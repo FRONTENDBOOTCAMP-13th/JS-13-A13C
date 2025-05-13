@@ -1,1 +1,12 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+@theme {
+  --font-pretendard: "Pretendard Variable", sans-serif;
+
+  --black: #111111;
+  --white: #eeeeee;
+  --main-color: #0f2b36; /* 그린색*/
+  --braum-light: #fae8c8; /* 버튼 그라데이션 1 */
+  --braum-middle: #d49d82; /* 버튼 그라데이션 2 */
+  --braum-dark: #ab795e; /* 버튼 그라데이션 3 */
+}
