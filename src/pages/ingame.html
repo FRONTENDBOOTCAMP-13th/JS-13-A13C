@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>인게임 화면</title>
+    <link rel="icon" type="image/svg+xml" href="/public/logo.webp" />
+    <link rel="preload" href="/font/pretendardvariable.css" as="style" />
+    <link rel="stylesheet" href="/font/pretendardvariable.css" />
+    <script type="module" src="/src/pages/ingame/ingame.ts"></script>
+  </head>
+  <body
+    class="h-screen overflow-hidden text-white font-pretendard"
+    style="
+      background: linear-gradient(
+        180deg,
+        #2f5969 0%,
+        #1c343d 34%,
+        #0f2b36 100%
+      );
+    "
+  >
+    <!-- 상대 카드 -->
+    <div class="flex justify-start items-center py-5 ml-50 -translate-y-5">
+      <div class="flex space-x-1 mr-6">
+        <img
+          src="/src/imges/card-back.webp"
+          alt="상대1 카드1"
+          class="w-[115px] h-[168px]"
+        />
+        <img
+          src="/src/imges/card-back.webp"
+          alt="상대1 카드2"
+          class="w-[115px] h-[168px]"
+        />
+      </div>
+
+      <div class="flex space-x-1 mr-6">
+        <img
+          src="/src/imges/card-back.webp"
+          alt="상대2 카드1"
+          class="w-[115px] h-[168px]"
+        />
+        <img
+          src="/src/imges/card-back.webp"
+          alt="상대2 카드2"
+          class="w-[115px] h-[168px]"
+        />
+      </div>
+
+      <div class="flex space-x-1 mr-6">
+        <img
+          src="/src/imges/card-back.webp"
+          alt="상대3 카드1"
+          class="w-[115px] h-[168px]"
+        />
+        <img
+          src="/src/imges/card-back.webp"
+          alt="상대3 카드2"
+          class="w-[115px] h-[168px]"
+        />
+      </div>
+
+      <div class="flex space-x-1">
+        <img
+          src="/src/imges/card-back.webp"
+          alt="상대4 카드1"
+          class="w-[115px] h-[168px]"
+        />
+        <img
+          src="/src/imges/card-back.webp"
+          alt="상대4 카드2"
+          class="w-[115px] h-[168px]"
+        />
+      </div>
+    </div>
+
+    <!-- 방이름 -->
+    <div class="mr-130 text-right text-white font-bold -translate-y-35">
+      방이름 A13C
+    </div>
+
+    <!-- 결과창 -->
+    <div class="flex justify-start -mt-8 ml-112">
+      <div
+        class="w-[511px] h-[301px] bg-cover bg-center text-center flex flex-col justify-center items-center"
+        style="background-image: url(&quot;/src/imges/score-board.webp&quot;)"
+      >
+        <p class="text-sm">라운드 <span id="round-number">1</span></p>
+        <p class="text-sm">누적 승점 <span id="total-score">0</span></p>
+        <p class="text-sm">닉네임 박정우</p>
+      </div>
+    </div>
+
+    <!-- 제출 카드 영역 -->
+    <div class="w-full mt-18">
+      <div
+        class="relative flex items-center w-full bg-red-900 px-8 py-4 h-[136px]"
+      >
+        <!-- 왼쪽: 라운드 표시 -->
+        <div class="flex flex-col items-start justify-center mr-6">
+          <div class="mb-2 text-white">
+            라운드 <span class="font-bold">1 / 5</span>
+          </div>
+          <div class="flex space-x-2">
+            <span
+              class="w-6 h-6 rounded-full bg-blue-500 text-xs text-white flex items-center justify-center"
+              >1</span
+            >
+            <span
+              class="w-6 h-6 rounded-full bg-[#9C9E64] text-xs text-white flex items-center justify-center"
+              >2</span
+            >
+            <span
+              class="w-6 h-6 rounded-full bg-[#659E64] text-xs text-white flex items-center justify-center"
+              >3</span
+            >
+            <span
+              class="w-6 h-6 rounded-full bg-[#159779] text-xs text-white flex items-center justify-center"
+              >4</span
+            >
+            <span
+              class="w-6 h-6 rounded-full bg-[#583BFF] text-xs text-white flex items-center justify-center"
+              >5</span
+            >
+          </div>
+        </div>
+
+        <!-- 오른쪽: 카드 + 제출 버튼 -->
+        <div class="absolute flex items-center space-x-20 ml-128">
+          <div
+            id="selected-left"
+            class="w-[127px] h-[186px] bg-center bg-cover"
+            style="background-image: url(&quot;/src/imges/card-back.webp&quot;)"
+          ></div>
+          <div
+            id="selected-right"
+            class="w-[127px] h-[186px] bg-center bg-cover"
+            style="background-image: url(&quot;/src/imges/card-back.webp&quot;)"
+          ></div>
+
+          <!-- 제출 버튼 자리 -->
+          <div id="submitbutton"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 내 카드 -->
+    <div class="flex justify-start translate-y-10 ml-20">
+      <div class="flex space-x-2">
+        <img
+          src="/src/imges/card-1.webp"
+          class="w-[153px] h-[214px] cursor-pointer"
+          data-card="1"
+        />
+
+        <img
+          src="/src/imges/card-2.webp"
+          class="w-[153px] h-[214px] cursor-pointer"
+          data-card="2"
+        />
+        <img
+          src="/src/imges/card-3.webp"
+          class="w-[153px] h-[214px] cursor-pointer"
+          data-card="3"
+        />
+        <img
+          src="/src/imges/card-4.webp"
+          class="w-[153px] h-[214px] cursor-pointer"
+          data-card="4"
+        />
+        <img
+          src="/src/imges/card-5.webp"
+          class="w-[153px] h-[214px] cursor-pointer"
+          data-card="5"
+        />
+        <img
+          src="/src/imges/card-6.webp"
+          class="w-[153px] h-[214px] cursor-pointer"
+          data-card="6"
+        />
+        <img
+          src="/src/imges/card-7.webp"
+          class="w-[153px] h-[214px] cursor-pointer"
+          data-card="7"
+        />
+        <img
+          src="/src/imges/card-8.webp"
+          class="w-[153px] h-[214px] cursor-pointer"
+          data-card="8"
+        />
+      </div>
+    </div>
+  </body>
+</html>
