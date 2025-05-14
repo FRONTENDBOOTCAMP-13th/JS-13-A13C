@@ -8,6 +8,8 @@
     <link rel="preload" href="/font/pretendardvariable.css" as="style" />
     <link rel="stylesheet" href="/font/pretendardvariable.css" />
     <script type="module" src="/src/pages/ingame/ingame.ts"></script>
+    <script src="https://fesp-api.koyeb.app/socket.io/socket.io.js"></script>
+    <script type="module" src="/src/pages/ingame/test-chat.ts"></script>
   </head>
   <body
     class="h-screen overflow-hidden text-white font-pretendard"
@@ -75,13 +77,9 @@
       </div>
     </div>
 
-    <!-- 방이름 -->
-    <div class="mr-130 text-right text-white font-bold -translate-y-35">
-      방이름 A13C
-    </div>
-
-    <!-- 결과창 -->
-    <div class="flex justify-start -mt-8 ml-112">
+    <!-- 최종카드제출창 + 임시보관구역 정렬 -->
+    <div class="flex justify-start space-x-10 ml-24 -mt-8">
+      <!-- 최종카드제출창 -->
       <div
         class="w-[511px] h-[301px] bg-cover bg-center text-center flex flex-col justify-center items-center"
         style="background-image: url(&quot;/src/imges/score-board.webp&quot;)"
@@ -89,6 +87,18 @@
         <p class="text-sm">라운드 <span id="round-number">1</span></p>
         <p class="text-sm">누적 승점 <span id="total-score">0</span></p>
         <p class="text-sm">닉네임 박정우</p>
+        <div id="final-card-area" class="mt-2"></div>
+      </div>
+
+      <!-- 임시보관구역 -->
+      <div
+        class="w-[511px] h-[301px] bg-cover bg-center text-center flex flex-col justify-center items-center"
+        style="background-image: url(&quot;/src/imges/score-board.webp&quot;)"
+      >
+        <p class="text-sm">라운드 <span id="round-number">1</span></p>
+        <p class="text-sm">누적 승점 <span id="total-score">0</span></p>
+        <p class="text-sm">닉네임 박정우</p>
+        <div id="temp-card-area" class="mt-2"></div>
       </div>
     </div>
 
@@ -139,8 +149,11 @@
             style="background-image: url(&quot;/src/imges/card-back.webp&quot;)"
           ></div>
 
-          <!-- 제출 버튼 자리 -->
-          <div id="submitbutton"></div>
+          <!-- 초기화, 제출 버튼 -->
+          <div id="submitbutton" class="space-x-5 ml-20">
+            <a href="#void" class="btn btn-active">초기화</a>
+            <a href="#void" class="btn btn-active">제출</a>
+          </div>
         </div>
       </div>
     </div>
