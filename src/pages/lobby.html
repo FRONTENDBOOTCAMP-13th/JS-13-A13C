@@ -3,10 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
+    <title>로비 | A13C</title>
     <link rel="preload" href="/font/pretendardvariable.css" as="style" />
     <link rel="stylesheet" href="/font/pretendardvariable.css" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <script src="https://fesp-api.koyeb.app/socket.io/socket.io.js"></script>
     <script type="module" src="/src/main.ts"></script>
     <script type="module" src="/src/components/modal/modal.ts"></script>
     <script type="module" src="/src/pages/lobby/lobby.ts"></script>
@@ -51,23 +52,29 @@
 
             <!-- 참여하기 버튼 시작 -->
             <div class="button-groups button-static">
-              <button type="button" class="btn btn-active">참여하기</button>
+              <a href="./ingame.html" class="btn btn-active">참여하기</a>
             </div>
             <!-- 참여하기 버튼 종료 -->
+
+            <!-- 닫기 버튼 클릭 시작 -->
             <div class="absolute right-10 top-10 close-btn">
               <button type="button" class="w-8 h-8 cursor-pointer">
                 <img src="/src/imges/close-white.svg" alt="닫기" />
               </button>
             </div>
-            <!-- 사용자 입력폼 -->
-            <!-- TODO 방 제목: label, placeholder 수정 -->
-            <div class="modal-content">
-              <label for="modal-form" class="mr-6">닉네임</label>
-              <input id="modal-form" type="text" class="border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]" placeholder="영어, 10자 이내" />
-            </div>
+            <!-- 닫기 버튼 클릭 종료 -->
           </div>
         </div>
         <!-- 방 참여하기 버튼 누르면 생기는 팝업 종료-->
+
+        <!-- 방만들기 모달 시작 -->
+        <!-- 사용자 입력폼 -->
+        <!-- TODO 방 제목: label, placeholder 수정 -->
+        <div class="modal-content">
+          <label for="modal-form" class="mr-6">닉네임</label>
+          <input id="modal-form" type="text" class="border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]" placeholder="영어, 10자 이내" />
+        </div>
+        <!-- 방만들기 모달 종료 -->
 
         <!-- 하단 저작권 표기 시작 -->
         <footer class="copyright w-full bottom-15 text-center text-gray-400" aria-label="저작권 정보 표시입니다.">
