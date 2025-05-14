@@ -58,9 +58,6 @@
     left: 50%;
     transform: translateX(-50%);
   }
-  .button-groups.button-static {
-    bottom: 138px;
-  }
 }
 
 /* 룰 슬라이드 dispaly: none, block */
