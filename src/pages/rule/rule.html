@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게임 설명 | A13C</title>
+    <link rel="preload" href="/font/pretendardvariable.css" as="style" />
+    <link rel="stylesheet" href="/font/pretendardvariable.css" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/pages/rule/rule.ts"></script>
+  </head>
+  <body class="font-pretendard text-(--white)">
+    <main class="main-container">
+      <div class="main-rule-backgrund flex justify-center items-center flex-col">
+        <div class="flex justify-center items-center flex-col absolute top-25">
+          <h1 class="w-[76px]"><span class="sr-only">하나빼기 룰 페이지입니다.</span><img src="/logo.svg" alt="" /></h1>
+          <p class="text-(--white)">하나빼기 게임에 오신 걸 환영합니다.</p>
+          <p class="text-(--white) my-2 text-hidden">이 게임은 넷플릭스 <span class="font-bold">&lt;데블스플렌:데스룸&gt;</span>의 하나빼기 룰을 기반으로 만들어졌습니다.</p>
+          <p class="text-(--white) text-hidden">다음은 게임의 진행 방식과 규칙입니다</p>
+        </div>
+        <ul class="rule-list w-[800px]" role="tablist">
+          <li class="active" role="tabpanel" aria-hidden="false">
+            <div>
+              <h2><strong>1. </strong>기본 룰</h2>
+              <p>각 플레이어는 손에 있는 숫자 카드 중 2장을 선택하여 좌우로 나눠 제출합니다.</p>
+              <p>이후, 2장 중 한 장만 실제로 사용되며 나머지 한 장은 버려집니다.</p>
+              <p>더 낮은 숫자를 제출한 플레이어가 해당 라운드에서 승리하고, 낸 카드의 숫자만큼 승점을 획득합니다.</p>
+            </div>
+            <div>
+              <h2><strong>2. </strong>카드 구성</h2>
+              <p>모든 플레이어는 숫자 1번부터 8번까지 총 8장의 카드로 게임을 시작합니다.</p>
+              <p>각 숫자는 단 한 번만 사용할 수 있습니다.</p>
+            </div>
+          </li>
+          <li role="tabpanel" aria-hidden="true">
+            <div>
+              <h2><strong>3. </strong>카드 제출 방식</h2>
+              <p>라운드가 시작되면, 각자 2장의 카드를 왼쪽/오른쪽 슬롯에 나눠서 제출합니다.</p>
+              <p>이후 모든 플레이어가 카드를 제출한 후, 두 장을 동시에 공개합니다.</p>
+            </div>
+            <div>
+              <h2><strong>4. </strong>최종 카드 결정</h2>
+              <p>플레이어는 공개된 2장 중 어떤 카드를 사용할지 직접 클릭하여 선택합니다.</p>
+              <p>한 번 선택한 카드는 변경할 수 없습니다.</p>
+            </div>
+            <div>
+              <h2><strong>5. </strong>승리 조건</h2>
+              <p>제출된 카드 중, 중복된 카드를 제외하고 가장 낮은 숫자를 낸 플레이어가 승리합니다.</p>
+              <p>승리한 플레이어는 승리 표식을 획득합니다.</p>
+              <p>무승부의 경우, 모든 플레이어가 1점을 획득합니다.</p>
+            </div>
+          </li>
+          <li role="tabpanel" aria-hidden="true">
+            <div>
+              <h2><strong>6. </strong>사용된 카드 처리</h2>
+              <p>제출된 2장 중 실제 사용된 카드는 게임에서 제거됩니다.</p>
+              <p>사용되지 않은 카드 1장은 임시 보관 구역으로 이동되며, 다음 라운드까지 사용할 수 없습니다.</p>
+            </div>
+            <div>
+              <h2><strong>7. </strong>게임 종료</h2>
+              <p>게임은 5판으로 진행되며, 승점이 가장 높은 사람이 우승하게 됩니다.</p>
+              <p>승점이 동일할 경우, 승리 표식이 많은 사람이 우승하게 됩니다.</p>
+              <p>승리 표식의 수가 동일할 경우, 가장 최근 라운드의 승자가 우승하게 됩니다.</p>
+            </div>
+          </li>
+        </ul>
+        <div class="button-groups bottom-33">
+          <button type="button" class="btn btn-active mr-25" id="prevBtn"></button>
+          <button type="button" class="btn btn-active" id="nextBtn"></button>
+        </div>
+        <footer class="copyright w-full bottom-15 text-center text-gray-400" aria-label="저작권 정보 표시입니다.">
+          <p>Copyright &copy; 2025. A13C Corporation (박정우, 구성연, 우영찬, 정예빈) All right reserved.</p>
+          <p>2024. 본 프로젝트는 넷플릭스와 무관한 팬 제작물입니다.</p>
+        </footer>
+      </div>
+    </main>
+  </body>
+</html>
