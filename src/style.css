@@ -10,3 +10,100 @@
   --braum-middle: #d49d82; /* 버튼 그라데이션 2 */
   --braum-dark: #ab795e; /* 버튼 그라데이션 3 */
 }
+
+/* 버튼 컴포넌트 */
+.btn {
+  @apply px-6 py-2 rounded-full font-bold text-(--main-color);
+  background: linear-gradient(180deg, #fae8c8 0%, #d49d82 47.12%, #ab795e 100%);
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+/* 버튼 비활성화  */
+.btn-disabled {
+  background: linear-gradient(to bottom, #e5e5e5, #b3b3b3);
+  color: #7d7d7d;
+  &:focus {
+    outline: none;
+    border: none;
+  }
+}
+
+/* 버튼 활성화 */
+.btn-active {
+  background: linear-gradient(180deg, #fae8c8 0%, #d49d82 47.12%, #ab795e 100%);
+  @apply hover:text-(--white);
+}
+
+/* main-container 배경화면 */
+.main-container {
+  background-color: var(--main-color);
+  position: relative;
+  .main-index-backgrund {
+    background: url("./imges/main-backgrund.webp") no-repeat center center;
+    width: 1310px;
+    height: 100vh;
+    background-size: 100%;
+    margin: 0 auto;
+  }
+  .main-rule-backgrund {
+    background: url("./imges/frame.webp") no-repeat center center;
+    width: 1310px;
+    height: 100vh;
+    background-size: 100%;
+    margin: 0 auto;
+  }
+  .button-groups,
+  .copyright {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* 룰 슬라이드 dispaly: none, block */
+.rule-list {
+  li {
+    display: none;
+    div {
+      outline: none;
+      @apply my-5;
+
+      &:focus {
+        outline: none;
+      }
+
+      h2 {
+        @apply font-bold text-2xl;
+
+        strong {
+          @apply text-3xl;
+        }
+      }
+
+      p {
+        @apply ml-6 my-3;
+      }
+    }
+  }
+  li.active {
+    display: block;
+  }
+}
+
+/* 게임시작 글자 바운스 */
+/* 바운스 에니메이션 */
+@keyframes bounce {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -20px;
+  }
+}
+
+/* 바운스 등록 */
+.bounce .target-animation {
+  animation: bounce 2s infinite ease-in-out;
+  animation-play-state: running;
+}
