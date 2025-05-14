@@ -11,14 +11,19 @@
     <script type="module" src="/src/pages/rule/rule.ts"></script>
   </head>
   <body class="font-pretendard text-(--white)">
+    <!-- 메인 컨테이너 시작 -->
     <main class="main-container">
       <div class="main-rule-backgrund flex justify-center items-center flex-col">
+        <!-- 타이틀 시작 -->
         <div class="flex justify-center items-center flex-col absolute top-25">
           <h1 class="w-[76px]"><span class="sr-only">하나빼기 룰 페이지입니다.</span><img src="/logo.svg" alt="" /></h1>
           <p class="text-(--white)">하나빼기 게임에 오신 걸 환영합니다.</p>
           <p class="text-(--white) my-2 text-hidden">이 게임은 넷플릭스 <span class="font-bold">&lt;데블스플렌:데스룸&gt;</span>의 하나빼기 룰을 기반으로 만들어졌습니다.</p>
           <p class="text-(--white) text-hidden">다음은 게임의 진행 방식과 규칙입니다</p>
         </div>
+        <!-- 타이틀 종료 -->
+
+        <!-- 룰 슬라이드 시작 -->
         <ul class="rule-list w-[800px]" role="tablist">
           <li class="active" role="tabpanel" aria-hidden="false">
             <div>
@@ -65,15 +70,23 @@
             </div>
           </li>
         </ul>
+        <!-- 룰 슬라이드 종료 -->
+
+        <!-- 버튼  시작 -->
         <div class="button-groups bottom-33">
           <button type="button" class="btn btn-active mr-25" id="prevBtn"></button>
           <button type="button" class="btn btn-active" id="nextBtn"></button>
         </div>
+        <!-- 버튼  시작 -->
+
+        <!-- 저작권 표기 시작 -->
         <footer class="copyright w-full bottom-15 text-center text-gray-400" aria-label="저작권 정보 표시입니다.">
           <p>Copyright &copy; 2025. A13C Corporation (박정우, 구성연, 우영찬, 정예빈) All right reserved.</p>
           <p>2024. 본 프로젝트는 넷플릭스와 무관한 팬 제작물입니다.</p>
         </footer>
+        <!-- 저작권 표기 종료 -->
       </div>
     </main>
+    <!-- 메인 컨테이너 종료 -->
   </body>
 </html>
