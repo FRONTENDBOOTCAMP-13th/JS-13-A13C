@@ -3,25 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>채팅</title>
-    <link rel="icon" type="image/svg+xml" href="/logo.webp" />
-    <script type="module" src="../main.ts"></script>
+    <title>채팅 | A13C</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <script type="module" src="/src/main.ts"></script>
     <script src="https://fesp-api.koyeb.app/socket.io/socket.io.js"></script>
-    <script type="module" src="../chat.ts"></script>
+    <script type="module" src="/src/pages/ingame/chat.ts"></script>
   </head>
   <body class="bg-cyan-800">
     <h1 class="text-2xl">채팅</h1>
     <input type="text" name="userId" placeholder="사용자 아이디" /><br />
     <input type="text" name="roomId" placeholder="생성할 채팅방 아이디" />
     <input type="text" name="roomName" placeholder="채팅방 이름" />
-    <button id="createRoomBtn" class="border border-red-300">채팅방 생성</button
-    ><br />
+    <button id="createRoomBtn" class="border border-red-300">채팅방 생성</button><br />
     <br />
     <input type="text" name="enterRoomId" placeholder="채팅방 아이디" />
     <input type="text" name="nickName" placeholder="사용자 닉네임" />
     <button id="joinRoomBtn" class="border border-red-300">채팅방 입장</button>
     <button id="leaveRoomBtn" class="border border-red-300">채팅방 나가기</button>
-    <br /><p class="text-white text-xl absolute right-75 top-1/20">방 이름:<span id="connectedRoom" class="text-white pl-2"></span></p>
+    <br />
+    <p class="text-white text-xl absolute right-75 top-1/20">방 이름:<span id="connectedRoom" class="text-white pl-2"></span></p>
 
     <!-- 화면에 띄울 채팅 공간 -->
     <div class="mt-2 w-3xs h-[650px] bg-white/70 rounded-2xl p-4 fixed right-5 top-1/2 -translate-y-1/2">
@@ -32,18 +32,23 @@
         <input type="text" name="message" placeholder="메시지 입력" class="ml-3 relative top-1" />
         <button id="sendBtn" class="relative top-1">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M13.8565 2.59993L3.07739 6.49743L6.66842 8.57586L9.83487 5.40856C9.99549 5.24805 10.2133 5.15792 10.4404 5.158C10.6675 5.15808 10.8852 5.24836 11.0457 5.40899C11.2062 5.56961 11.2964 5.78742 11.2963 6.0145C11.2962 6.24158 11.2059 6.45933 11.0453 6.61984L7.87799 9.78714L9.95813 13.3773L13.8565 2.59993ZM14.133 0.679006C15.1559 0.308346 16.1472 1.29963 15.7766 2.32258L11.255 14.8249C10.8835 15.8504 9.48304 15.9754 8.93604 15.0312L6.1822 10.2734L1.4244 7.51952C0.480197 6.97252 0.605178 5.57206 1.6307 5.20054L14.133 0.679006Z" fill="#111111"/>
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M13.8565 2.59993L3.07739 6.49743L6.66842 8.57586L9.83487 5.40856C9.99549 5.24805 10.2133 5.15792 10.4404 5.158C10.6675 5.15808 10.8852 5.24836 11.0457 5.40899C11.2062 5.56961 11.2964 5.78742 11.2963 6.0145C11.2962 6.24158 11.2059 6.45933 11.0453 6.61984L7.87799 9.78714L9.95813 13.3773L13.8565 2.59993ZM14.133 0.679006C15.1559 0.308346 16.1472 1.29963 15.7766 2.32258L11.255 14.8249C10.8835 15.8504 9.48304 15.9754 8.93604 15.0312L6.1822 10.2734L1.4244 7.51952C0.480197 6.97252 0.605178 5.57206 1.6307 5.20054L14.133 0.679006Z"
+              fill="#111111"
+            />
           </svg>
         </button>
       </div>
     </div>
 
-
     <!-- 방 목록 -->
     <div class="room-list-container w-full max-w-2xl mx-auto mt-8 bg-gray-200/80 p-6 rounded-lg shadow-lg">
       <table class="table-auto w-full text-left border-collapse">
-        <thead class=""><!-- bg-gray-700 text-white -->
-          
+        <thead class="">
+          <!-- bg-gray-700 text-white -->
+
           <tr>
             <th>번호</th>
             <th>방 이름</th>
@@ -52,7 +57,7 @@
           </tr>
         </thead>
         <tbody id="roomList">
-            <!-- 방 만들기 추가 되면 여기에 배치됨 -->
+          <!-- 방 만들기 추가 되면 여기에 배치됨 -->
         </tbody>
       </table>
     </div>
