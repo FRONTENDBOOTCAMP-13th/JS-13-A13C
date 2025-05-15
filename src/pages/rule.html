@@ -11,8 +11,18 @@
     <script type="module" src="/src/pages/rule/rule.ts"></script>
   </head>
   <body class="font-pretendard text-(--white)">
+    <!-- 모바일 접근 차단 시작 -->
+    <div class="bg-(--main-color) h-screen xl:hidden flex justify-center items-center flex-col px-6">
+      <img src="/logo.svg" alt="" />
+      <div class="font-bold text-4xl text-(--white) text-center">
+        <p class="my-5">이 콘텐츠는 PC에서만 이용 가능합니다.</p>
+        <p>더 나은 이용을 위해 PC 환경에서 접속해 주세요 😊</p>
+      </div>
+    </div>
+    <!-- 모바일 접근 차단 종료 -->
+
     <!-- 메인 컨테이너 시작 -->
-    <main class="main-container">
+    <main class="main-container hidden xl:block">
       <div class="main-rule-backgrund flex justify-center items-center flex-col">
         <!-- 타이틀 시작 -->
         <div class="flex justify-center items-center flex-col absolute top-25">

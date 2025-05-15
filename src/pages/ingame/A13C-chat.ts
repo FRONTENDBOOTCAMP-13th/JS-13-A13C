@@ -116,9 +116,7 @@ socket.on("disconnect", () => {
  * @returns Promise<CreateRoomResponse> - 채팅방 생성 결과
  * @throws {Error} user_id나 roomName이 비어있을 경우 에러 발생
  */
-export function createRoom(
-  params: CreateRoomParams
-): Promise<CreateRoomResponse> {
+export function createRoom(params: CreateRoomParams): Promise<CreateRoomResponse> {
   if (!params.user_id.trim()) {
     throw new Error("user_id가 없습니다.");
   }
