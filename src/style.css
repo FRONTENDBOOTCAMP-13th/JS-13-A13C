@@ -34,35 +34,6 @@
   @apply hover:text-(--white);
 }
 
-/* main-container 배경화면 */
-.main-container {
-  background-color: var(--main-color);
-  position: relative;
-  .main-index-backgrund {
-    background: url("./imges/main-backgrund.webp") no-repeat center center;
-    width: 1310px;
-    height: 100vh;
-    background-size: 100%;
-    margin: 0 auto;
-  }
-  .main-rule-backgrund {
-    background: url("./imges/frame.webp") no-repeat center center;
-    width: 1310px;
-    height: 100vh;
-    background-size: 100%;
-    margin: 0 auto;
-  }
-  .button-groups,
-  .copyright {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  .button-groups.button-static {
-    bottom: 138px;
-  }
-}
-
 /* 룰 슬라이드 dispaly: none, block */
 .rule-list {
   li {
@@ -101,7 +72,7 @@
     translate: 0 0;
   }
   50% {
-    translate: 0 -20px;
+    translate: 0 -30px;
   }
 }
 
