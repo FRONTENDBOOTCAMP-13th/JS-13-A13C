@@ -609,27 +609,12 @@ socket.on("message", (data: ChatMessage) => {
   const messageElement = document.createElement("div");
   messageElement.textContent = `${data.nickName}: ${data.msg}`;
   
-  // 긴 텍스트 자동 줄바꿈 스타일 추가
-  messageElement.style.wordBreak = "break-word";
-  messageElement.style.whiteSpace = "pre-wrap";
-  messageElement.style.overflowWrap = "break-word";
-  messageElement.style.maxWidth = "100%";
-  messageElement.style.padding = "4px 8px";
-  
   chatScreen.appendChild(messageElement);
   chatScreen.scrollTop = chatScreen.scrollHeight;
 });
 
 /** 초기화 */
 document.addEventListener("DOMContentLoaded", () => {
-  // 채팅창 스타일 설정 (가로 스크롤 제거)
-  if (chatScreen) {
-    chatScreen.setAttribute("style", `
-      overflow-x: hidden;
-      word-wrap: break-word;
-      white-space: pre-wrap;
-    `);
-  }
   
   loadDeletedRooms();
   loadCacheFromStorage();
