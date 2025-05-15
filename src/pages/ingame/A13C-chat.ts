@@ -1,4 +1,4 @@
-import io  from "socket.io-client";
+import io from "socket.io-client";
 
 /**
  * 채팅 메시지의 구조를 정의하는 인터페이스

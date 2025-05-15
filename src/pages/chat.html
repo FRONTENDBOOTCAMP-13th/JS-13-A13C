@@ -15,18 +15,31 @@
     <br />
     <input type="text" name="enterRoomId" placeholder="참여할 방 이름" />
     <input type="text" name="nickName" placeholder="사용할 닉네임" />
-    <button id="joinRoomBtn" class="border border-red-300">채팅방 입장</button>
-    <button id="leaveRoomBtn" class="border border-red-300">채팅방 나가기</button>
+    <button id="joinRoomBtn" class="border border-red-300">게임 입장</button>
+    <button id="leaveRoomBtn" class="border border-red-300">
+      채팅방 나가기
+    </button>
     <br />
-    <p class="text-white text-xl absolute right-75 top-1/20">방 이름:<span id="connectedRoom" class="text-white pl-2"></span></p>
+    <p class="text-white text-xl absolute right-75 top-1/20">
+      방 이름:<span id="connectedRoom" class="text-white pl-2"></span>
+    </p>
 
     <!-- 화면에 띄울 채팅 공간 -->
-    <div class="mt-2 w-3xs h-[650px] bg-white/70 rounded-2xl p-4 fixed right-5 top-1/2 -translate-y-1/2">
+    <div
+      class="mt-2 w-3xs h-[650px] bg-white/70 rounded-2xl p-4 fixed right-5 top-1/2 -translate-y-1/2"
+    >
       <div class="addChat overflow-y-auto h-[580px] pr-2">
         <!-- 메시지 여기에 추가됨 -->
       </div>
-      <div class="w-[230px] h-8 mt-4 space-x-2 absolute bottom-5 bg-white rounded-lg">
-        <input type="text" name="message" placeholder="메시지 입력" class="ml-3 relative top-1" />
+      <div
+        class="w-[230px] h-8 mt-4 space-x-2 absolute bottom-5 bg-white rounded-lg"
+      >
+        <input
+          type="text"
+          name="message"
+          placeholder="메시지 입력"
+          class="ml-3 relative top-1"
+        />
         <button id="sendBtn" class="relative top-1">
           <img src="../imges/chat-btn.svg" alt="채팅 입력 버튼 이미지" />
         </button>
@@ -34,11 +47,12 @@
     </div>
 
     <!-- 방 목록 -->
-    <div class="room-list-container w-full max-w-2xl mx-auto mt-8 bg-gray-200/80 p-6 rounded-lg shadow-lg">
+    <div
+      class="room-list-container w-full max-w-2xl mx-auto mt-8 bg-gray-200/80 p-6 rounded-lg shadow-lg"
+    >
       <table class="table-auto w-full text-left border-collapse">
         <thead class="">
           <!-- bg-gray-700 text-white -->
-
           <tr>
             <th>번호</th>
             <th>방 이름</th>
@@ -51,15 +65,5 @@
         </tbody>
       </table>
     </div>
-
-    <!-- 모바일 접근 차단 시작 -->
-    <div class="bg-(--main-color) h-screen xl:hidden flex justify-center items-center flex-col px-6">
-      <!-- <img src="logo.svg" alt="" /> -->
-      <div class="font-bold text-4xl text-(--white) text-center">
-        <p class="my-5">이 콘텐츠는 PC에서만 이용 가능합니다.</p>
-        <p>더 나은 이용을 위해 PC 환경에서 접속해 주세요 😊</p>
-      </div>
-    </div>
-    <!-- 모바일 접근 차단 종료 -->
   </body>
 </html>
