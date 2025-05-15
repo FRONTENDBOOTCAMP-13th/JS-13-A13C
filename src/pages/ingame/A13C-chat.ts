@@ -116,7 +116,9 @@ socket.on("disconnect", () => {
  * @returns Promise<CreateRoomResponse> - 채팅방 생성 결과
  * @throws {Error} user_id나 roomName이 비어있을 경우 에러 발생
  */
-export function createRoom(params: CreateRoomParams): Promise<CreateRoomResponse> {
+export function createRoom(
+  params: CreateRoomParams
+): Promise<CreateRoomResponse> {
   if (!params.user_id.trim()) {
     throw new Error("user_id가 없습니다.");
   }
@@ -222,3 +224,13 @@ socket.on("rooms", (rooms: RoomsResponse) => {
 socket.on("members", (members: RoomMembers) => {
   console.log("현재 채팅방 멤버:", members);
 });
+
+// 멤버 목록 요청 함수 추가
+export function requestMembers() {
+  const currentRoom = JSON.parse(
+    localStorage.getItem("A13C_CURRENT_ROOM") || "null"
+  );
+  if (currentRoom && currentRoom.roomId) {
+    socket.emit("get_members", { roomId: currentRoom.roomId });
+  }
+}
