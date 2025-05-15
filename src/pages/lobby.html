@@ -12,6 +12,8 @@
     <script type="module" src="/src/components/modal/modal.ts"></script>
     <script type="module" src="/src/pages/lobby/lobby.ts"></script>
     <script type="module" src="/src/pages/lobby/lobby-scroll.ts"></script>
+    <script type="module" src="/src/pages/ingame/chat.ts"></script>
+    <script type="module" src="/src/pages/ingame/A13C-chat.ts"></script>
   </head>
   <body>
     <!-- 메인 컨테이너 시작 -->
@@ -19,7 +21,7 @@
       <div class="main-index-backgrund hidden xl:block">
         <!-- 참여하기, 방 만들기 버튼 시작 -->
         <div class="button-groups bottom-53">
-          <button type="button" class="btn btn-active mr-25">방 만들기</button>
+          <button type="button" class="show-modal-dialog btn btn-active mr-25">방 만들기</button>
           <button type="button" class="show-room-btn btn btn-active">참여하기</button>
         </div>
         <!-- 참여하기, 방 만들기 버튼 종료 -->
@@ -29,7 +31,7 @@
           <div class="flex justify-center items-center flex-col h-screen relative">
             <!-- 방 리스트 시작 -->
             <div id="room-list" class="room-list-container w-[900px] h-[600px] mx-auto mb-15">
-              <table class="w-full relative table-auto">
+              <table class="relative table-auto w-full text-left border-collapse">
                 <thead class="sticky">
                   <tr class="border-b border-gray-300">
                     <th class="h-12 px-4 text-center align-center font-medium">NO</th>
@@ -39,20 +41,23 @@
                   </tr>
                 </thead>
                 <tbody id="roomList">
-                  <tr class="border-b border-gray-500 hover:font-bold">
+                  <!-- 하드코딩으로 방 목록 불러오기 시작 -->
+                  <!-- <tr class="border-b border-gray-500 hover:font-bold">
                     <td class="h-12 px-4 text-center font-medium">1번</td>
                     <td class="max-w-[500px] h-12 px-4 text-left align-middle font-medium truncate">이리사사오류치파구십</td>
                     <td class="h-12 px-4 text-center font-medium">3명</td>
                     <td class="h-12 px-4 text-center font-medium">진행중</td>
-                  </tr>
+                  </tr> -->
+                  <!-- 하드코딩으로 방 목록 불러오기 종료 -->
                 </tbody>
               </table>
             </div>
             <!-- 방 리스트 종료-->
 
             <!-- 참여하기 버튼 시작 -->
-            <div class="button-groups button-static">
-              <a href="./ingame.html" class="btn btn-active">참여하기</a>
+            <div id="joinRoomBtn" class="button-groups button-static">
+              <button type="button" id="joinRoomBtn" class="btn btn-active">참여하기</button>
+              <!-- <button type="button" class="btn btn-active">참여하기</button> -->
             </div>
             <!-- 참여하기 버튼 종료 -->
 
@@ -70,20 +75,44 @@
         <!-- 방만들기 모달 시작 -->
         <!-- 사용자 입력폼 -->
         <!-- TODO 방 제목: label, placeholder 수정 -->
-        <div class="modal-content">
-          <label for="modal-form" class="mr-6">닉네임</label>
-          <input id="modal-form" type="text" class="border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]" placeholder="영어, 10자 이내" />
-        </div>
+        <dialog class="modal-dialog w-[500px] h-[350px] rounded-[30px] shadow-2xl bg-[rgba(129,125,125,0.7)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" aria-labelledby="">
+          <div class="modal-layout pt-20 relative text-white flex flex-col items-center justify-center h-full">
+            <div class="contents-layout">
+              <!-- 닫기 버튼 -->
+              <button type="button" class="close-modal-dialog absolute top-5 right-5 cursor-pointer">
+                <img src="/src/imges/close.webp" alt="닫기" />
+              </button>
+              <!-- 사용자 입력폼 -->
+              <!-- TODO 방 제목: label, placeholder 수정 -->
+              <div class="modal-content">
+                <label for="modal-form" class="mr-6">방 제목</label>
+                <input id="modal-form" type="text" class="border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]" placeholder="영어, 10자 이내" />
+              </div>
+            </div>
+
+            <!-- TODO 생성 버튼 교체 -->
+            <button type="button" id="createRoomBtn" class="btn btn-active p-4 mt-15 cursor-pointer">방 만들기</button>
+          </div>
+        </dialog>
         <!-- 방만들기 모달 종료 -->
 
         <!-- 하단 저작권 표기 시작 -->
         <footer class="copyright w-full bottom-15 text-center text-gray-400" aria-label="저작권 정보 표시입니다.">
-          <p>Copyright &copy; 2025. A13C Corporation (박정우, 구성연, 우영찬, 정예빈) All right reserved.</p>
+          <p>Copyright &copy; 2025. A13C Corporation (구성연, 박정우, 우영찬, 정예빈) All right reserved.</p>
           <p>2024. 본 프로젝트는 넷플릭스와 무관한 팬 제작물입니다.</p>
         </footer>
         <!-- 하단 저작권 표기 종료 -->
       </div>
     </main>
     <!-- 메인 컨테이너 종료 -->
+
+    <!-- 채팅 api를 불러오기 위한 가상노드 시작 -->
+    <button id="leaveRoomBtn" class="sr-only"></button>
+    <button id="sendBtn" class="sr-only"></button>
+    <input name="message" class="sr-only" />
+    <div id="connectedRoom" class="sr-only"></div>
+    <div class="addChat" class="sr-only"></div>
+    <input id="enterRoomId" name="enterRoomId" class="sr-only" />
+    <!-- 채팅 api를 불러오기 위한 가상노드 종료 -->
   </body>
 </html>
