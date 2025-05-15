@@ -608,6 +608,11 @@ msgInput.addEventListener("keydown", (e) => {
 socket.on("message", (data: ChatMessage) => {
   const messageElement = document.createElement("div");
   messageElement.textContent = `${data.nickName}: ${data.msg}`;
+
+  messageElement.style.wordBreak = "break-word";
+  messageElement.style.overflowWrap = "break-word";
+  messageElement.style.maxWidth = "100%";
+  messageElement.style.padding = "4px 8px";
   
   chatScreen.appendChild(messageElement);
   chatScreen.scrollTop = chatScreen.scrollHeight;
@@ -615,6 +620,12 @@ socket.on("message", (data: ChatMessage) => {
 
 /** 초기화 */
 document.addEventListener("DOMContentLoaded", () => {
+  if (chatScreen) {
+    chatScreen.setAttribute("style", `
+      overflow-x: hidden;
+      word-wrap: break-word;
+    `);
+  }
   
   loadDeletedRooms();
   loadCacheFromStorage();
