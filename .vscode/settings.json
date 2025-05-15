@@ -1,13 +1,13 @@
 {
   "[javascript]": {
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
-},
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 
-"[html]": {
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
-},
-"gitmoji.addCustomEmoji": [
-  {
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "gitmoji.addCustomEmoji": [
+    {
       "emoji": "✨",
       "code": ":feat:",
       "description": "새로운 기능 추가"
@@ -73,5 +73,13 @@
       "description": "설정파일 추가/수정"
     }
   ],
-  "gitmoji.onlyUseCustomEmoji": true
+  "gitmoji.onlyUseCustomEmoji": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/node_modules": false
+  }
 }
