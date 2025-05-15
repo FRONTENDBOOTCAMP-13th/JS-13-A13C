@@ -1,4 +1,4 @@
-import io  from "socket.io-client";
+import io from "socket.io-client";
 
 /**
  * 채팅 메시지의 구조를 정의하는 인터페이스
@@ -87,7 +87,7 @@ export interface RoomsResponse {
 }
 
 // npm i @types/socket.io-client 필요
-export const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team01");
+export const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team02");
 
 /**
  * 소켓 연결 이벤트 리스너
@@ -116,9 +116,7 @@ socket.on("disconnect", () => {
  * @returns Promise<CreateRoomResponse> - 채팅방 생성 결과
  * @throws {Error} user_id나 roomName이 비어있을 경우 에러 발생
  */
-export function createRoom(
-  params: CreateRoomParams
-): Promise<CreateRoomResponse> {
+export function createRoom(params: CreateRoomParams): Promise<CreateRoomResponse> {
   if (!params.user_id.trim()) {
     throw new Error("user_id가 없습니다.");
   }
