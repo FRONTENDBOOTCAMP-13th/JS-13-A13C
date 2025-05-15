@@ -44,10 +44,10 @@ function renderRoomList(rooms: { [key: string]: RoomInfo }) {
     const displayCount = Math.min(memberCount, 5);
 
     row.innerHTML = `
-      <td class="px-4 py-2">${index + 1}</td>
-      <td class="px-4 py-2">${room.roomName}</td>
-      <td class="px-4 py-2 participant-count">${displayCount}/5</td>
-      <td class="px-4 py-2">${room.parents_option?.isPlaying ? "진행 중" : "대기 중"}</td>
+      <td class="h-12 px-4 text-center font-medium">${index + 1}</td>
+      <td class="max-w-[500px] h-12 px-4 text-left align-middle font-medium truncate">${room.roomName}</td>
+      <td class="h-12 px-4 text-center font-medium participant-count">${displayCount}/5</td>
+      <td class="h-12 px-4 text-center font-medium">${room.parents_option?.isPlaying ? "진행 중" : "대기 중"}</td>
     `;
 
     connectedRoomElem.textContent = `${currentRoomId} (${memberCount}/5)`;
