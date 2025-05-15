@@ -73,7 +73,7 @@ window.addEventListener("DOMContentLoaded", () => {
     for (let i = 1; i <= 8; i++) {
       if (selectedCardNumbers.includes(i)) continue;
       const card = document.createElement("img");
-      card.src = `/src/imges/card-${i}.webp`;
+      card.src = `/imges/card-${i}.webp`;
       card.className = "w-[153px] h-[214px] cursor-pointer transition-transform duration-200 ease-in-out hover:scale-110";
       card.setAttribute("data-card", String(i));
 
@@ -153,7 +153,7 @@ window.addEventListener("DOMContentLoaded", () => {
   resetBtn.addEventListener("click", () => {
     selectedCardNumbers = [];
     [selectedLeft, selectedRight].forEach((el) => {
-      el.style.backgroundImage = `url("/src/imges/card-back.webp")`;
+      el.style.backgroundImage = `url("/imges/card-back.webp")`;
       el.removeAttribute("data-card-src");
       el.classList.remove("border-4", "border-yellow-300");
     });
@@ -207,7 +207,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // 슬롯 초기화
     [selectedLeft, selectedRight].forEach((el) => {
-      el.style.backgroundImage = `url("/src/imges/card-back.webp")`;
+      el.style.backgroundImage = `url("/imges/card-back.webp")`;
       el.removeAttribute("data-card-src");
       el.classList.remove("border-4", "border-yellow-300");
     });
