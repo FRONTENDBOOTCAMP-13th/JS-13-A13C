@@ -1,16 +1,5 @@
-import { socket } from "../../pages/ingame/A13C-chat.ts";
-
 const showButton = document.getElementById("show-button") as HTMLButtonElement;
 const scoreTables = document.getElementById("score-tables") as HTMLDivElement;
-const roundWinnerBody = document.getElementById(
-  "round-winner-body"
-) as HTMLTableSectionElement;
-const totalScoreHeader = document.getElementById(
-  "total-score-header"
-) as HTMLTableRowElement;
-const totalScoreRow = document.getElementById(
-  "total-score-row"
-) as HTMLTableRowElement;
 
 // 버튼에 마우스 진입 시, 테이블 보이기
 showButton.addEventListener("mouseenter", () => {
@@ -36,78 +25,35 @@ scoreTables.addEventListener("mouseleave", () => {
   scoreTables.classList.add("hidden");
 });
 
-// 데이터 저장용 변수
-let roundWinners: { round: number; nickName: string; score: number }[] = [];
-let totalScores: { [nickName: string]: number[] } = {};
+// 1. 하드코딩된 방 ID 및 닉네임/유저아이디
+import { socket } from "../../pages/ingame/A13C-chat.ts";
+import { joinRoom } from "../../pages/ingame/A13C-chat.ts";
 
-// 라운드 별 우승자 테이블 업데이트
-function updateRoundWinnerTable() {
-  roundWinnerBody.innerHTML = "";
-  roundWinners.forEach((winner) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td class="px-6 py-3 text-center">${winner.round}</td>
-      <td class="px-6 py-3 text-center">${winner.nickName}</td>
-      <td class="px-6 py-3 text-center">${winner.score}</td>
-    `;
-    roundWinnerBody.appendChild(row);
-  });
-}
+const hardcodedRoomId = "room_1747396315375_4vxn2y";
+const userId = "observer001";
+const nickName = "승점판관찰자";
 
-// 누적 승점 테이블 업데이트
-function updateTotalScoreTable() {
-  totalScoreHeader.innerHTML = "";
-  totalScoreRow.innerHTML = "";
+// chat.ts의 joinRoom 함수 사용
+async function joinHardcodedRoom() {
+  try {
+    const joinParams = {
+      roomId: hardcodedRoomId,
+      user_id: userId,
+      nickName: nickName,
+    };
+    // chat.ts의 joinRoom 함수 호출
+    const result = await joinRoom(joinParams);
 
-  // 헤더 생성
-  const headerRow =
-    `<th class="px-6 py-3 text-center">닉네임</th>` +
-    Object.keys(totalScores)
-      .map(
-        (_, index) =>
-          `<th class="px-6 py-3 text-center">라운드 ${index + 1}</th>`
-      )
-      .join("") +
-    `<th class="px-6 py-3 text-center">총점</th>`;
-  totalScoreHeader.innerHTML = headerRow;
-
-  // 데이터 행 생성
-  Object.entries(totalScores).forEach(([nickName, scores]) => {
-    const totalScoreRowContent = `
-      <td class="px-6 py-3 text-center">${nickName}</td>
-      ${scores.map((score) => `<td class="px-6 py-3 text-center">${score}</td>`).join("")}
-      <td class="px-6 py-3 text-center">${scores.reduce((a, b) => a + b, 0)}</td>
-    `;
-    const row = document.createElement("tr");
-    row.innerHTML = totalScoreRowContent;
-    totalScoreRow.appendChild(row);
-  });
-}
-
-// 데이터 추가 함수
-function addRoundWinner(round: number, nickName: string, score: number) {
-  // 라운드 별 우승자 추가
-  roundWinners.push({ round, nickName, score });
-
-  // 누적 승점 업데이트
-  if (!totalScores[nickName]) {
-    totalScores[nickName] = [];
+    if (result.ok) {
+      console.log(`방 "${hardcodedRoomId}"에 입장 성공`);
+      // chat.ts의 소켓 "members" 리스너가 이미 닉네임 배열을 콘솔로 찍어줌
+    } else {
+      console.error("방 입장 실패:", result.message);
+    }
+  } catch (error) {
+    console.error("방 입장 중 오류 발생:", error);
   }
-  totalScores[nickName][round - 1] = score;
-
-  // 테이블 업데이트
-  updateRoundWinnerTable();
-  updateTotalScoreTable();
 }
 
-// 테스트용 데이터 추가 버튼
-const testButton = document.createElement("button");
-testButton.textContent = "테스트 데이터 추가";
-testButton.className = "bg-blue-500 text-white px-4 py-2 rounded";
-testButton.addEventListener("click", () => {
-  const round = roundWinners.length + 1;
-  const nickName = `Player${round}`;
-  const score = Math.floor(Math.random() * 100);
-  addRoundWinner(round, nickName, score);
-});
-document.body.appendChild(testButton);
+// 실제 실행
+joinHardcodedRoom();
