@@ -1,4 +1,5 @@
 import "../../style.css";
+import './chat.ts';
 window.addEventListener("DOMContentLoaded", () => {
   const selectedLeft = document.getElementById("selected-left") as HTMLDivElement;
   const selectedRight = document.getElementById("selected-right") as HTMLDivElement;
