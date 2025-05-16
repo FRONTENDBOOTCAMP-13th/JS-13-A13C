@@ -34,6 +34,7 @@ export interface RoomMembers {
  * 채팅방의 전체 정보를 정의하는 인터페이스
  */
 export interface RoomInfo {
+  [x: string]: any;
   roomId: string;
   user_id: string;
   hostName: string;
@@ -152,9 +153,10 @@ export function joinRoom(params: JoinRoomParams): Promise<JoinRoomResponse> {
 
 /**
  * 모든 채팅방 목록을 조회하는 함수
+ * @param queryString - 캐시 방지를 위한 쿼리 문자열 (선택적)
  * @returns Promise<RoomsResponse> - 전체 채팅방 목록
  */
-export function getRooms(): Promise<RoomsResponse> {
+export function getRooms(queryString = ''): Promise<RoomsResponse> {
   return new Promise((resolve) => {
     socket.emit("rooms", (rooms: RoomsResponse) => {
       resolve(rooms);
