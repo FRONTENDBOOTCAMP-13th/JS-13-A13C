@@ -15,7 +15,11 @@
     <script type="module" src="/src/pages/ingame/A13C-chat.ts"></script>
     <script type="module" src="/src/pages/ingame/chat.ts"></script>
   </head>
-  <body>
+  <body class="font-pretendard">
+    <!-- 스크린 리더 사용자를 위한 페이지 소개 시작 -->
+    <h1 class="sr-only">어서오세요 하나빼기에 오신걸 환영합니다.</h1>
+    <!-- 스크린 리더 사용자를 위한 페이지 소개 종료 -->
+
     <!-- 모바일 접근 차단 시작 -->
     <div class="bg-(--main-color) h-screen xl:hidden flex justify-center items-center flex-col px-6">
       <img src="/logo.svg" alt="" />
@@ -27,30 +31,67 @@
     <!-- 모바일 접근 차단 종료 -->
 
     <!-- 메인 컨테이너 시작 -->
-    <main class="main-container hidden xl:block">
-      <div class="main-index-backgrund hidden xl:block">
-        <!-- 참여하기, 방 만들기 버튼 시작 -->
-        <div class="button-groups bottom-53">
-          <button type="button" class="show-modal-dialog btn btn-active mr-25">
-            방 만들기
-          </button>
-          <button type="button" class="show-room-btn btn btn-active">
-            참여하기
-          </button>
-        </div>
-        <!-- 참여하기, 방 만들기 버튼 종료 -->
+    <main class="bg-(--main-color) w-full h-screen hidden xl:block">
+      <div class="flex justify-center items-center w-[1310px] h-screen mx-auto">
+        <div class="relative">
+          <img src="/imges/main-backgrund.webp" alt="" width="1310" />
 
+          <!-- 게임 시작 버튼 시작-->
+          <div class="button-groups absolute bottom-53 left-1/2 -translate-x-1/2">
+            <button type="button" class="show-modal-dialog btn btn-active mr-25">방 만들기</button>
+            <button type="button" class="show-room-btn btn btn-active">참여하기</button>
+          </div>
+          <!-- 게임 시작 버튼 종료 -->
+
+          <!-- 방만들기 모달 시작 -->
+          <!-- 사용자 입력폼 -->
+          <!-- TODO 방 제목: label, placeholder 수정 -->
+          <dialog class="modal-dialog w-[500px] h-[350px] rounded-[30px] shadow-2xl bg-[rgba(129,125,125,0.7)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" aria-labelledby="">
+            <div class="modal-layout pt-20 relative text-white flex flex-col items-center justify-center h-full">
+              <div class="contents-layout">
+                <!-- 닫기 버튼 -->
+                <button type="button" class="close-modal-dialog absolute top-5 right-5 cursor-pointer">
+                  <img src="/imges/close.webp" alt="닫기" />
+                </button>
+                <!-- 사용자 입력폼 -->
+                <!-- TODO 방 제목: label, placeholder 수정 -->
+                <div class="modal-content space-y-4">
+                  <label for="roomName" class="mr-6">생성할 방 이름</label>
+                  <input type="text" id="roomName" name="roomName" class="border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]" placeholder="영어, 10자 이내" />
+                  <br />
+
+                  <label for="userId" class="mr-6">사용할 유저 ID</label>
+                  <input type="text" id="userId" name="userId" class="border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]" placeholder="영어, 10자 이내" />
+                  <br />
+                  <label for="nickName" class="mr-6">사용할 닉네임</label>
+                  <input
+                    type="text"
+                    id="nickName"
+                    name="nickName"
+                    class="border rounded-[8px] ml-1 px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]"
+                    placeholder="영어, 10자 이내"
+                  />
+                </div>
+              </div>
+
+              <!-- TODO 생성 버튼 교체 -->
+              <button id="joinRoomBtn" class="border border-red-300">채팅방 입장</button>
+            </div>
+          </dialog>
+          <!-- 방만들기 모달 종료 -->
+
+          <!-- 하단 저작권 표기 시작 -->
+          <footer class="copyright absolute w-full bottom-15 text-center text-gray-400" aria-label="저작권 정보 표시입니다.">
+            <p>Copyright &copy; 2025. A13C Corporation (구성연, 박정우, 우영찬, 정예빈) All right reserved.</p>
+            <p>2024. 본 프로젝트는 넷플릭스와 무관한 팬 제작물입니다.</p>
+          </footer>
+          <!-- 하단 저작권 표기 종료 -->
+        </div>
         <!-- 방 참여하기 버튼 누르면 생기는 팝업 시작-->
-        <div
-          class="show-room-list hidden absolute top-0 left-0 w-full h-screen bg-(--black)/60 hide-scrollbar"
-        >
-          <div
-            class="flex justify-center items-center flex-col h-screen relative"
-          >
+        <div class="show-room-list hidden fixed top-0 left-0 w-full h-screen bg-(--black)/60 hide-scrollbar">
+          <div class="flex justify-center items-center flex-col h-screen relative">
             <!-- 방 목록 -->
-            <div
-              class="room-list-container w-full max-w-2xl mx-auto mt-8 bg-gray-200/80 p-6 rounded-lg shadow-lg"
-            >
+            <div class="room-list-container w-full max-w-2xl mx-auto mt-8 bg-gray-200/80 p-6 rounded-lg shadow-lg">
               <table class="table-auto w-full text-left border-collapse">
                 <thead class="">
                   <!-- bg-gray-700 text-white -->
@@ -68,112 +109,23 @@
             </div>
 
             <!-- 참여하기 버튼 시작 -->
-            <div
-              id="join-form"
-              class="mt-4 hidden space-y-3 bg-white text-black"
-            >
-              <p class="text-lg">
-                선택한 방: <span id="selectedRoomName" class="font-bold"></span>
-              </p>
-              <input
-                type="text"
-                id="joinUserId"
-                placeholder="유저 ID"
-                class="w-full px-3 py-2 rounded text-black"
-              />
-              <input
-                type="text"
-                id="joinNickName"
-                placeholder="닉네임"
-                class="w-full px-3 py-2 rounded text-black"
-              />
-              <button id="finalJoinBtn" class="btn btn-active w-full">
-                입장하기
-              </button>
+            <div id="join-form" class="mt-4 hidden space-y-3 bg-white text-black">
+              <p class="text-lg">선택한 방: <span id="selectedRoomName" class="font-bold"></span></p>
+              <input type="text" id="joinUserId" placeholder="유저 ID" class="w-full px-3 py-2 rounded text-black" />
+              <input type="text" id="joinNickName" placeholder="닉네임" class="w-full px-3 py-2 rounded text-black" />
+              <button id="finalJoinBtn" class="btn btn-active w-full">입장하기</button>
             </div>
 
             <!-- 닫기 버튼 클릭 시작 -->
             <div class="absolute right-10 top-10 close-btn">
               <button type="button" class="w-8 h-8 cursor-pointer">
-                <img src="/src/imges/close-white.svg" alt="닫기" />
+                <img src="/imges/close-white.svg" alt="닫기" />
               </button>
             </div>
             <!-- 닫기 버튼 클릭 종료 -->
           </div>
         </div>
         <!-- 방 참여하기 버튼 누르면 생기는 팝업 종료-->
-
-        <!-- 방만들기 모달 시작 -->
-        <!-- 사용자 입력폼 -->
-        <!-- TODO 방 제목: label, placeholder 수정 -->
-        <dialog
-          class="modal-dialog w-[500px] h-[350px] rounded-[30px] shadow-2xl bg-[rgba(129,125,125,0.7)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center"
-          aria-labelledby=""
-        >
-          <div
-            class="modal-layout pt-20 relative text-white flex flex-col items-center justify-center h-full"
-          >
-            <div class="contents-layout">
-              <!-- 닫기 버튼 -->
-              <button
-                type="button"
-                class="close-modal-dialog absolute top-5 right-5 cursor-pointer"
-              >
-                <img src="/src/imges/close.webp" alt="닫기" />
-              </button>
-              <!-- 사용자 입력폼 -->
-              <!-- TODO 방 제목: label, placeholder 수정 -->
-              <div class="modal-content space-y-4">
-                <label for="roomName" class="mr-6">생성할 방 이름</label>
-                <input
-                  type="text"
-                  id="roomName"
-                  name="roomName"
-                  class="border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]"
-                  placeholder="영어, 10자 이내"
-                />
-                <br />
-
-                <label for="userId" class="mr-6">사용할 유저 ID</label>
-                <input
-                  type="text"
-                  id="userId"
-                  name="userId"
-                  class="border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]"
-                  placeholder="영어, 10자 이내"
-                />
-                <br />
-                <label for="nickName" class="mr-6">사용할 닉네임</label>
-                <input
-                  type="text"
-                  id="nickName"
-                  name="nickName"
-                  class="border rounded-[8px] ml-1 px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]"
-                  placeholder="영어, 10자 이내"
-                />
-              </div>
-            </div>
-
-            <!-- TODO 생성 버튼 교체 -->
-            <button id="joinRoomBtn" class="border border-red-300">
-              채팅방 입장
-            </button>
-          </div>
-        </dialog>
-        <!-- 방만들기 모달 종료 -->
-
-        <!-- 하단 저작권 표기 시작 -->
-        <footer
-          class="copyright w-full bottom-15 text-center text-gray-400"
-          aria-label="저작권 정보 표시입니다."
-        >
-          <p>
-            Copyright &copy; 2025. A13C Corporation (구성연, 박정우, 우영찬,
-            정예빈) All right reserved.
-          </p>
-          <p>2024. 본 프로젝트는 넷플릭스와 무관한 팬 제작물입니다.</p>
-        </footer>
-        <!-- 하단 저작권 표기 종료 -->
       </div>
     </main>
     <!-- 메인 컨테이너 종료 -->
