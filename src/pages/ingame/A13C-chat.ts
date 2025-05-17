@@ -34,6 +34,7 @@ export interface RoomMembers {
  * 채팅방의 전체 정보를 정의하는 인터페이스
  */
 export interface RoomInfo {
+  [x: string]: any;
   roomId: string;
   user_id: string;
   hostName: string;
@@ -154,9 +155,10 @@ export function joinRoom(params: JoinRoomParams): Promise<JoinRoomResponse> {
 
 /**
  * 모든 채팅방 목록을 조회하는 함수
+ * @param queryString - 캐시 방지를 위한 쿼리 문자열 (선택적)
  * @returns Promise<RoomsResponse> - 전체 채팅방 목록
  */
-export function getRooms(): Promise<RoomsResponse> {
+export function getRooms(queryString = ""): Promise<RoomsResponse> {
   return new Promise((resolve) => {
     socket.emit("rooms", (rooms: RoomsResponse) => {
       resolve(rooms);
@@ -224,13 +226,3 @@ socket.on("rooms", (rooms: RoomsResponse) => {
 socket.on("members", (members: RoomMembers) => {
   console.log("현재 채팅방 멤버:", members);
 });
-
-// 멤버 목록 요청 함수 추가
-export function requestMembers() {
-  const currentRoom = JSON.parse(
-    localStorage.getItem("A13C_CURRENT_ROOM") || "null"
-  );
-  if (currentRoom && currentRoom.roomId) {
-    socket.emit("get_members", { roomId: currentRoom.roomId });
-  }
-}
