@@ -25,8 +25,8 @@ scoreTables.addEventListener("mouseleave", () => {
   scoreTables.classList.add("hidden");
 });
 
-// 1. 하드코딩된 방 ID 및 닉네임/유저아이디
 import { getRoomInfo } from "../../pages/ingame/A13C-chat.ts";
+
 // 현재 방 정보 로드 함수
 function loadCurrentRoom() {
   const saved = localStorage.getItem("A13C_CURRENT_ROOM");
@@ -50,7 +50,7 @@ async function updateScoreTable() {
   // 닉네임 배열 추출
   const nicknames = Object.values(roomInfo.memberList).map((m) => m.nickName);
 
-  // 테이블 DOM 업데이트 (기존 코드 활용)
+  // 누적 승점 테이블 바디 업데이트
   const totalScoreHeader = document.getElementById("total-score-header");
   const totalScoreTable = document.getElementById("total-score-row");
   if (totalScoreHeader && totalScoreTable) {
@@ -70,7 +70,7 @@ async function updateScoreTable() {
       totalScoreTable.appendChild(scoreTd);
     });
   }
-  // 라운드 우승자 테이블 바디 업데이트 (예시)
+  // 라운드 별 우승자 테이블 바디 업데이트
   const roundWinnerBody = document.getElementById("round-winner-body");
   if (roundWinnerBody) {
     roundWinnerBody.innerHTML = "";
