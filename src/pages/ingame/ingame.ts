@@ -23,9 +23,8 @@ const resetBtn = document.querySelector(
 const submitBtn = document.querySelector(
   "#submitbutton button:nth-child(2)"
 ) as HTMLButtonElement;
-const myCardContainer = document.querySelector(
-  ".flex.translate-y-10.ml-20 > .flex.space-x-2"
-) as HTMLDivElement;
+const myCardContainer = document.getElementById("my-cards") as HTMLDivElement;
+
 const scoreBoard = document.getElementById("final-card-area") as HTMLDivElement;
 const tempStorageArea = document.getElementById(
   "temp-card-area"
