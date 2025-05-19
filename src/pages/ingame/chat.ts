@@ -156,7 +156,7 @@ function loadCurrentRoom(): CurrentRoomInfo | null {
 }
 
 // 실시간 업데이트를 위한 타이머
-let updateInterval: number | null = null;
+let updateInterval: ReturnType<typeof setInterval> | null = null;
 
 /**
  * 같은 이름의 방이 이미 있는지 확인

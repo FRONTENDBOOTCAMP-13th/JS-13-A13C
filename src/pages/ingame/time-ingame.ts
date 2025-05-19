@@ -24,7 +24,6 @@ const submitBtn = document.querySelector(
   "#submitbutton button:nth-child(2)"
 ) as HTMLButtonElement;
 const myCardContainer = document.getElementById("my-cards") as HTMLDivElement;
-
 const scoreBoard = document.getElementById("final-card-area") as HTMLDivElement;
 const tempStorageArea = document.getElementById(
   "temp-card-area"
@@ -34,7 +33,6 @@ const isHost = localStorage
   .getItem("A13C_CREATE_ROOM_INFO")
   ?.includes('"isCreator":true');
 
-// 오버레이 추가
 const overlay = document.createElement("div");
 overlay.id = "game-overlay";
 overlay.className =
@@ -45,13 +43,7 @@ overlay.innerHTML = isHost
        <button id="startGameBtn" class="btn btn-active text-xl px-6 py-2">게임 시작</button>
      </div>`
   : `<p class="pointer-events-none">방장이 게임을 시작할 때까지 기다려주세요</p>`;
-
-const gameMain = document.querySelector("main");
-if (gameMain) {
-  gameMain.appendChild(overlay);
-} else {
-  document.body.appendChild(overlay);
-}
+document.body.appendChild(overlay);
 
 const timerDisplay = document.createElement("div");
 timerDisplay.id = "selection-timer";
@@ -99,10 +91,14 @@ function renderMyCards(): void {
     myCardContainer.appendChild(card);
   }
   updateHandCardAvailability();
-  startSelectionTimer();
 }
 
-function selectCard(num: number, cardEl: HTMLImageElement): void {
+function selectCard(
+  num: number,
+  cardEl: HTMLImageElement,
+  force = false
+): void {
+  if (selectionExpired && !force) return;
   if (cardEl.classList.contains("opacity-50")) return;
   if (selectedCardNumbers.length >= 2) return;
   selectedCardNumbers.push(num);
@@ -111,10 +107,6 @@ function selectCard(num: number, cardEl: HTMLImageElement): void {
     selectedCardNumbers.length === 1 ? selectedLeft : selectedRight;
   target.style.backgroundImage = `url("/imges/card-${num}.webp")`;
   target.setAttribute("data-card-src", `/imges/card-${num}.webp`);
-  if (selectedCardNumbers.length === 2) {
-    clearInterval(timerInterval);
-    timerDisplay.textContent = "";
-  }
 }
 
 function setupSubmitCardClick(): void {
@@ -156,42 +148,73 @@ function flyCard(fromEl: HTMLElement, toEl: HTMLElement, src: string): void {
   }, 500);
 }
 
+function revealOpponentCards(): void {
+  const opponentContainers = document.querySelectorAll(".flex.space-x-1");
+
+  const fakeOpponentCards = [
+    [3, 7],
+    [5, 2],
+    [1, 6],
+    [4, 8],
+  ];
+
+  opponentContainers.forEach((container, i) => {
+    const imgs = container.querySelectorAll("img");
+    imgs.forEach((img, j) => {
+      const num = fakeOpponentCards[i][j];
+      img.src = `/imges/card-${num}.webp`;
+    });
+  });
+}
+
 let selectionTimeout: ReturnType<typeof setTimeout>;
 let timerInterval: ReturnType<typeof setInterval>;
+let selectionExpired = false;
+
 function startSelectionTimer(): void {
   clearTimeout(selectionTimeout);
   clearInterval(timerInterval);
   let remaining = 8;
+  selectionExpired = false;
   timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
+
   timerInterval = setInterval(() => {
     remaining--;
     if (remaining > 0) {
       timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
     } else {
+      timerDisplay.textContent = `시간 종료`;
       clearInterval(timerInterval);
-      timerDisplay.textContent = "";
     }
   }, 1000);
+
   selectionTimeout = setTimeout(() => {
-    if (selectedCardNumbers.length < 2) {
-      const availableCards = Array.from(
-        myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
-      ).map((card) => Number(card.getAttribute("data-card")));
-      while (selectedCardNumbers.length < 2 && availableCards.length > 0) {
-        const randomIndex = Math.floor(Math.random() * availableCards.length);
-        const randomCard = availableCards.splice(randomIndex, 1)[0];
-        const cardEl = myCardContainer.querySelector(
-          `img[data-card="${randomCard}"]`
-        );
-        if (cardEl) {
-          selectCard(randomCard, cardEl as HTMLImageElement);
-        }
+    selectionExpired = true;
+    const availableCardElements = Array.from(
+      myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
+    );
+
+    const availableCards = availableCardElements.map((card) =>
+      Number(card.getAttribute("data-card"))
+    );
+
+    while (selectedCardNumbers.length < 2 && availableCards.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableCards.length);
+      const randomCard = availableCards.splice(randomIndex, 1)[0];
+      const cardEl = myCardContainer.querySelector(
+        `img[data-card="${randomCard}"]`
+      ) as HTMLImageElement;
+      if (cardEl) {
+        selectCard(randomCard, cardEl, true);
       }
     }
+
+    revealOpponentCards();
   }, 8000);
 }
 
 resetBtn.addEventListener("click", () => {
+  if (selectionExpired) return;
   selectedCardNumbers = [];
   activeCardId = null;
   selectedLeft.style.backgroundImage = `url("/imges/card-back.webp")`;
@@ -240,12 +263,14 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("게임이 시작되었습니다.");
       document.getElementById("game-overlay")?.remove();
       renderMyCards();
+      startSelectionTimer();
     });
   } else {
     const observer = new MutationObserver(() => {
       if (!document.getElementById("game-overlay")) {
         alert("게임이 시작되었습니다.");
         renderMyCards();
+        startSelectionTimer();
         observer.disconnect();
       }
     });
