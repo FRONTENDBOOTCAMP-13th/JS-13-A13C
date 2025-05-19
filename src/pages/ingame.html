@@ -8,7 +8,7 @@
     <link rel="preload" href="/font/pretendardvariable.css" as="style" />
     <link rel="stylesheet" href="/font/pretendardvariable.css" />
     <script type="module" src="/src/main.ts"></script>
-    <script type="module" src="/src/pages/ingame/ingame.ts"></script>
+    <script type="module" src="/src/pages/ingame/time-ingame.ts"></script>
 
     <!-- <script src="https://fesp-api.koyeb.app/socket.io/socket.io.js"></script> -->
     <script type="module" src="/src/pages/ingame/chat.ts"></script>
@@ -245,49 +245,47 @@
 
     <!-- 내 카드 -->
     <div id="my-cards" class="flex justify-start translate-y-25 -mt-10 ml-20">
+      <img
+        src="/imges/card-1.webp"
+        class="w-[153px] h-[214px] cursor-pointer"
+        data-card="1"
+      />
 
-        <img
-          src="/imges/card-1.webp"
-          class="w-[153px] h-[214px] cursor-pointer"
-          data-card="1"
-        />
-
-        <img
-          src="/imges/card-2.webp"
-          class="w-[153px] h-[214px] cursor-pointer"
-          data-card="2"
-        />
-        <img
-          src="/imges/card-3.webp"
-          class="w-[153px] h-[214px] cursor-pointer"
-          data-card="3"
-        />
-        <img
-          src="/imges/card-4.webp"
-          class="w-[153px] h-[214px] cursor-pointer"
-          data-card="4"
-        />
-        <img
-          src="/imges/card-5.webp"
-          class="w-[153px] h-[214px] cursor-pointer"
-          data-card="5"
-        />
-        <img
-          src="/imges/card-6.webp"
-          class="w-[153px] h-[214px] cursor-pointer"
-          data-card="6"
-        />
-        <img
-          src="/imges/card-7.webp"
-          class="w-[153px] h-[214px] cursor-pointer"
-          data-card="7"
-        />
-        <img
-          src="/imges/card-8.webp"
-          class="w-[153px] h-[214px] cursor-pointer"
-          data-card="8"
-        />
-      </div>
+      <img
+        src="/imges/card-2.webp"
+        class="w-[153px] h-[214px] cursor-pointer"
+        data-card="2"
+      />
+      <img
+        src="/imges/card-3.webp"
+        class="w-[153px] h-[214px] cursor-pointer"
+        data-card="3"
+      />
+      <img
+        src="/imges/card-4.webp"
+        class="w-[153px] h-[214px] cursor-pointer"
+        data-card="4"
+      />
+      <img
+        src="/imges/card-5.webp"
+        class="w-[153px] h-[214px] cursor-pointer"
+        data-card="5"
+      />
+      <img
+        src="/imges/card-6.webp"
+        class="w-[153px] h-[214px] cursor-pointer"
+        data-card="6"
+      />
+      <img
+        src="/imges/card-7.webp"
+        class="w-[153px] h-[214px] cursor-pointer"
+        data-card="7"
+      />
+      <img
+        src="/imges/card-8.webp"
+        class="w-[153px] h-[214px] cursor-pointer"
+        data-card="8"
+      />
     </div>
 
     <!-- 인게임 채팅 시작 -->
@@ -332,6 +330,5 @@
       <br />
     </div>
     <!-- 에러코드 없에기 위한 코드 종료 -->
-    </main>
   </body>
 </html>
