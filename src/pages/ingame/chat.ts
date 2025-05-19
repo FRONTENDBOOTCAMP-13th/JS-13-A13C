@@ -269,7 +269,7 @@ function renderRoomList(rooms: { [key: string]: RoomInfo }) {
 
     row.innerHTML = `
       <td class="px-4 py-2">${index + 1}</td>
-      <td class="px-4 py-2">${room.roomName}</td>
+      <td class="text-left px-4 py-2">${room.roomName}</td>
       <td class="px-4 py-2 participant-count">${displayCount}/5</td>
       <td class="px-4 py-2">${room.parents_option?.isPlaying ? "진행 중" : isFull ? "입장 마감" : "대기 중"}</td>
     `;
