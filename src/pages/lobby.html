@@ -45,37 +45,55 @@
 
           <!-- 방만들기 모달 시작 -->
           <!-- 사용자 입력폼 -->
-          <!-- TODO 방 제목: label, placeholder 수정 -->
           <dialog class="modal-dialog w-[500px] h-[350px] rounded-[30px] shadow-2xl bg-[rgba(129,125,125,0.7)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" aria-labelledby="">
             <div class="modal-layout pt-20 relative text-white flex flex-col items-center justify-center h-full">
               <div class="contents-layout">
-                <!-- 닫기 버튼 -->
+                <!-- 닫기 버튼 시작-->
                 <button type="button" class="close-modal-dialog absolute top-5 right-5 cursor-pointer">
                   <img src="/imges/close.webp" alt="닫기" />
                 </button>
-                <!-- 사용자 입력폼 -->
-                <!-- TODO 방 제목: label, placeholder 수정 -->
-                <div class="modal-content space-y-4">
-                  <label for="roomName" class="mr-6">생성할 방 이름</label>
-                  <input type="text" id="roomName" name="roomName" class="border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]" placeholder="영어, 10자 이내" />
-                  <br />
+                <!-- 닫기 버튼 종료-->
 
-                  <label for="userId" class="mr-6">사용할 유저 ID</label>
-                  <input type="text" id="userId" name="userId" class="border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]" placeholder="영어, 10자 이내" />
+                <!-- 사용자 입력폼 -->
+                <div class="modal-content space-y-4">
+                  <!-- 생성할 방 이름 폼 시작 -->
+                  <label for="roomName" class="mr-6">생성할 방 이름</label>
+                  <input
+                    type="text"
+                    id="roomName"
+                    name="roomName"
+                    class="filter-english border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]"
+                    placeholder="영어, 10자 이내"
+                  />
                   <br />
+                  <!-- 생성할 방 이름 폼 종료 -->
+
+                  <!-- 유저 id 폼 시작 -->
+                  <label for="userId" class="mr-6">사용할 유저 ID</label>
+                  <input
+                    type="text"
+                    id="userId"
+                    name="userId"
+                    class="filter-english border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]"
+                    placeholder="영어, 10자 이내"
+                  />
+                  <br />
+                  <!-- 유저 id 폼 종료 -->
+
+                  <!-- 사용할 닉네임 폼 시작 -->
                   <label for="nickName" class="mr-6">사용할 닉네임</label>
                   <input
                     type="text"
                     id="nickName"
                     name="nickName"
-                    class="border rounded-[8px] ml-1 px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]"
+                    class="filter-english border rounded-[8px] ml-1 px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]"
                     placeholder="영어, 10자 이내"
                   />
+                  <!-- 사용할 닉네임 폼 종료 -->
                 </div>
               </div>
 
-              <!-- TODO 생성 버튼 교체 -->
-              <button id="joinRoomBtn" class="border border-red-300">채팅방 입장</button>
+              <button id="joinRoomBtn" class="btn btn-active my-3">채팅방 입장</button>
             </div>
           </dialog>
           <!-- 방만들기 모달 종료 -->
@@ -91,13 +109,13 @@
         <div class="show-room-list hidden fixed top-0 left-0 w-full h-screen bg-(--black)/60 hide-scrollbar">
           <div class="flex justify-center items-center flex-col h-screen relative">
             <!-- 방 목록 -->
-            <div class="room-list-container w-full max-w-2xl mx-auto mt-8 bg-gray-200/80 p-6 rounded-lg shadow-lg">
-              <table class="table-auto w-full text-left border-collapse">
-                <thead class="">
+            <div class="room-list-container w-full max-w-2xl mx-auto bg-gray-200/80 p-6 rounded-lg shadow-lg">
+              <table class="table-auto w-full text-center border-collapse">
+                <thead>
                   <!-- bg-gray-700 text-white -->
                   <tr>
                     <th>번호</th>
-                    <th>방 이름</th>
+                    <th class="w-[300px]">방 이름</th>
                     <th>참여 인원</th>
                     <th>게임 진행 여부</th>
                   </tr>
