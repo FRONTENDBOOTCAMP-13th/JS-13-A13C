@@ -37,74 +37,9 @@
         <p>더 나은 이용을 위해 PC 환경에서 접속해 주세요 😊</p>
       </div>
     </div>
-    <!-- 모바일 접근 차단 종료 -->
 
-    <!-- 메인 컨테이너 시작 -->
-    <main>
-      <!-- 승점 테이블 시작 -->
-      <div class="relative inline-flex w-fit group">
-        <!-- 버튼 -->
-        <button
-          class="bg-[#9E844F] text-white font-semibold px-4 py-2 rounded-[30px]"
-          id="show-button"
-        >
-          승점 확인
-        </button>
-
-        <!-- 호버 시 -->
-        <div
-          class="absolute top-full left-0 mt-2 hidden group-hover:block z-10"
-          id="score-tables"
-        >
-          <!-- 라운드 별 우승자 테이블 -->
-          <table
-            class="table-auto w-[26.875rem] border border-[#9E844F] text-white bg-[rgba(29,28,30,0.7)]"
-            id="round-winner-table"
-          >
-            <thead>
-              <tr>
-                <th colspan="3" class="text-center text-lg pt-5">
-                  라운드 별 승자
-                </th>
-              </tr>
-              <tr>
-                <th class="px-6 py-3">라운드</th>
-                <th class="px-6 py-3">닉네임</th>
-                <th class="px-6 py-3">승점</th>
-              </tr>
-            </thead>
-            <tbody id="round-winner-body">
-              <!-- 내용은 동적으로 채워짐 -->
-            </tbody>
-          </table>
-
-          <!-- 누적 승점 테이블 -->
-          <table
-            class="table-auto w-[26.875rem] mt-2 border border-[#9E844F] text-white bg-[rgba(29,28,30,0.7)]"
-            id="total-score-table"
-          >
-            <thead>
-              <tr>
-                <th colspan="5" class="text-center text-lg pt-5">누적 승점</th>
-              </tr>
-              <tr id="total-score-header">
-                <!-- 헤더는 동적으로 채워짐 -->
-              </tr>
-            </thead>
-            <tbody>
-              <tr id="total-score-row">
-                <!-- 점수는 동적으로 채워짐 -->
-              </tr>
-              <!-- 밑 여백을 위한 빈칸 -->
-              <tr>
-                <th colspan="5" class="text-center text-lg pt-2.5"></th>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
       <!-- 상대 카드 -->
-      <div class="flex justify-start items-center py-5 ml-22 -translate-y-5">
+      <div class="flex justify-start items-center py-5 ml-70 -translate-y-5">
         <!-- 플레이어 1 시작 -->
         <div class="flex space-x-1 mr-6">
           <img
@@ -118,7 +53,7 @@
             class="w-[115px] h-[168px]"
           />
         </div>
-        <!-- 플레이어 1 종료 -->
+
 
         <!-- 플레이어 2 시작 -->
         <div class="flex space-x-1 mr-6">
@@ -133,7 +68,7 @@
             class="w-[115px] h-[168px]"
           />
         </div>
-        <!-- 플레이어 2 종료 -->
+
 
         <!-- 플레이어 3 시작 -->
         <div class="flex space-x-1 mr-6">
@@ -149,9 +84,6 @@
           />
         </div>
 
-          <!-- 플레이어 3 종료 -->
-
-
         <!-- 플레이어 4 시작 -->
         <div class="flex space-x-1">
           <img
@@ -164,15 +96,14 @@
             alt="상대4 카드2"
             class="w-[115px] h-[168px]"
           />
-
         </div>
-        <!-- 상대 카드 종료 -->
+      </div>
 
       <!-- 최종카드제출창 + 임시보관구역 정렬 -->
-      <div class="flex justify-start space-x-10 ml-24 -mt-8">
+      <div class="flex justify-start space-x-10 ml-50 -mt-5">
         <!-- 최종카드제출창 -->
         <div
-          class="w-[511px] h-[301px] bg-cover bg-center text-center flex flex-col justify-center items-center"
+          class="w-[570px] h-[335px] bg-cover bg-center text-center flex flex-col justify-center items-center"
           style="background-image: url(&quot;/imges/score-board.webp&quot;)"
         >
           <p class="text-sm">라운드 <span id="round-number">1</span></p>
@@ -183,19 +114,18 @@
 
         <!-- 임시보관구역 -->
         <div
-          class="w-[511px] h-[301px] bg-cover bg-center text-center flex flex-col justify-center items-center"
+          class="w-[492px] h-[290px] bg-cover bg-center text-center flex mt-10 flex-col justify-center items-center"
           style="background-image: url(&quot;/imges/score-board.webp&quot;)"
         >
           <p class="text-sm">라운드 <span id="round-number">1</span></p>
           <p class="text-sm">누적 승점 <span id="total-score">0</span></p>
           <p class="text-sm">닉네임 박정우</p>
           <div id="temp-card-area" class="mt-2"></div>
-
         </div>
-        <!-- 최종카드제출창 + 임시보관구역 정렬 종료-->
+      </div>
 
       <!-- 제출 카드 영역 -->
-      <div class="w-full mt-18">
+      <div class="w-full mt-15">
         <div
           class="relative flex items-center w-full bg-red-900 px-8 py-4 h-[136px]"
         >
@@ -225,8 +155,71 @@
                 class="w-6 h-6 rounded-full bg-[#583BFF] text-xs text-white flex items-center justify-center"
                 >5</span
               >
-
             </div>
+            <!-- 승점 테이블 시작 -->
+            <div class="relative inline-flex w-fit group">
+              <!-- 버튼 -->
+              <button
+                class="bg-[#9E844F] text-white font-semibold mt-4 px-4 py-2 rounded-[30px]"
+                id="show-button"
+              >
+                승점 확인
+              </button>
+
+              <!-- 호버 시 -->
+              <div
+                class="absolute top-full left-0 mt-2 hidden group-hover:block z-10"
+                id="score-tables"
+              >
+                <!-- 라운드 별 우승자 테이블 -->
+                <table
+                  class="table-auto w-[26.875rem] border border-[#9E844F] text-white bg-[rgba(29,28,30,0.7)]"
+                  id="round-winner-table"
+                >
+                  <thead>
+                    <tr>
+                    <th colspan="3" class="text-center text-lg pt-5">
+                        라운드 별 승자
+                      </th>
+                    </tr>
+                    <tr>
+                      <th class="px-6 py-3">라운드</th>
+                      <th class="px-6 py-3">닉네임</th>
+                      <th class="px-6 py-3">승점</th>
+                    </tr>
+                  </thead>
+                  <tbody id="round-winner-body">
+                    <!-- 내용은 동적으로 채워짐 -->
+                  </tbody>
+                </table>
+
+                <!-- 누적 승점 테이블 -->
+                <table
+                  class="table-auto w-[26.875rem] mt-2 border border-[#9E844F] text-white bg-[rgba(29,28,30,0.7)]"
+                  id="total-score-table"
+                >
+                  <thead>
+                    <tr>
+                      <th colspan="5" class="text-center text-lg pt-5">누적 승점</th>
+                    </tr>
+                    <tr id="total-score-header">
+                      <!-- 헤더는 동적으로 채워짐 -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr id="total-score-row">
+                      <!-- 점수는 동적으로 채워짐 -->
+                    </tr>
+                    <!-- 밑 여백을 위한 빈칸 -->
+                    <tr>
+                      <th colspan="5" class="text-center text-lg pt-2.5"></th>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        
 
           <!-- 오른쪽: 카드 + 제출 버튼 -->
           <div class="absolute flex items-center space-x-20 ml-128">
@@ -241,158 +234,108 @@
               style="background-image: url(&quot;/imges/card-back.webp&quot;)"
             ></div>
 
-              <!-- 초기화, 제출 버튼 -->
-              <div id="submitbutton" class="space-x-5 ml-20">
-                <button type="button" class="btn btn-active">초기화</button>
-                <button type="button" class="btn btn-active">제출</button>
-                <button id="show-button" type="button" class="btn btn-active">승점 확인</button>
-              </div>
-            </div>
-            <!-- 오른쪽: 카드 + 제출 버튼 종료-->
-          </div>
-        </div>
-        <!-- 제출 카드 영역 종료 -->
-
-        <!-- 라운드 승점 보여주는 모달창 시작-->
-        <div class="absolute left-10 top-0">
-          <div class="inline-flex w-fit group">
-            <!-- 버튼 -->
-            <!-- <button class="bg-[#9E844F] text-white font-semibold px-4 py-2 rounded-[30px]">승점 확인</button> -->
-
-            <!-- 호버 시 -->
-            <div class="absolute top-full left-0 mt-2 hidden group-hover:block z-10" id="score-tables">
-              <!-- 라운드 별 우승자 테이블 -->
-              <table class="table-auto w-[26.875rem] border border-[#9E844F] bg-[rgba(29,28,30,0.7)] text-center">
-                <thead>
-                  <tr>
-                    <th colspan="3" class="text-center text-lg pt-5">라운드 별 우승자</th>
-                  </tr>
-                  <tr>
-                    <th class="px-6 py-3">라운드</th>
-                    <th class="px-6 py-3">닉네임</th>
-                    <th class="px-6 py-3">승점</th>
-                  </tr>
-                </thead>
-                <tbody id="round-wrap"> 
-                  <!-- <tr>
-                    <td class="px-6 py-3">1</td>
-                    <td class="px-6 py-3">
-                      <div class="max-w-[80px] truncate mx-auto">apple</div>
-                    </td>
-                    <td class="px-6 py-3">1점</td>
-                  </tr>
-                  <tr>
-                    <td class="px-6 py-3">2</td>
-                    <td class="px-6 py-3">
-                      <div class="max-w-[80px] truncate mx-auto">banana</div>
-                    </td>
-                    <td class="px-6 py-3">2점</td>
-                  </tr>
-                  <tr>
-                    <td class="px-6 py-3">3</td>
-                    <td class="px-6 py-3">
-                      <div class="max-w-[80px] truncate mx-auto">pineapple</div>
-                    </td>
-                    <td class="px-6 py-3">2점</td>
-                  </tr>
-                  <tr>
-                    <td class="px-6 py-3">4</td>
-                    <td class="px-6 py-3">
-                      <div class="max-w-[80px] truncate mx-auto">notebook</div>
-                    </td>
-                    <td class="px-6 py-3">2점</td>
-                  </tr>
-                  <tr>
-                    <td class="px-6 py-3">5</td>
-                    <td class="px-6 py-3">
-                      <div class="max-w-[80px] truncate mx-auto">refrigerator</div>
-                    </td>
-                    <td class="px-6 py-3">2점</td>
-                  </tr> -->
-                  <!-- 밑 여백을 위한 빈칸 -->
-                  <tr>
-                    <th colspan="3" class="text-center text-lg pt-2.5"></th>
-                  </tr>
-                </tbody>
-              </table>
-
-              <!-- 누적 승점 테이블 -->
-              <table class="table-auto w-[26.875rem] mt-2 border border-[#9E844F] text-white bg-[rgba(29,28,30,0.7)]">
-                <thead>
-                  <tr>
-                    <th colspan="5" class="text-center text-lg pt-5">누적 승점</th>
-                  </tr>
-                  <tr id="round-nickname">
-                    <th class="px-4 py-2 max-w-[90px] truncate">apple</th>
-                    <th class="px-4 py-2 max-w-[90px] truncate">banana</th>
-                    <th class="px-4 py-2 max-w-[90px] truncate">pineapple</th>
-                    <th class="px-4 py-2 max-w-[90px] truncate">notebook</th>
-                    <th class="px-4 py-2 max-w-[90px] truncate">refrigerator</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="px-4 py-2 text-center">5</td>
-                    <td class="px-4 py-2 text-center">10</td>
-                    <td class="px-4 py-2 text-center">8</td>
-                    <td class="px-4 py-2 text-center">7</td>
-                    <td class="px-4 py-2 text-center">2</td>
-                  </tr>
-                  <!-- 밑 여백을 위한 빈칸 -->
-                  <tr>
-                    <th colspan="3" class="text-center text-lg pt-2.5"></th>
-                  </tr>
-                </tbody>
-              </table>
+            <!-- 초기화, 제출 버튼 -->
+            <div id="submitbutton" class="space-x-5 ml-20">
+              <button type="button" class="btn btn-active">초기화</button>
+              <button type="button" class="btn btn-active">제출</button>
             </div>
           </div>
         </div>
-        <!-- 라운드 승점 보여주는 모달창 종료-->
+      </div>
 
-        <!-- 내 카드 -->
-        <div class="flex justify-start translate-y-10 ml-20">
-          <div class="flex space-x-2">
-            <img src="/imges/card-1.webp" class="w-[153px] h-[214px] cursor-pointer" data-card="1" />
+      <!-- 내 카드 -->
+      <div class="flex justify-start translate-y-25 -mt-10 ml-20">
+        <div class="flex space-x-2">
+          <img
+            src="/imges/card-1.webp"
+            class="w-[153px] h-[214px] cursor-pointer"
+            data-card="1"
+          />
 
-            <img src="/imges/card-2.webp" class="w-[153px] h-[214px] cursor-pointer" data-card="2" />
-            <img src="/imges/card-3.webp" class="w-[153px] h-[214px] cursor-pointer" data-card="3" />
-            <img src="/imges/card-4.webp" class="w-[153px] h-[214px] cursor-pointer" data-card="4" />
-            <img src="/imges/card-5.webp" class="w-[153px] h-[214px] cursor-pointer" data-card="5" />
-            <img src="/imges/card-6.webp" class="w-[153px] h-[214px] cursor-pointer" data-card="6" />
-            <img src="/imges/card-7.webp" class="w-[153px] h-[214px] cursor-pointer" data-card="7" />
-            <img src="/imges/card-8.webp" class="w-[153px] h-[214px] cursor-pointer" data-card="8" />
-          </div>
+          <img
+            src="/imges/card-2.webp"
+            class="w-[153px] h-[214px] cursor-pointer"
+            data-card="2"
+          />
+          <img
+            src="/imges/card-3.webp"
+            class="w-[153px] h-[214px] cursor-pointer"
+            data-card="3"
+          />
+          <img
+            src="/imges/card-4.webp"
+            class="w-[153px] h-[214px] cursor-pointer"
+            data-card="4"
+          />
+          <img
+            src="/imges/card-5.webp"
+            class="w-[153px] h-[214px] cursor-pointer"
+            data-card="5"
+          />
+          <img
+            src="/imges/card-6.webp"
+            class="w-[153px] h-[214px] cursor-pointer"
+            data-card="6"
+          />
+          <img
+            src="/imges/card-7.webp"
+            class="w-[153px] h-[214px] cursor-pointer"
+            data-card="7"
+          />
+          <img
+            src="/imges/card-8.webp"
+            class="w-[153px] h-[214px] cursor-pointer"
+            data-card="8"
+          />
         </div>
       </div>
-      <div class="chat-wrap w-[300px] h-screen fixed right-10 top-0 flex justify-between flex-col overflow-hidden">
-        <!-- 인게임 채팅 시작 -->
-        <p class="text-white text-xl mt-7">방 이름:<span id="connectedRoom" class="text-white pl-2"></span></p>
-        <div class="mt-2 w-full h-[85%] bg-white/70 rounded-2xl text-(--black) p-4 relative mb-7">
-          <div class="addChat overflow-y-auto h-[90%] pr-2 mb-7">
-            <!-- 메시지 여기에 추가됨 -->
-          </div>
-          <div class="w-full mt-4 space-x-2 relative bottom-1 bg-white rounded-lg p-2">
-            <input type="text" name="message" placeholder="메시지 입력" class="h-8" />
-            <button id="sendBtn" class="absolute right-4 top-1/2 -translate-y-1/2">
-              <img src="/imges/chat-btn.svg" alt="버튼을 클릭해 메시지를 보내세요" />
-            </button>
-          </div>
+
+      <!-- 인게임 채팅 시작 -->
+      <p class="text-white text-xl absolute right-38 top-1/20">
+        방 이름:<span id="connectedRoom" class="text-white pl-2"></span>
+      </p>
+      <div
+        class="mt-2 w-[300px] h-[670px] bg-white/70 rounded-2xl text-(--black) p-4 fixed right-5 top-1/2 -translate-y-1/2"
+      >
+        <div class="addChat overflow-y-auto h-[580px] pr-2 mb-7">
+          <!-- 메시지 여기에 추가됨 -->
         </div>
-        <!-- 인게임 채팅 종료 -->
+        <div
+          class="w-full mt-4 space-x-2 relative bottom-5 bg-white rounded-lg p-2"
+        >
+          <input
+            type="text"
+            name="message"
+            placeholder="메시지 입력"
+            class="h-8"
+          />
+          <button
+            id="sendBtn"
+            class="absolute right-4 top-1/2 -translate-y-1/2"
+          >
+            <img src="/imges/chat-btn.svg" alt="채팅 입력 버튼 이미지" />
+          </button>
+        </div>
       </div>
+      <!-- 인게임 채팅 종료 -->
+
+      <!-- 에러코드 없에기 위한 코드 시작 -->
+      <div class="absolute top-50 right-0 z-1">
+        <input type="text" name="userId" placeholder="사용자 아이디" /><br />
+        <input type="text" name="roomName" placeholder="생성할 방 이름" />
+        <br />
+        <input type="text" name="enterRoomId" placeholder="참여할 방 이름" />
+        <input type="text" name="nickName" placeholder="사용할 닉네임" />
+        <button id="joinRoomBtn" class="border border-red-300">
+          채팅방 입장
+        </button>
+        <button id="leaveRoomBtn" class="border border-red-300">
+          채팅방 나가기
+        </button>
+        <br />
+      </div>
+      <!-- 에러코드 없에기 위한 코드 종료 -->
     </main>
     <!-- 메인 컨테이너 종료 -->
-    <!-- 에러코드 없에기 위한 코드 시작 -->
-    <div class="absolute top-50 right-0 z-1 hidden xl:block">
-      <input type="text" name="userId" placeholder="사용자 아이디" /><br />
-      <input type="text" name="roomName" placeholder="생성할 방 이름" />
-      <br />
-      <input type="text" name="enterRoomId" placeholder="참여할 방 이름" />
-      <input type="text" name="nickName" placeholder="사용할 닉네임" />
-      <button id="joinRoomBtn" class="border border-red-300">채팅방 입장</button>
-      <button id="leaveRoomBtn" class="border border-red-300">채팅방 나가기</button>
-      <br />
-    </div>
-    <!-- 에러코드 없에기 위한 코드 종료 -->
   </body>
 </html>
