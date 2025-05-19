@@ -137,17 +137,17 @@ function saveCurrentRoom(roomId: string, roomName: string, memberCount: number) 
     roomName,
     memberCount
   };
-  localStorage.setItem(CURRENT_ROOM_KEY, JSON.stringify(currentRoom));
+  sessionStorage.setItem(CURRENT_ROOM_KEY, JSON.stringify(currentRoom));
 }
 
 // 현재 방 정보 삭제
 function clearCurrentRoom() {
-  localStorage.removeItem(CURRENT_ROOM_KEY);
+  sessionStorage.removeItem(CURRENT_ROOM_KEY);
 }
 
 // 현재 방 정보 로드
 function loadCurrentRoom(): CurrentRoomInfo | null {
-  const savedRoom = localStorage.getItem(CURRENT_ROOM_KEY);
+  const savedRoom = sessionStorage.getItem(CURRENT_ROOM_KEY);
   if (savedRoom) {
     try {
       return JSON.parse(savedRoom);
@@ -571,6 +571,7 @@ joinRoomBtn.addEventListener("click", async () => {
 
       const result = await joinRoom(params);
       
+      // 기존 방 입장 모드에서 성공 후 UI 업데이트 코드 수정
       if (result.ok) {
         // 사용자 정보 저장 - 새로고침해도 방 참여 유지하기 위함
         saveCurrentUser(userIdValue, nickNameValue);
@@ -585,11 +586,25 @@ joinRoomBtn.addEventListener("click", async () => {
         // 현재 방 정보 저장
         saveCurrentRoom(roomIdValue, existingRoomName, Math.min(newCount, 5));
         
+        // 여기에 UI 직접 업데이트 추가 (누락된 부분)
+        const displayCount = Math.min(newCount, 5);
+        connectedRoomElem.textContent = `${existingRoomName} (${displayCount}/5)`;
+        
         // 방 ID를 data-room-id 속성으로도 저장 (퇴장 시 사용)
         enterRoomId.setAttribute("data-room-id", roomIdValue);
         
         // 방 목록에서 참여자 수 업데이트
         updateRoomParticipantCount(roomIdValue, newCount);
+        
+        // 서버에서 최신 참여자 정보 가져와서 정확히 업데이트
+        socket.emit("get_members", { roomId: roomIdValue }, (membersData: any) => {
+          if (membersData) {
+            const realMemberCount = Object.keys(membersData).length;
+            const displayCount = Math.min(realMemberCount, 5);
+            connectedRoomElem.textContent = `${existingRoomName} (${displayCount}/5)`;
+            updateRoomParticipantCount(roomIdValue, realMemberCount);
+          }
+        });
         
         // 최신 방 목록 정보 로드 및 반영
         socket.emit("rooms", (roomsData: any) => {
