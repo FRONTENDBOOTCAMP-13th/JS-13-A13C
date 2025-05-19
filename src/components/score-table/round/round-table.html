@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>round score table 컴포넌트 | A13C</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="preload" href="/font/pretendardvariable.css" as="style" />
+    <link rel="stylesheet" href="/font/pretendardvariable.css" />
+    <script type="module" src="/src/main.ts"></script>
+    <script
+      type="module"
+      src="/src/components/score-table/round/round-table.ts"
+    ></script>
+    <script type="module" src="/src/pages/ingame/chat.ts"></script>
+    <script type="module" src="/src/pages/ingame/A13C-chat.ts"></script>
+  </head>
+  <body class="m-0 p-0 overflow-hidden">
+    <!-- 전체 화면을 덮는 어두운 배경 + 가운데 테이블 -->
+    <div
+      id="score-tables"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 text-white"
+    >
+      <div
+        class="bg-gray-900 rounded-xl border-2 border-[#bba16d] p-6 shadow-[0_0_15px_#9E844F] max-w-xl w-full flex flex-col gap-6 items-center"
+      >
+        <!-- 총점 테이블 -->
+        <div class="w-full">
+          <h2 class="text-xl font-bold mb-4 text-center text-white">
+            누적 승점
+          </h2>
+          <table
+            class="w-full table-auto border-collapse rounded-lg overflow-hidden text-sm"
+          >
+            <thead class="bg-gray-800 border-b border-[#9E844F]">
+              <tr
+                id="total-score-header"
+                class="text-center font-semibold uppercase tracking-wide text-white"
+              >
+                <!-- 동적으로 채워짐 -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                id="total-score-row"
+                class="bg-gray-900 text-center font-medium hover:bg-[#9E844F]/30 transition-colors duration-300"
+              >
+                <!-- 동적으로 채워짐 -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 라운드별 승자 테이블 -->
+        <div class="w-full">
+          <h2 class="text-xl font-bold mb-4 text-center text-white">
+            라운드별 승자
+          </h2>
+          <table
+            class="w-full table-auto border-collapse rounded-lg overflow-hidden text-sm"
+          >
+            <thead class="bg-gray-800 border-b border-[#9E844F]">
+              <tr>
+                <th
+                  class="px-4 py-2 text-center font-semibold uppercase tracking-wide border-r border-[#9E844F] text-white"
+                >
+                  라운드
+                </th>
+                <th
+                  class="px-4 py-2 text-center font-semibold uppercase tracking-wide border-r border-[#9E844F] text-white"
+                >
+                  승자
+                </th>
+                <th
+                  class="px-4 py-2 text-center font-semibold uppercase tracking-wide text-white"
+                >
+                  점수
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              id="round-winner-body"
+              class="bg-gray-900 text-center font-medium hover:bg-[#9E844F]/30 transition-colors duration-300"
+            >
+              <!-- 동적으로 채워짐 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
