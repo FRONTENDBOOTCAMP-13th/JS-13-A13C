@@ -62,7 +62,7 @@ window.onload = () => {
 //   // 라운드별 결과 테이블
 //   const roundWinnerBody = document.getElementById("round-winner-body")!;
 //   roundWinnerBody.innerHTML = "";
-//   getRoundResults().forEach(({ round, winners, point, card, draw }) => {
+//   getRoundResults().forEach(({ round, winners, point, draw }) => {
 //     winners.forEach((winner) => {
 //       const tr = document.createElement("tr");
 //       tr.innerHTML = `
