@@ -227,11 +227,13 @@ submitBtn.addEventListener("click", () => {
   activeCardId = null;
 });
 
-export function removeOverlay(): void {
+export function removeOverlay(): boolean {
   const overlay = document.getElementById("game-overlay");
   if (overlay) {
     overlay.remove();
+    return true;
   }
+  return true;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
