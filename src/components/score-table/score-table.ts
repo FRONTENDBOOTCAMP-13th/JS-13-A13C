@@ -29,7 +29,7 @@ import { getRoomInfo } from "../../pages/ingame/A13C-chat.ts";
 
 // 현재 방 정보 로드 함수
 function loadCurrentRoom() {
-  const saved = localStorage.getItem("A13C_CURRENT_ROOM");
+  const saved = sessionStorage.getItem("A13C_CURRENT_ROOM");
   if (!saved) return null;
   try {
     return JSON.parse(saved);
