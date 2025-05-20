@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>채팅 | A13C</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/pages/ingame/chat.ts"></script>
+  </head>
+  <body class="bg-cyan-800">
+    <h1 class="text-2xl">채팅</h1>
+    <input type="text" name="userId" placeholder="사용자 아이디" /><br />
+    <input type="text" name="roomName" placeholder="생성할 방 이름" />
+    <br />
+    <input type="text" name="enterRoomId" placeholder="참여할 방 이름" />
+    <input type="text" name="nickName" placeholder="사용할 닉네임" />
+    <button id="joinRoomBtn" class="border border-red-300">게임 입장</button>
+    <button id="leaveRoomBtn" class="border border-red-300">
+      채팅방 나가기
+    </button>
+    <br />
+    <p class="text-white text-xl absolute right-75 top-1/20">
+      방 이름:<span id="connectedRoom" class="text-white pl-2"></span>
+    </p>
+
+    <!-- 화면에 띄울 채팅 공간 -->
+    <div
+      class="mt-2 w-3xs h-[650px] bg-white/70 rounded-2xl p-4 fixed right-5 top-1/2 -translate-y-1/2"
+    >
+      <div class="addChat overflow-y-auto h-[580px] pr-2">
+        <!-- 메시지 여기에 추가됨 -->
+      </div>
+      <div
+        class="w-[230px] h-8 mt-4 space-x-2 absolute bottom-5 bg-white rounded-lg"
+      >
+        <input
+          type="text"
+          name="message"
+          placeholder="메시지 입력"
+          class="ml-3 relative top-1"
+        />
+        <button id="sendBtn" class="relative top-1">
+          <img src="../imges/chat-btn.svg" alt="채팅 입력 버튼 이미지" />
+        </button>
+      </div>
+    </div>
+
+    <!-- 방 목록 -->
+    <div
+      class="room-list-container w-full max-w-2xl mx-auto mt-8 bg-gray-200/80 p-6 rounded-lg shadow-lg"
+    >
+      <table class="table-auto w-full text-left border-collapse">
+        <thead class="">
+          <!-- bg-gray-700 text-white -->
+          <tr>
+            <th>번호</th>
+            <th>방 이름</th>
+            <th>참여 인원</th>
+            <th>게임 진행 여부</th>
+          </tr>
+        </thead>
+        <tbody id="roomList">
+          <!-- 방 만들기 추가 되면 여기에 배치됨 -->
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

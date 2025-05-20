@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>score table 컴포넌트 | A13C</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="preload" href="/font/pretendardvariable.css" as="style" />
+    <link rel="stylesheet" href="/font/pretendardvariable.css" />
+    <script type="module" src="/src/main.ts"></script>
+    <script
+      type="module"
+      src="/src/components/score-table/score-table.ts"
+    ></script>
+    <script type="module" src="/src/pages/ingame/chat.ts"></script>
+    <script type="module" src="/src/pages/ingame/A13C-chat.ts"></script>
+  </head>
+  <body class="flex flex-col p-20 h-screen gap-10 text-white bg-[var(--main-color)]">
+    <div class="relative inline-flex w-fit group">
+      <!-- 버튼 -->
+      <button id="show-button" type="button" class="btn btn-active">승점 확인</button>
+      <!-- <button class="bg-[#9E844F] text-white font-semibold px-4 py-2 rounded-[30px]" >승점 확인</button> -->
+
+      <!-- 호버 시 -->
+      <div class="absolute top-full left-0 mt-2 hidden group-hover:block z-10" id="score-tables">
+        <!-- 라운드 별 우승자 테이블 -->
+        <table class="table-auto w-[26.875rem] border border-[#9E844F] text-white bg-[rgba(29,28,30,0.7)]">
+          <thead>
+            <tr>
+              <th colspan="3" class="text-center text-lg pt-5">라운드 별 우승자</th>
+            </tr>
+            <tr>
+              <th class="px-6 py-3">라운드</th>
+              <th class="px-6 py-3">닉네임</th>
+              <th class="px-6 py-3">승점</th>
+            </tr>
+          </thead>
+          <tbody id="round-winner-body">
+            <!-- 내용은 동적으로 채워짐 -->
+          </tbody>
+        </table>
+
+        <!-- 누적 승점 테이블 -->
+        <table
+          class="table-auto w-[26.875rem] mt-2 border border-[#9E844F] text-white bg-[rgba(29,28,30,0.7)]"
+          id="total-score-table"
+        >
+          <thead>
+            <tr>
+              <th colspan="5" class="text-center text-lg pt-5">누적 승점</th>
+            </tr>
+            <tr id="total-score-header">
+              <!-- 헤더는 동적으로 채워짐 -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="total-score-row">
+              <!-- 점수는 동적으로 채워짐 -->
+            </tr>
+            <!-- 밑 여백을 위한 빈칸 -->
+            <tr>
+              <th colspan="5" class="text-center text-lg pt-2.5"></th>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

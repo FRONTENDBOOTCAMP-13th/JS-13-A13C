@@ -1,96 +1,98 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@theme {
+  --font-pretendard: "Pretendard Variable", sans-serif;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --black: #111111;
+  --white: #eeeeee;
+  --main-color: #0f2b36; /* 그린색*/
+  --braum-light: #fae8c8; /* 버튼 그라데이션 1 */
+  --braum-middle: #d49d82; /* 버튼 그라데이션 2 */
+  --braum-dark: #ab795e; /* 버튼 그라데이션 3 */
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+/* 드래그 막음 */
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* 버튼 컴포넌트 */
+.btn {
+  @apply px-6 py-2 rounded-full font-bold text-(--main-color);
+  background: linear-gradient(180deg, #fae8c8 0%, #d49d82 47.12%, #ab795e 100%);
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #3178c6aa);
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/* 버튼 비활성화  */
+.btn-disabled {
+  background: linear-gradient(to bottom, #e5e5e5, #b3b3b3);
+  color: #7d7d7d;
+  &:focus {
+    outline: none;
+    border: none;
   }
-  a:hover {
-    color: #747bff;
+}
+
+/* 버튼 활성화 */
+.btn-active {
+  background: linear-gradient(180deg, #fae8c8 0%, #d49d82 47.12%, #ab795e 100%);
+  @apply hover:text-(--white);
+}
+
+/* 룰 슬라이드 dispaly: none, block */
+.rule-list {
+  li {
+    display: none;
+    div {
+      outline: none;
+      @apply my-5;
+
+      &:focus {
+        outline: none;
+      }
+
+      h2 {
+        @apply font-bold text-2xl;
+
+        strong {
+          @apply text-3xl;
+        }
+      }
+
+      p {
+        @apply ml-6 my-3;
+      }
+    }
   }
-  button {
-    background-color: #f9f9f9;
+  li.active {
+    display: block;
   }
+}
+
+/* 게임시작 글자 바운스 */
+/* 바운스 에니메이션 */
+@keyframes bounce {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -30px;
+  }
+}
+
+/* 바운스 등록 */
+.bounce .target-animation {
+  animation: bounce 2s infinite ease-in-out;
+  animation-play-state: running;
+}
+
+.card-fly {
+  position: fixed;
+  width: 80px;
+  height: 110px;
+  z-index: 50;
+  transition: transform 0.5s ease-in-out;
+  pointer-events: none;
 }
