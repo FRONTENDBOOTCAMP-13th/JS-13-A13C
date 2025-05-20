@@ -240,7 +240,7 @@ let selectionTimeout: ReturnType<typeof setTimeout>;
 /** 카드 선택 타이머 인터벌 핸들러 */
 let timerInterval: ReturnType<typeof setInterval>;
 /** 카드 선택 시간 만료 여부 */
-let selectionExpired: any = false;
+// let selectionExpired: boolean;
 
 /** 카드 선택 타이머 시작 */
 function startSelectionTimer(): void {
@@ -248,7 +248,7 @@ function startSelectionTimer(): void {
   clearInterval(timerInterval);
 
   let remaining = 8;
-  selectionExpired = false;
+  // selectionExpired = false;
   timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
 
   // overlay 제거 시에만 타이머 시작
@@ -267,7 +267,7 @@ function startSelectionTimer(): void {
   }
 
   selectionTimeout = setTimeout(() => {
-    selectionExpired = true;
+    // selectionExpired = true;
     const availableCardElements = Array.from(
       myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
     );

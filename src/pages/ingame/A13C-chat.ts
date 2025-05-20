@@ -158,7 +158,7 @@ export function joinRoom(params: JoinRoomParams): Promise<JoinRoomResponse> {
  * @param queryString - 캐시 방지를 위한 쿼리 문자열 (선택적)
  * @returns Promise<RoomsResponse> - 전체 채팅방 목록
  */
-export function getRooms(queryString = ""): Promise<RoomsResponse> {
+export function getRooms(): Promise<RoomsResponse> {
   return new Promise((resolve) => {
     socket.emit("rooms", (rooms: RoomsResponse) => {
       resolve(rooms);

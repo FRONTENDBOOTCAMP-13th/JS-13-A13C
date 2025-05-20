@@ -77,7 +77,7 @@ document.head.appendChild(styles);
 /**
  * 방 목록 렌더링 함수 - 캐시 방지 매개변수 추가
  */
-async function renderRoomList(forceRefresh = false) {
+async function renderRoomList() {
   try {
     roomListContainer.innerHTML = `
       <tr>
@@ -86,8 +86,8 @@ async function renderRoomList(forceRefresh = false) {
     `;
 
     // 캐시 방지를 위한 타임스탬프 추가
-    const timestamp = forceRefresh ? `?_t=${Date.now()}` : "";
-    const rooms = await getRooms(timestamp);
+    // const timestamp = forceRefresh ? `?_t=${Date.now()}` : "";
+    const rooms = await getRooms();
 
     if (!rooms || Object.keys(rooms).length === 0) {
       roomListContainer.innerHTML = `
@@ -167,12 +167,12 @@ function startRoomListTimer() {
   }
 
   // 초기 로드 시 강제 새로고침
-  renderRoomList(true);
+  renderRoomList();
 
   updateInterval = setInterval(() => {
     // 팝업이 표시 중일 때만 업데이트
     if (!showRoomList.classList.contains("hidden")) {
-      renderRoomList(true);
+      renderRoomList();
     }
   }, 5000) as unknown as number; // 5초마다 업데이트
 }
@@ -261,7 +261,7 @@ function showRoomListPopup() {
 
   // 팝업이 표시될 때만 방 목록 로드 및 타이머 시작
   if (!showRoomList.classList.contains("hidden")) {
-    renderRoomList(true);
+    renderRoomList();
     startRoomListTimer();
   } else {
     // 팝업이 닫힐 때 타이머 정리
@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 방 목록 팝업이 표시 중이면 바로 로드
   if (!showRoomList.classList.contains("hidden")) {
-    renderRoomList(true);
+    renderRoomList();
     startRoomListTimer();
   }
 

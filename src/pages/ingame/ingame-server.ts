@@ -218,6 +218,8 @@ function startSelectionTimer(): void {
   }, 8000);
 }
 
+startSelectionTimer();
+
 resetBtn.addEventListener("click", () => {
   if (selectionExpired) return;
   selectedCardNumbers = [];
