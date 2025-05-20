@@ -892,24 +892,106 @@ msgInput.addEventListener("keydown", (e) => {
   }
 });
 
-/** 소켓 이벤트 리스너 */
-socket.on("message", (data: ChatMessage) => {
-  if (!chatScreen) return;
-
-  const messageElement = document.createElement("div");
-  messageElement.textContent = `${data.nickName}: ${data.msg}`;
-
-  messageElement.style.wordBreak = "break-word";
-  messageElement.style.overflowWrap = "break-word";
-  messageElement.style.maxWidth = "100%";
-  messageElement.style.padding = "4px 8px";
-
-  chatScreen.appendChild(messageElement);
-  chatScreen.scrollTop = chatScreen.scrollHeight;
-});
-
 /** 초기화 */
 document.addEventListener("DOMContentLoaded", () => {
+  // 모든 소켓 이벤트 리스너 제거 (DOMContentLoaded 이벤트 핸들러 내부에 넣으세요)
+  socket.off("message");
+
+  // 퇴장 메시지 중복 방지를 위한 변수들
+  let globalLastLeaveTime = 0;
+  let lastLeaveText = "";
+
+  // 메시지 이벤트 핸들러 수정
+  socket.on("message", (data: ChatMessage) => {
+    if (!chatScreen) return;
+
+    const messageElement = document.createElement("div");
+    let messageText = "";
+    const now = Date.now();
+
+    // 시스템 메시지 처리
+    if (data.nickName === "시스템" || data.nickName === "system") {
+      // 1. 객체 형태 메시지 처리
+      if (typeof data.msg === "object" && data.msg !== null) {
+        console.log("시스템 메시지 객체:", data.msg);
+
+        const msgObj = data.msg as any;
+
+        // 퇴장 메시지 필터링 (객체 형식)
+        if (
+          (msgObj.type === "leave" || msgObj.action === "leaveRoom") &&
+          (msgObj.nickName || (msgObj.params && msgObj.params.nickName))
+        ) {
+          const nick =
+            msgObj.nickName || (msgObj.params && msgObj.params.nickName);
+
+          // 3초 이내 퇴장 메시지 무시
+          if (now - globalLastLeaveTime < 3000) {
+            console.log(
+              `퇴장 메시지 필터링(객체): ${now - globalLastLeaveTime}ms 내 중복`
+            );
+            return;
+          }
+
+          // 전역 퇴장 시간 갱신 및 텍스트 저장
+          globalLastLeaveTime = now;
+          lastLeaveText = `${nick}님이 퇴장하셨습니다.`;
+
+          messageText = lastLeaveText;
+        }
+        // 나머지 메시지 처리 (기존 코드)
+        else if (
+          msgObj.action === "joinRoom" &&
+          msgObj.params &&
+          msgObj.params.nickName
+        ) {
+          messageText = `${msgObj.params.nickName}님이 대화에 참여하였습니다.`;
+        }
+        // 기타 객체 메시지 처리...
+      }
+      // 2. 문자열 형태 메시지 처리 (중요한 부분)
+      else {
+        const msgStr = String(data.msg);
+
+        // 퇴장 메시지 감지 (문자열 형식)
+        if (
+          msgStr.includes("님이 퇴장하셨습니다") ||
+          msgStr.includes("님이 대화에서 나갔습니다")
+        ) {
+          // 3초 이내 퇴장 메시지 무시
+          if (now - globalLastLeaveTime < 3000 || msgStr === lastLeaveText) {
+            console.log(
+              `퇴장 메시지 필터링(문자열): ${now - globalLastLeaveTime}ms 내 중복`
+            );
+            return;
+          }
+
+          // 전역 퇴장 시간 갱신 및 텍스트 저장
+          globalLastLeaveTime = now;
+          lastLeaveText = msgStr;
+        }
+
+        messageText = `${data.nickName}: ${data.msg}`;
+        messageElement.style.color = "#888888";
+        messageElement.style.fontStyle = "italic";
+      }
+    } else {
+      // 일반 사용자 메시지
+      messageText = `${data.nickName}: ${data.msg}`;
+    }
+
+    // 메시지가 비어있으면 표시하지 않음
+    if (!messageText) return;
+
+    messageElement.textContent = messageText;
+    messageElement.style.wordBreak = "break-word";
+    messageElement.style.overflowWrap = "break-word";
+    messageElement.style.maxWidth = "100%";
+    messageElement.style.padding = "4px 8px";
+
+    chatScreen.appendChild(messageElement);
+    chatScreen.scrollTop = chatScreen.scrollHeight;
+  });
   // 페이지 로드 시 퇴장 플래그 초기화
   localStorage.removeItem("A13C_LEAVING_ROOM");
 
