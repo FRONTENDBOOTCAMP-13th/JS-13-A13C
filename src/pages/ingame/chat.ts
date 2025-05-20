@@ -876,7 +876,7 @@ leaveRoomBtn.addEventListener("click", async () => {
 sendBtn.addEventListener("click", () => {
   const message = msgInput.value.trim();
   if (message) {
-    sendMsg(message);
+    sendMsg<string>(message);
     msgInput.value = "";
   }
 });
