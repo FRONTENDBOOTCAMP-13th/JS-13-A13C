@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>승점 테스트</title>
+    <script type="module">
+      import {
+        addRoundResult,
+        getRoundResults,
+        getTotalPoints,
+        resetResults,
+      } from "./winning-point.ts";
+
+      // 테스트 데이터 추가
+      addRoundResult(1, "가나다", 10);
+      addRoundResult(2, "라마바", 15);
+      addRoundResult(3, "가나다", 20);
+
+      // 결과 출력
+      window.onload = () => {
+        document.getElementById("round").textContent = JSON.stringify(
+          getRoundResults(),
+          null,
+          2
+        );
+        document.getElementById("total").textContent = JSON.stringify(
+          getTotalPoints(),
+          null,
+          2
+        );
+      };
+    </script>
+  </head>
+  <body>
+    <h2>라운드별 승자</h2>
+    <pre id="round"></pre>
+    <h2>닉네임별 누적 승점</h2>
+    <pre id="total"></pre>
+  </body>
+</html>
