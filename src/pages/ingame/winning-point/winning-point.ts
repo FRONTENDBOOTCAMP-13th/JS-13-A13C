@@ -41,7 +41,6 @@ export function getRoundResults() {
         round: Number(round),
         winners: submits.map((s) => s.nickName),
         point: 1,
-        card: null,
         draw: true,
       };
     }
@@ -58,7 +57,6 @@ export function getRoundResults() {
       round: Number(round),
       winners,
       point: minCard,
-      card: minCard,
       draw: winners.length > 1,
     };
   });
