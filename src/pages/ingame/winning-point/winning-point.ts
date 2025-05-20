@@ -1,28 +1,77 @@
-// 라운드별 승자와 승점 저장용 배열
-export interface RoundResult {
+// 플레이어 카드 제출 정보
+export interface PlayerCard {
   round: number;
-  winner: string;
-  point: number;
+  nickName: string;
+  card: number;
 }
 
-let roundResults: RoundResult[] = [];
+// 라운드별 제출 내역
+let roundSubmits: PlayerCard[] = [];
 
-// 라운드 결과 추가 함수
-export function addRoundResult(round: number, winner: string, point: number) {
-  roundResults.push({ round, winner, point });
+// 카드 제출 기록
+export function submitCard(round: number, nickName: string, card: number) {
+  roundSubmits.push({ round, nickName, card });
 }
 
-// 라운드별 승자 배열 반환
-export function getRoundResults(): RoundResult[] {
-  return roundResults;
+// 라운드별 승자/승점 계산
+export function getRoundResults() {
+  // 라운드별 그룹화
+  const roundMap: { [round: number]: PlayerCard[] } = {};
+  roundSubmits.forEach((r) => {
+    if (!roundMap[r.round]) roundMap[r.round] = [];
+    roundMap[r.round].push(r);
+  });
+
+  // 각 라운드별 결과 계산
+  return Object.entries(roundMap).map(([round, submits]) => {
+    // 카드별 제출자 수 세기
+    const cardCount: { [card: number]: number } = {};
+    submits.forEach((s) => {
+      cardCount[s.card] = (cardCount[s.card] || 0) + 1;
+    });
+
+    // 중복되지 않은 카드만 추출
+    const uniqueCards = Object.entries(cardCount)
+      .filter(([_, count]) => count === 1)
+      .map(([card]) => Number(card));
+
+    if (uniqueCards.length === 0) {
+      // 무승부 (모두 중복)
+      return {
+        round: Number(round),
+        winners: submits.map((s) => s.nickName),
+        point: 1,
+        card: null,
+        draw: true,
+      };
+    }
+
+    // 가장 낮은 카드 찾기
+    const minCard = Math.min(...uniqueCards);
+    // 해당 카드를 낸 플레이어(들)
+    const winners = submits
+      .filter((s) => s.card === minCard)
+      .map((s) => s.nickName);
+
+    // 동점자 여러 명일 수 있음
+    return {
+      round: Number(round),
+      winners,
+      point: minCard,
+      card: minCard,
+      draw: winners.length > 1,
+    };
+  });
 }
 
-// 닉네임별 누적 승점 계산 함수
-export function getTotalPoints(): { nickName: string; totalPoint: number }[] {
+// 닉네임별 누적 승점 계산
+export function getTotalPoints() {
   const totals: { [nick: string]: number } = {};
-  roundResults.forEach(({ winner, point }) => {
-    if (!totals[winner]) totals[winner] = 0;
-    totals[winner] += point;
+  getRoundResults().forEach((result) => {
+    result.winners.forEach((nick) => {
+      if (!totals[nick]) totals[nick] = 0;
+      totals[nick] += result.point;
+    });
   });
   return Object.entries(totals).map(([nickName, totalPoint]) => ({
     nickName,
@@ -30,7 +79,18 @@ export function getTotalPoints(): { nickName: string; totalPoint: number }[] {
   }));
 }
 
-// 테스트용 초기화 함수 (테스트/디버깅용)
-export function resetResults() {
-  roundResults = [];
-}
+// 실제 동작: 카드 제출 시점에 submitCard 호출
+// import { submitCard, getRoundResults, getTotalPoints } from "./winning-point";
+
+// // 예시: 서버에서 카드 제출 이벤트를 받았을 때
+// socket.on("cardSubmitted", (data) => {
+//   // data: { round, nickName, card }
+//   submitCard(data.round, data.nickName, data.card);
+
+//   // 라운드 결과/누적 승점 갱신
+//   const roundResults = getRoundResults();
+//   const totalPoints = getTotalPoints();
+
+//   // 결과를 UI에 반영 (테이블 갱신 등)
+//   updateScoreTables(roundResults, totalPoints);
+// });
