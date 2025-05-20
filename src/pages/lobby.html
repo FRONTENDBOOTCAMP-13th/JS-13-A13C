@@ -130,7 +130,9 @@
             <div id="join-form" class="mt-4 hidden space-y-3 bg-white text-black">
               <p class="text-lg">선택한 방: <span id="selectedRoomName" class="font-bold"></span></p>
               <input type="text" id="joinUserId" placeholder="유저 ID" class="w-full px-3 py-2 rounded text-black" />
+              <label for="joinUserId" class="sr-only">유저 ID</label>
               <input type="text" id="joinNickName" placeholder="닉네임" class="w-full px-3 py-2 rounded text-black" />
+              <label for="joinNickName" class="sr-only">닉네임</label>
               <button id="finalJoinBtn" class="btn btn-active w-full">입장하기</button>
             </div>
 
@@ -149,12 +151,22 @@
     <!-- 메인 컨테이너 종료 -->
 
     <!-- 채팅 api를 불러오기 위한 가상노드 시작 -->
-    <button id="leaveRoomBtn" class="sr-only"></button>
-    <button id="sendBtn" class="sr-only"></button>
-    <input name="message" class="sr-only" />
-    <div id="connectedRoom" class="sr-only"></div>
-    <div class="addChat" class="sr-only"></div>
-    <input id="enterRoomId" name="enterRoomId" class="sr-only" />
+    <div class="sr-only">
+      <label for="leaveRoomBtn">버튼을 눌러서 입장해주세요</label>
+      <button id="leaveRoomBtn" class="sr-only"></button>
+      <!-- 구분선 -->
+      <label for="sendBtn">버튼을 눌러서 입장해주세요</label>
+      <button id="sendBtn" class="sr-only"></button>
+      <!-- 구분선 -->
+      <label for="message">버튼을 눌러서 입장해주세요</label>
+      <input name="message" id="message" class="sr-only" />
+      <!-- 구분선 -->
+      <div id="connectedRoom" class="sr-only"></div>
+      <div class="addChat" class="sr-only"></div>
+      <!-- 구분선 -->
+      <label for="enterRoomId">버튼을 눌러서 입장해주세요</label>
+      <input id="enterRoomId" name="enterRoomId" class="sr-only" />
+    </div>
     <!-- 채팅 api를 불러오기 위한 가상노드 종료 -->
   </body>
 </html>

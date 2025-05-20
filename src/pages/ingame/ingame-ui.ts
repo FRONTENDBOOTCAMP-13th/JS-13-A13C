@@ -1,4 +1,5 @@
-import { removeOverlay } from "./ingame-server";
+import { sendMsg, socket } from "./A13C-chat";
+import { removeOverlay, isHost } from "./ingame-server";
 
 // 모듈 스크립트는 defer 동작하므로 DOMContentLoaded 이벤트 불필요
 
@@ -35,6 +36,15 @@ window.addEventListener("DOMContentLoaded", () => {
   ) {
     console.error("필수 요소를 찾을 수 없습니다.");
     return;
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (isHost) {
+    const startBtn = document.getElementById("startGameBtn");
+    startBtn?.addEventListener("click", () => {
+      removeOverlay();
+    });
   }
 });
 
@@ -178,10 +188,16 @@ resetBtn.addEventListener("click", () => {
 
 // 제출 버튼 클릭 핸들러
 submitBtn.addEventListener("click", () => {
-  if (!activeCardId || selectedCardNumbers.length < 2) {
+  activeCardId = selectedLeft.getAttribute("data-card-src")
+    ? "left"
+    : selectedRight.getAttribute("data-card-src")
+      ? "right"
+      : null;
+  if (!activeCardId) {
     alert("카드를 선택해주세요");
     return;
   }
+
   const [a, b] = selectedCardNumbers;
   const keepNum = activeCardId === "left" ? a : b;
   const loseNum = activeCardId === "left" ? b : a;
@@ -207,93 +223,57 @@ submitBtn.addEventListener("click", () => {
 });
 
 // 상대 플레이어 카드 공개 (테스트용)
-function revealOpponentCards(): void {
-  const opponentContainers = document.querySelectorAll(".flex.space-x-1");
+export function revealOpponentCards(): void {
+  const opponentContainers =
+    document.querySelectorAll<HTMLDivElement>(".flex.space-x-1");
 
-  const fakeOpponentCards = [
-    [3, 7],
-    [5, 2],
-    [1, 6],
-    [4, 8],
-  ];
+  const fakeOpponentCards = Array.from({ length: 4 }, () => {
+    const a = Math.floor(Math.random() * 8) + 1;
+    let b;
+    do {
+      b = Math.floor(Math.random() * 8) + 1;
+    } while (b === a);
+    return [a, b];
+  });
 
   opponentContainers.forEach((container, i) => {
-    const imgs = container.querySelectorAll("img");
+    const imgs = container.querySelectorAll<HTMLImageElement>("img");
     imgs.forEach((img, j) => {
       const num = fakeOpponentCards[i][j];
       img.src = `/imges/card-${num}.webp`;
+      img.setAttribute("data-card", String(num));
+    });
+  });
+
+  opponentContainers.forEach((container) => {
+    const imgs = container.querySelectorAll<HTMLImageElement>("img");
+    imgs.forEach((img) => {
+      img.addEventListener("click", () => {
+        // 선택 표시 로직은 그대로 유지
+        imgs.forEach((i) => {
+          i.classList.remove("border-4", "border-yellow-300");
+          i.classList.add("opacity-50");
+        });
+        img.classList.add("border-4", "border-yellow-300");
+        img.classList.remove("opacity-50");
+
+        const numStr = img.getAttribute("data-card");
+        if (numStr) {
+          sendMsg(`${numStr}번 카드가 제출됐습니다.`);
+          console.log("전송된 카드 번호:", numStr);
+        }
+      });
     });
   });
 }
 
-// 타이머 디스플레이 생성
-const timerDisplay = document.createElement("div");
-timerDisplay.id = "selection-timer";
-timerDisplay.className = "text-white text-xl ml-20 mt-2";
-selectedLeft.parentElement?.parentElement?.insertBefore(
-  timerDisplay,
-  selectedLeft.parentElement
-);
-
-/** 카드 선택 제한 시간 타임아웃 핸들러 */
-let selectionTimeout: ReturnType<typeof setTimeout>;
-/** 카드 선택 타이머 인터벌 핸들러 */
-let timerInterval: ReturnType<typeof setInterval>;
-/** 카드 선택 시간 만료 여부 */
-// let selectionExpired: boolean;
-
-/** 카드 선택 타이머 시작 */
-function startSelectionTimer(): void {
-  clearTimeout(selectionTimeout);
-  clearInterval(timerInterval);
-
-  let remaining = 8;
-  // selectionExpired = false;
-  timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
-
-  // overlay 제거 시에만 타이머 시작
-  const removed = removeOverlay();
-  if (removed) {
-    timerInterval = setInterval(() => {
-      remaining--;
-      if (remaining > 0) {
-        timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
-      } else {
-        timerDisplay.textContent = "시간 종료";
-        submitBtn.classList.remove("hidden");
-        clearInterval(timerInterval);
-      }
-    }, 1000);
-  }
-
-  selectionTimeout = setTimeout(() => {
-    // selectionExpired = true;
-    const availableCardElements = Array.from(
-      myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
-    );
-
-    const availableCards = availableCardElements.map((card) =>
-      Number(card.getAttribute("data-card"))
-    );
-
-    // 시간 초과 시 남은 카드에서 랜덤으로 선택
-    while (selectedCardNumbers.length < 2 && availableCards.length > 0) {
-      const randomIndex = Math.floor(Math.random() * availableCards.length);
-      const randomCard = availableCards.splice(randomIndex, 1)[0];
-      const cardEl = myCardContainer.querySelector(
-        `img[data-card="${randomCard}"]`
-      ) as HTMLImageElement;
-      if (cardEl) {
-        cardEl.remove();
-        appendCard(randomCard, true);
-      }
-    }
-
-    revealOpponentCards();
-  }, 8000);
-}
+socket.on("message", (data: object) => {
+  revealOpponentCards();
+  sendMsg<object>({ msg: data });
+  console.log("수신된 카드 src:", data);
+});
 
 // 초기 렌더 및 이벤트 설정
 renderMyCards();
 setupSlotToggle();
-startSelectionTimer();
+revealOpponentCards();

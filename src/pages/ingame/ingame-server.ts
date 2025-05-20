@@ -39,7 +39,7 @@ const tempStorageArea = document.getElementById(
   "temp-card-area"
 ) as HTMLDivElement;
 
-const isHost = localStorage
+export const isHost = localStorage
   .getItem("A13C_CREATE_ROOM_INFO")
   ?.includes('"isCreator":true');
 const nickName = localStorage.getItem("A13C_NICKNAME") || "익명";
@@ -107,10 +107,10 @@ function renderMyCards(): void {
 
 function selectCard(
   num: number,
-  cardEl: HTMLImageElement,
-  force = false
+  cardEl: HTMLImageElement
+  // force = false
 ): void {
-  if (selectionExpired && !force) return;
+  // if (selectionExpired && !force) return;
   if (cardEl.classList.contains("opacity-50")) return;
   if (selectedCardNumbers.length >= 2) return;
   selectedCardNumbers.push(num);
@@ -160,68 +160,68 @@ function flyCard(fromEl: HTMLElement, toEl: HTMLElement, src: string): void {
   }, 500);
 }
 
-let selectionTimeout: ReturnType<typeof setTimeout>;
-let timerInterval: ReturnType<typeof setInterval>;
-let selectionExpired = false;
+// let selectionTimeout: ReturnType<typeof setTimeout>;
+// let timerInterval: ReturnType<typeof setInterval>;
+// let selectionExpired = false;
 
-function sendStep1Cards(): void {
-  const card1 = Number(
-    selectedLeft.getAttribute("data-card-src")?.match(/\d+/)?.[0]
-  );
-  const card2 = Number(
-    selectedRight.getAttribute("data-card-src")?.match(/\d+/)?.[0]
-  );
-  const message: Step1Payload = {
-    action: "step1",
-    actor: nickName,
-    card1,
-    card2,
-  };
-  socket.emit("message", message);
-  console.log("emit step1 message:", message); //백엔드로 보내지는 확인
-}
+// function sendStep1Cards(): void {
+//   const card1 = Number(
+//     selectedLeft.getAttribute("data-card-src")?.match(/\d+/)?.[0]
+//   );
+//   const card2 = Number(
+//     selectedRight.getAttribute("data-card-src")?.match(/\d+/)?.[0]
+//   );
+//   const message: Step1Payload = {
+//     action: "step1",
+//     actor: nickName,
+//     card1,
+//     card2,
+//   };
+//   socket.emit("message", message);
+//   console.log("emit step1 message:", message); //백엔드로 보내지는 확인
+// }
 
-function startSelectionTimer(): void {
-  clearTimeout(selectionTimeout);
-  clearInterval(timerInterval);
-  let remaining = 8;
-  selectionExpired = false;
-  timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
+// function startSelectionTimer(): void {
+//   clearTimeout(selectionTimeout);
+//   clearInterval(timerInterval);
+//   let remaining = 8;
+//   selectionExpired = false;
+//   timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
 
-  timerInterval = setInterval(() => {
-    remaining--;
-    if (remaining > 0) {
-      timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
-    } else {
-      timerDisplay.textContent = `시간 종료`;
-      clearInterval(timerInterval);
-    }
-  }, 1000);
+//   timerInterval = setInterval(() => {
+//     remaining--;
+//     if (remaining > 0) {
+//       timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
+//     } else {
+//       timerDisplay.textContent = `시간 종료`;
+//       clearInterval(timerInterval);
+//     }
+//   }, 1000);
 
-  selectionTimeout = setTimeout(() => {
-    selectionExpired = true;
-    const availableCardElements = Array.from(
-      myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
-    );
-    const availableCards = availableCardElements.map((card) =>
-      Number(card.getAttribute("data-card"))
-    );
-    while (selectedCardNumbers.length < 2 && availableCards.length > 0) {
-      const randomIndex = Math.floor(Math.random() * availableCards.length);
-      const randomCard = availableCards.splice(randomIndex, 1)[0];
-      const cardEl = myCardContainer.querySelector(
-        `img[data-card="${randomCard}"]`
-      ) as HTMLImageElement;
-      if (cardEl) selectCard(randomCard, cardEl, true);
-    }
-    sendStep1Cards();
-  }, 8000);
-}
+//   selectionTimeout = setTimeout(() => {
+//     selectionExpired = true;
+//     const availableCardElements = Array.from(
+//       myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
+//     );
+//     const availableCards = availableCardElements.map((card) =>
+//       Number(card.getAttribute("data-card"))
+//     );
+//     while (selectedCardNumbers.length < 2 && availableCards.length > 0) {
+//       const randomIndex = Math.floor(Math.random() * availableCards.length);
+//       const randomCard = availableCards.splice(randomIndex, 1)[0];
+//       const cardEl = myCardContainer.querySelector(
+//         `img[data-card="${randomCard}"]`
+//       ) as HTMLImageElement;
+//       if (cardEl) selectCard(randomCard, cardEl, true);
+//     }
+//     sendStep1Cards();
+//   }, 8000);
+// }
 
-startSelectionTimer();
+// startSelectionTimer();
 
 resetBtn.addEventListener("click", () => {
-  if (selectionExpired) return;
+  // if (selectionExpired) return;
   selectedCardNumbers = [];
   activeCardId = null;
   selectedLeft.style.backgroundImage = `url("/imges/card-back.webp")`;

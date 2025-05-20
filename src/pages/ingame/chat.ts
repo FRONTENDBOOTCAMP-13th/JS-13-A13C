@@ -16,6 +16,7 @@ import type {
   JoinRoomParams,
   RoomInfo,
 } from "./A13C-chat.ts";
+// import { revealOpponentCards } from "./ingame-ui.ts";
 
 /** DOM 요소들 */
 const userId = document.querySelector<HTMLInputElement>('[name="userId"]')!;
@@ -903,6 +904,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 메시지 이벤트 핸들러 수정
   socket.on("message", (data: ChatMessage) => {
+    // console.log("메시지 수신:", data);
     if (!chatScreen) return;
 
     const messageElement = document.createElement("div");
@@ -1250,3 +1252,74 @@ export function handleRoomJoinFromLobby(
   // 인게임 채팅 페이지로 이동
   window.location.href = "./ingame.html";
 }
+
+export function appendChatMessage(
+  nickName: string,
+  msg: string | object
+): void {
+  console.log(nickName, msg);
+  // 채팅 메시지 컨테이너 선택
+  const chatContainer = document.querySelector<HTMLDivElement>(".addChat")!;
+
+  // 메시지 래퍼 요소 생성
+  const messageElem = document.createElement("div");
+  messageElem.className = "py-1 flex items-start space-x-2";
+
+  // 닉네임 요소
+  const nameElem = document.createElement("span");
+  nameElem.className = "font-bold";
+  nameElem.textContent = `${nickName}: `;
+
+  // 메시지 내용 요소
+  const textElem = document.createElement("span");
+  if (typeof msg === "object") {
+    // 객체일 경우 JSON 문자열로 변환하여 표시
+    textElem.textContent = JSON.stringify(msg);
+  } else {
+    textElem.textContent = msg;
+  }
+
+  // 요소 조립 및 추가
+  messageElem.appendChild(nameElem);
+  messageElem.appendChild(textElem);
+  chatContainer.appendChild(messageElem);
+
+  // 스크롤 자동 최하단
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+socket.on("message", (data: ChatMessage) => {
+  console.log("여기여기", data);
+  // const chatScreen = document.querySelector<HTMLDivElement>(".addChat")!;
+
+  // 카드 선택 페이로드는 data.src 혹은 data.msg.src에 담겨 올 수 있으니 둘 다 체크
+  // const src: string | null = (typeof data === "object" && "src" in data && data.src) || (data.msg && typeof data.msg === "object" && "src" in data.msg && data.msg.src) || null;
+
+  // if (src) {
+  //   // 1️⃣ 메시지 래퍼 생성
+  //   const messageElem = document.createElement("div");
+  //   messageElem.className = "py-1 flex items-start space-x-2";
+
+  //   // 2️⃣ 닉네임
+  //   const nameElem = document.createElement("span");
+  //   nameElem.className = "font-bold";
+  //   nameElem.textContent = `${data.nickName}: `;
+
+  //   // 3️⃣ 카드 이미지
+  //   const cardImg = document.createElement("img");
+  //   cardImg.src = src;
+  //   cardImg.className = "w-8 h-12 inline-block mr-2";
+
+  //   // 4️⃣ 설명 텍스트
+  //   const textElem = document.createElement("span");
+  //   textElem.textContent = "님이 카드를 선택했습니다.";
+
+  //   // 5️⃣ 조립 & 추가
+  //   messageElem.append(nameElem, cardImg, textElem);
+  //   chatScreen.appendChild(messageElem);
+  //   chatScreen.scrollTop = chatScreen.scrollHeight;
+  // } else {
+  //   // 일반 채팅 메시지
+  //   appendChatMessage(data.nickName, data.msg);
+  // }
+});
