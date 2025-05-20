@@ -69,3 +69,30 @@ async function updateScoreTable() {
 
 // 페이지 진입 시 즉시 호출
 updateScoreTable();
+
+// 오버레이
+export async function showScoreTable() {
+  const overlay = document.getElementById("round-overlay");
+  const content = document.getElementById("round-overlay-content");
+  if (!overlay || !content) return;
+
+  // HTML 불러오기
+  const html = await fetch(
+    "/src/components/score-table/round/round-table.html"
+  ).then((res) => res.text());
+  content.innerHTML = html;
+
+  // 점수 테이블 렌더링
+  await updateScoreTable();
+
+  // 화면에 표시
+  overlay.style.display = "flex";
+
+  // 5초 후 자동 제거
+  setTimeout(() => {
+    overlay.style.display = "none";
+  }, 4000);
+}
+
+// TODO 호출 부분은 ingame에서 라운드 종료 판단 후 호출하도록 수정해야 함
+showScoreTable();
