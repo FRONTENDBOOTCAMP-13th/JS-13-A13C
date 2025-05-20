@@ -1,8 +1,68 @@
 // src/pages/ingame/ingame.ts
 import "../../style.css";
 import "./ingame-ui.ts";
-import { sendMsg, socket } from "./A13C-chat.ts";
+import { sendMsg, socket, joinRoom, getRoomInfo } from "./A13C-chat.ts";
+import type { RoomMembers, RoomMember, JoinRoomParams } from "./A13C-chat.ts";
 import "./chat.ts";
+
+function loadCurrentRoom() {
+  const saved = sessionStorage.getItem("A13C_CURRENT_ROOM");
+  if (!saved) return null;
+  try {
+    return JSON.parse(saved);
+  } catch {
+    return null;
+  }
+}
+
+async function updateOpponentNicknames() {
+  console.log("✅ updateOpponentNicknames 함수 시작됨");
+  const currentRoom = loadCurrentRoom();
+  const savedUser = localStorage.getItem("A13C_CURRENT_USER");
+
+  if (!currentRoom || !savedUser) return;
+
+  const parsed = JSON.parse(savedUser);
+  const user_id = parsed.userId;
+  const myNick = parsed.nickName;
+
+  // joinRoom 먼저 실행
+  const joinParams: JoinRoomParams = {
+    roomId: currentRoom.roomId,
+    user_id,
+    nickName: myNick,
+  };
+
+  try {
+    const joinResult = await joinRoom(joinParams);
+    console.log("✅ joinRoom 결과:", joinResult);
+
+    const roomInfo = await getRoomInfo(currentRoom.roomId);
+    console.log("✅ roomInfo:", roomInfo);
+
+    if (!roomInfo || !roomInfo.memberList) return;
+
+    const nickNames = Object.values(roomInfo.memberList).map((m) => m.nickName);
+    console.log("✅ nickNames:", nickNames);
+
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(`nickname-${i}`);
+      const nick = nickNames[i - 1];
+      console.log(`⛳ nickname-${i}:`, el, "| nick:", nick);
+      if (el && nick) {
+        el.textContent = nick;
+      } else {
+        console.warn(`⚠️ nickname-${i} 요소 또는 nick이 존재하지 않음`);
+      }
+    }
+  } catch (e) {
+    console.error("❌ joinRoom 또는 getRoomInfo 중 오류 발생:", e);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateOpponentNicknames();
+});
 
 interface TempCard {
   card: number;
@@ -43,7 +103,6 @@ const isHost = localStorage
   .getItem("A13C_CREATE_ROOM_INFO")
   ?.includes('"isCreator":true');
 const nickName = localStorage.getItem("A13C_NICKNAME") || "익명";
-// const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team02");
 
 const overlay = document.createElement("div");
 overlay.id = "game-overlay";
@@ -56,14 +115,6 @@ overlay.innerHTML = isHost
      </div>`
   : `<p class="pointer-events-none">방장이 게임을 시작할 때까지 기다려주세요</p>`;
 document.body.appendChild(overlay);
-
-const timerDisplay = document.createElement("div");
-timerDisplay.id = "selection-timer";
-timerDisplay.className = "text-white text-xl ml-20 mt-2";
-selectedLeft.parentElement?.parentElement?.insertBefore(
-  timerDisplay,
-  selectedLeft.parentElement
-);
 
 function updateHandCardAvailability(): void {
   const cards = Array.from(
@@ -110,7 +161,6 @@ function selectCard(
   cardEl: HTMLImageElement,
   force = false
 ): void {
-  if (selectionExpired && !force) return;
   if (cardEl.classList.contains("opacity-50")) return;
   if (selectedCardNumbers.length >= 2) return;
   selectedCardNumbers.push(num);
@@ -148,6 +198,7 @@ function flyCard(fromEl: HTMLElement, toEl: HTMLElement, src: string): void {
   requestAnimationFrame(() => {
     card.style.transform = `translate(${toRect.left - fromRect.left}px, ${toRect.top - fromRect.top}px)`;
   });
+
   setTimeout(() => {
     card.remove();
     const finalCard = document.createElement("img");
@@ -159,10 +210,6 @@ function flyCard(fromEl: HTMLElement, toEl: HTMLElement, src: string): void {
     updateHandCardAvailability();
   }, 500);
 }
-
-let selectionTimeout: ReturnType<typeof setTimeout>;
-let timerInterval: ReturnType<typeof setInterval>;
-let selectionExpired = false;
 
 function sendStep1Cards(): void {
   const card1 = Number(
@@ -178,48 +225,10 @@ function sendStep1Cards(): void {
     card2,
   };
   socket.emit("message", message);
-  console.log("emit step1 message:", message); //백엔드로 보내지는 확인
-}
-
-function startSelectionTimer(): void {
-  clearTimeout(selectionTimeout);
-  clearInterval(timerInterval);
-  let remaining = 8;
-  selectionExpired = false;
-  timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
-
-  timerInterval = setInterval(() => {
-    remaining--;
-    if (remaining > 0) {
-      timerDisplay.textContent = `카드 선택 시간: ${remaining}초`;
-    } else {
-      timerDisplay.textContent = `시간 종료`;
-      clearInterval(timerInterval);
-    }
-  }, 1000);
-
-  selectionTimeout = setTimeout(() => {
-    selectionExpired = true;
-    const availableCardElements = Array.from(
-      myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
-    );
-    const availableCards = availableCardElements.map((card) =>
-      Number(card.getAttribute("data-card"))
-    );
-    while (selectedCardNumbers.length < 2 && availableCards.length > 0) {
-      const randomIndex = Math.floor(Math.random() * availableCards.length);
-      const randomCard = availableCards.splice(randomIndex, 1)[0];
-      const cardEl = myCardContainer.querySelector(
-        `img[data-card="${randomCard}"]`
-      ) as HTMLImageElement;
-      if (cardEl) selectCard(randomCard, cardEl, true);
-    }
-    sendStep1Cards();
-  }, 8000);
+  console.log("emit step1 message:", message);
 }
 
 resetBtn.addEventListener("click", () => {
-  if (selectionExpired) return;
   selectedCardNumbers = [];
   activeCardId = null;
   selectedLeft.style.backgroundImage = `url("/imges/card-back.webp")`;
@@ -274,16 +283,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (isHost) {
     const startBtn = document.getElementById("startGameBtn");
     startBtn?.addEventListener("click", () => {
-      // removeOverlay(); // 방장만 오버레이 제거
-      sendMsg<string>("게임시작"); // 모든 플레이어에게 게임 시작 신호 전송
+      sendMsg<string>("게임시작");
       console.log("startGame");
     });
   }
 });
 
-// 모든 플레이어(방장 포함)가 서버로부터 startGame 이벤트 받았을 때 오버레이 제거
 socket.on("message", (data: any) => {
-  console.log(data);
   if (data.msg === "게임시작") {
     removeOverlay();
     return;
@@ -298,4 +304,41 @@ socket.on("message", (data: Step1Payload) => {
       // TODO: 상대 카드 UI 표시
     }
   }
+});
+
+// members 이벤트를 통해 닉네임 할당
+socket.on("members", (members: RoomMembers) => {
+  console.log("members 이벤트 수신:", members);
+  // 현재 사용자 정보 로드
+  const savedUser = localStorage.getItem("A13C_CURRENT_USER");
+  let myNick = "";
+
+  if (savedUser) {
+    try {
+      const parsed = JSON.parse(savedUser);
+      myNick = parsed.nickName;
+    } catch (e) {
+      console.error("사용자 정보 파싱 오류:", e);
+    }
+  }
+
+  // 나를 제외한 상대방 목록 추출
+  const otherMembers = Object.values(members).filter(
+    (m) => m.nickName !== myNick
+  );
+
+  console.log(
+    "상대방 닉네임 목록:",
+    otherMembers.map((m) => m.nickName)
+  );
+
+  // nickname-1 ~ nickname-4에 상대 닉네임 넣기
+  otherMembers.forEach((member, index) => {
+    const nicknameEl = document.getElementById(`nickname-${index + 1}`);
+    if (nicknameEl) {
+      nicknameEl.textContent = member.nickName;
+    } else {
+      console.warn(`nickname-${index + 1} 요소를 찾을 수 없음`);
+    }
+  });
 });
