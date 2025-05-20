@@ -2,7 +2,7 @@ import { getRoomInfo } from "../../../pages/ingame/A13C-chat.ts";
 
 // 현재 방 정보 로드
 function loadCurrentRoom() {
-  const saved = localStorage.getItem("A13C_CURRENT_ROOM");
+  const saved = sessionStorage.getItem("A13C_CURRENT_ROOM");
   if (!saved) return null;
   try {
     return JSON.parse(saved);
@@ -69,20 +69,3 @@ async function updateScoreTable() {
 
 // 페이지 진입 시 즉시 호출
 updateScoreTable();
-
-// 테이블 표시 함수 (외부에서 사용 가능)
-// export async function showScoreTable() {
-//   await updateScoreTable();
-//   const scoreTables = document.getElementById("score-tables");
-//   if (scoreTables) {
-//     scoreTables.classList.remove("hidden");
-//   }
-// }
-
-// 다른 스크립트에서 불러올 때 사용
-// import { showScoreTable } from "./경로/scoreTable.ts";
-
-// // 라운드가 끝났을 때 호출
-// function onRoundEnd() {
-//   showScoreTable();
-// }
