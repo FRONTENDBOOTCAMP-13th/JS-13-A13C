@@ -1,9 +1,8 @@
 // src/pages/ingame/ingame.ts
 import "../../style.css";
 import "./ingame-ui.ts";
-import { sendMsg } from "./A13C-chat.ts";
+import { sendMsg, socket } from "./A13C-chat.ts";
 import "./chat.ts";
-import io from "socket.io-client";
 
 interface TempCard {
   card: number;
@@ -25,20 +24,31 @@ let tempStorage: TempCard[] = [];
 const submittedCards: { [playerId: string]: number } = {};
 
 const selectedLeft = document.getElementById("selected-left") as HTMLDivElement;
-const selectedRight = document.getElementById("selected-right") as HTMLDivElement;
-const resetBtn = document.querySelector("#submitbutton button:nth-child(1)") as HTMLButtonElement;
-const submitBtn = document.querySelector("#submitbutton button:nth-child(2)") as HTMLButtonElement;
+const selectedRight = document.getElementById(
+  "selected-right"
+) as HTMLDivElement;
+const resetBtn = document.querySelector(
+  "#submitbutton button:nth-child(1)"
+) as HTMLButtonElement;
+const submitBtn = document.querySelector(
+  "#submitbutton button:nth-child(2)"
+) as HTMLButtonElement;
 const myCardContainer = document.getElementById("my-cards") as HTMLDivElement;
 const scoreBoard = document.getElementById("final-card-area") as HTMLDivElement;
-const tempStorageArea = document.getElementById("temp-card-area") as HTMLDivElement;
+const tempStorageArea = document.getElementById(
+  "temp-card-area"
+) as HTMLDivElement;
 
-const isHost = localStorage.getItem("A13C_CREATE_ROOM_INFO")?.includes('"isCreator":true');
+const isHost = localStorage
+  .getItem("A13C_CREATE_ROOM_INFO")
+  ?.includes('"isCreator":true');
 const nickName = localStorage.getItem("A13C_NICKNAME") || "익명";
-const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team02");
+// const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team02");
 
-export const overlay = document.createElement("div");
+const overlay = document.createElement("div");
 overlay.id = "game-overlay";
-overlay.className = "fixed top-0 left-0 w-3/4 h-full z-40 bg-black/60 flex flex-col justify-center items-center text-white text-2xl pointer-events-none backdrop-blur-sm";
+overlay.className =
+  "fixed top-0 left-0 w-3/4 h-full z-40 bg-black/60 flex flex-col justify-center items-center text-white text-2xl pointer-events-none backdrop-blur-sm";
 overlay.innerHTML = isHost
   ? `<div class="pointer-events-auto text-center">
        <p class="mb-4">게임을 시작하려면 아래 버튼을 누르세요</p>
@@ -50,16 +60,23 @@ document.body.appendChild(overlay);
 const timerDisplay = document.createElement("div");
 timerDisplay.id = "selection-timer";
 timerDisplay.className = "text-white text-xl ml-20 mt-2";
-selectedLeft.parentElement?.parentElement?.insertBefore(timerDisplay, selectedLeft.parentElement);
+selectedLeft.parentElement?.parentElement?.insertBefore(
+  timerDisplay,
+  selectedLeft.parentElement
+);
 
 function updateHandCardAvailability(): void {
-  const cards = Array.from(myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]"));
+  const cards = Array.from(
+    myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
+  );
   const used = new Set<number>();
   [scoreBoard, tempStorageArea].forEach((board) => {
-    board.querySelectorAll<HTMLImageElement>("img[data-card]").forEach((img) => {
-      const m = img.src.match(/card-(\d+)\.webp/);
-      if (m) used.add(Number(m[1]));
-    });
+    board
+      .querySelectorAll<HTMLImageElement>("img[data-card]")
+      .forEach((img) => {
+        const m = img.src.match(/card-(\d+)\.webp/);
+        if (m) used.add(Number(m[1]));
+      });
   });
   cards.forEach((card) => {
     const num = Number(card.getAttribute("data-card"));
@@ -79,7 +96,8 @@ function renderMyCards(): void {
     if (selectedCardNumbers.includes(i)) continue;
     const card = document.createElement("img");
     card.src = `/imges/card-${i}.webp`;
-    card.className = "w-[153px] h-[214px] cursor-pointer transition-transform duration-200 ease-in-out hover:scale-110";
+    card.className =
+      "w-[153px] h-[214px] cursor-pointer transition-transform duration-200 ease-in-out hover:scale-110";
     card.setAttribute("data-card", String(i));
     card.addEventListener("click", () => selectCard(i, card));
     myCardContainer.appendChild(card);
@@ -87,13 +105,18 @@ function renderMyCards(): void {
   updateHandCardAvailability();
 }
 
-function selectCard(num: number, cardEl: HTMLImageElement, force = false): void {
+function selectCard(
+  num: number,
+  cardEl: HTMLImageElement,
+  force = false
+): void {
   if (selectionExpired && !force) return;
   if (cardEl.classList.contains("opacity-50")) return;
   if (selectedCardNumbers.length >= 2) return;
   selectedCardNumbers.push(num);
   cardEl.remove();
-  const target = selectedCardNumbers.length === 1 ? selectedLeft : selectedRight;
+  const target =
+    selectedCardNumbers.length === 1 ? selectedLeft : selectedRight;
   target.style.backgroundImage = `url("/imges/card-${num}.webp")`;
   target.setAttribute("data-card-src", `/imges/card-${num}.webp`);
 }
@@ -142,8 +165,12 @@ let timerInterval: ReturnType<typeof setInterval>;
 let selectionExpired = false;
 
 function sendStep1Cards(): void {
-  const card1 = Number(selectedLeft.getAttribute("data-card-src")?.match(/\d+/)?.[0]);
-  const card2 = Number(selectedRight.getAttribute("data-card-src")?.match(/\d+/)?.[0]);
+  const card1 = Number(
+    selectedLeft.getAttribute("data-card-src")?.match(/\d+/)?.[0]
+  );
+  const card2 = Number(
+    selectedRight.getAttribute("data-card-src")?.match(/\d+/)?.[0]
+  );
   const message: Step1Payload = {
     action: "step1",
     actor: nickName,
@@ -173,12 +200,18 @@ function startSelectionTimer(): void {
 
   selectionTimeout = setTimeout(() => {
     selectionExpired = true;
-    const availableCardElements = Array.from(myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]"));
-    const availableCards = availableCardElements.map((card) => Number(card.getAttribute("data-card")));
+    const availableCardElements = Array.from(
+      myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
+    );
+    const availableCards = availableCardElements.map((card) =>
+      Number(card.getAttribute("data-card"))
+    );
     while (selectedCardNumbers.length < 2 && availableCards.length > 0) {
       const randomIndex = Math.floor(Math.random() * availableCards.length);
       const randomCard = availableCards.splice(randomIndex, 1)[0];
-      const cardEl = myCardContainer.querySelector(`img[data-card="${randomCard}"]`) as HTMLImageElement;
+      const cardEl = myCardContainer.querySelector(
+        `img[data-card="${randomCard}"]`
+      ) as HTMLImageElement;
       if (cardEl) selectCard(randomCard, cardEl, true);
     }
     sendStep1Cards();
@@ -241,19 +274,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (isHost) {
     const startBtn = document.getElementById("startGameBtn");
     startBtn?.addEventListener("click", () => {
-      removeOverlay(); // 방장만 오버레이 제거
-      sendMsg("hello"); // 모든 플레이어에게 게임 시작 신호 전송
+      // removeOverlay(); // 방장만 오버레이 제거
+      sendMsg<string>("게임시작"); // 모든 플레이어에게 게임 시작 신호 전송
       console.log("startGame");
     });
   }
 });
 
 // 모든 플레이어(방장 포함)가 서버로부터 startGame 이벤트 받았을 때 오버레이 제거
-socket.on("startGame", () => {
-  removeOverlay(); // 이 위치에서 모든 유저가 제거
-  alert("게임이 시작되었습니다.");
-  renderMyCards();
-  startSelectionTimer();
+socket.on("message", (data: any) => {
+  console.log(data);
+  if (data.msg === "게임시작") {
+    removeOverlay();
+    return;
+  }
 });
 
 socket.on("message", (data: Step1Payload) => {
