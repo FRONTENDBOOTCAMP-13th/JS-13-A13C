@@ -1,9 +1,19 @@
+// src/pages/ingame/ingame.ts
 import "../../style.css";
+import { sendMsg } from "./A13C-chat.ts";
 import "./chat.ts";
+import io from "socket.io-client";
 
 interface TempCard {
   card: number;
   returnRound: number;
+}
+
+interface Step1Payload {
+  action: "step1";
+  actor: string;
+  card1: number;
+  card2: number;
 }
 
 let currentRound = 1;
@@ -32,6 +42,8 @@ const tempStorageArea = document.getElementById(
 const isHost = localStorage
   .getItem("A13C_CREATE_ROOM_INFO")
   ?.includes('"isCreator":true');
+const nickName = localStorage.getItem("A13C_NICKNAME") || "익명";
+const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team02");
 
 const overlay = document.createElement("div");
 overlay.id = "game-overlay";
@@ -148,28 +160,26 @@ function flyCard(fromEl: HTMLElement, toEl: HTMLElement, src: string): void {
   }, 500);
 }
 
-function revealOpponentCards(): void {
-  const opponentContainers = document.querySelectorAll(".flex.space-x-1");
-
-  const fakeOpponentCards = [
-    [3, 7],
-    [5, 2],
-    [1, 6],
-    [4, 8],
-  ];
-
-  opponentContainers.forEach((container, i) => {
-    const imgs = container.querySelectorAll("img");
-    imgs.forEach((img, j) => {
-      const num = fakeOpponentCards[i][j];
-      img.src = `/imges/card-${num}.webp`;
-    });
-  });
-}
-
 let selectionTimeout: ReturnType<typeof setTimeout>;
 let timerInterval: ReturnType<typeof setInterval>;
 let selectionExpired = false;
+
+function sendStep1Cards(): void {
+  const card1 = Number(
+    selectedLeft.getAttribute("data-card-src")?.match(/\d+/)?.[0]
+  );
+  const card2 = Number(
+    selectedRight.getAttribute("data-card-src")?.match(/\d+/)?.[0]
+  );
+  const message: Step1Payload = {
+    action: "step1",
+    actor: nickName,
+    card1,
+    card2,
+  };
+  socket.emit("message", message);
+  console.log("emit step1 message:", message); //백엔드로 보내지는 확인
+}
 
 function startSelectionTimer(): void {
   clearTimeout(selectionTimeout);
@@ -193,23 +203,18 @@ function startSelectionTimer(): void {
     const availableCardElements = Array.from(
       myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
     );
-
     const availableCards = availableCardElements.map((card) =>
       Number(card.getAttribute("data-card"))
     );
-
     while (selectedCardNumbers.length < 2 && availableCards.length > 0) {
       const randomIndex = Math.floor(Math.random() * availableCards.length);
       const randomCard = availableCards.splice(randomIndex, 1)[0];
       const cardEl = myCardContainer.querySelector(
         `img[data-card="${randomCard}"]`
       ) as HTMLImageElement;
-      if (cardEl) {
-        selectCard(randomCard, cardEl, true);
-      }
+      if (cardEl) selectCard(randomCard, cardEl, true);
     }
-
-    revealOpponentCards();
+    sendStep1Cards();
   }, 8000);
 }
 
@@ -255,25 +260,39 @@ submitBtn.addEventListener("click", () => {
   activeCardId = null;
 });
 
+function removeOverlay(): void {
+  const overlay = document.getElementById("game-overlay");
+  if (overlay) {
+    overlay.remove();
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   setupSubmitCardClick();
   if (isHost) {
     const startBtn = document.getElementById("startGameBtn");
     startBtn?.addEventListener("click", () => {
-      alert("게임이 시작되었습니다.");
-      document.getElementById("game-overlay")?.remove();
-      renderMyCards();
-      startSelectionTimer();
+      removeOverlay(); // 방장만 오버레이 제거
+      sendMsg("hello"); // 모든 플레이어에게 게임 시작 신호 전송
+      console.log("startGame");
     });
-  } else {
-    const observer = new MutationObserver(() => {
-      if (!document.getElementById("game-overlay")) {
-        alert("게임이 시작되었습니다.");
-        renderMyCards();
-        startSelectionTimer();
-        observer.disconnect();
-      }
-    });
-    observer.observe(document.body, { childList: true });
+  }
+});
+
+// 모든 플레이어(방장 포함)가 서버로부터 startGame 이벤트 받았을 때 오버레이 제거
+socket.on("startGame", () => {
+  removeOverlay(); // 이 위치에서 모든 유저가 제거
+  alert("게임이 시작되었습니다.");
+  renderMyCards();
+  startSelectionTimer();
+});
+
+socket.on("message", (data: Step1Payload) => {
+  if (data.action === "step1") {
+    const { actor, card1, card2 } = data;
+    if (actor !== nickName) {
+      console.log(`상대 ${actor}가 카드 ${card1}, ${card2} 선택함.`);
+      // TODO: 상대 카드 UI 표시
+    }
   }
 });
