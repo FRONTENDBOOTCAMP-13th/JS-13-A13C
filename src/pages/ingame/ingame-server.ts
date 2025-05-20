@@ -1,8 +1,8 @@
 // src/pages/ingame/ingame.ts
 import "../../style.css";
-import { sendMsg } from "./A13C-chat.ts";
+import "./ingame-ui.ts";
+import { sendMsg, socket } from "./A13C-chat.ts";
 import "./chat.ts";
-import io from "socket.io-client";
 
 interface TempCard {
   card: number;
@@ -43,7 +43,7 @@ const isHost = localStorage
   .getItem("A13C_CREATE_ROOM_INFO")
   ?.includes('"isCreator":true');
 const nickName = localStorage.getItem("A13C_NICKNAME") || "익명";
-const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team02");
+// const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team02");
 
 const overlay = document.createElement("div");
 overlay.id = "game-overlay";
@@ -260,11 +260,13 @@ submitBtn.addEventListener("click", () => {
   activeCardId = null;
 });
 
-function removeOverlay(): void {
+export function removeOverlay(): boolean {
   const overlay = document.getElementById("game-overlay");
   if (overlay) {
     overlay.remove();
+    return true;
   }
+  return true;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -272,19 +274,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (isHost) {
     const startBtn = document.getElementById("startGameBtn");
     startBtn?.addEventListener("click", () => {
-      removeOverlay(); // 방장만 오버레이 제거
-      sendMsg("hello"); // 모든 플레이어에게 게임 시작 신호 전송
+      // removeOverlay(); // 방장만 오버레이 제거
+      sendMsg<string>("게임시작"); // 모든 플레이어에게 게임 시작 신호 전송
       console.log("startGame");
     });
   }
 });
 
 // 모든 플레이어(방장 포함)가 서버로부터 startGame 이벤트 받았을 때 오버레이 제거
-socket.on("startGame", () => {
-  removeOverlay(); // 이 위치에서 모든 유저가 제거
-  alert("게임이 시작되었습니다.");
-  renderMyCards();
-  startSelectionTimer();
+socket.on("message", (data: any) => {
+  console.log(data);
+  if (data.msg === "게임시작") {
+    removeOverlay();
+    return;
+  }
 });
 
 socket.on("message", (data: Step1Payload) => {
