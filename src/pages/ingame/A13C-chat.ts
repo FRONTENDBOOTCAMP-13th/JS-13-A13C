@@ -194,10 +194,8 @@ export function leaveRoom(): void {
  * @description 사용자가 입력한 메시지를 현재 참여 중인 채팅방에 전송합니다.
  * 빈 문자열이나 공백만 있는 메시지는 전송되지 않습니다.
  */
-export function sendMsg(msg: string): void {
-  if (msg.trim()) {
-    socket.emit("message", msg);
-  }
+export function sendMsg<T>(msg: T): void {
+  socket.emit("message", msg);
 }
 
 /**
