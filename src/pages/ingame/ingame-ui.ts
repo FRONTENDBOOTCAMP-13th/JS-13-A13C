@@ -5,11 +5,17 @@ import { removeOverlay } from "./ingame-server";
 /** 왼쪽 카드 선택 슬롯 */
 const selectedLeft = document.getElementById("selected-left") as HTMLDivElement;
 /** 오른쪽 카드 선택 슬롯 */
-const selectedRight = document.getElementById("selected-right") as HTMLDivElement;
+const selectedRight = document.getElementById(
+  "selected-right"
+) as HTMLDivElement;
 /** 리셋 버튼 */
-const resetBtn = document.querySelector("#submitbutton button:nth-child(1)") as HTMLButtonElement;
+const resetBtn = document.querySelector(
+  "#submitbutton button:nth-child(1)"
+) as HTMLButtonElement;
 /** 제출 버튼 */
-const submitBtn = document.querySelector("#submitbutton button:nth-child(2)") as HTMLButtonElement;
+const submitBtn = document.querySelector(
+  "#submitbutton button:nth-child(2)"
+) as HTMLButtonElement;
 /** 내 카드 영역 */
 const myCardContainer = document.getElementById("my-cards") as HTMLDivElement;
 /** 점수판(최종 카드 영역) */
@@ -18,7 +24,15 @@ const scoreBoard = document.getElementById("final-card-area") as HTMLDivElement;
 const tempStorage = document.getElementById("temp-card-area") as HTMLDivElement;
 
 window.addEventListener("DOMContentLoaded", () => {
-  if (!selectedLeft || !selectedRight || !resetBtn || !submitBtn || !myCardContainer || !scoreBoard || !tempStorage) {
+  if (
+    !selectedLeft ||
+    !selectedRight ||
+    !resetBtn ||
+    !submitBtn ||
+    !myCardContainer ||
+    !scoreBoard ||
+    !tempStorage
+  ) {
     console.error("필수 요소를 찾을 수 없습니다.");
     return;
   }
@@ -47,7 +61,9 @@ function renderMyCards(): void {
     if (removedNumbers.has(i) || tempDisabled.has(i)) continue;
     activeNums.push(i);
   }
-  const disabledNums = Array.from(tempDisabled).filter((i) => !removedNumbers.has(i));
+  const disabledNums = Array.from(tempDisabled).filter(
+    (i) => !removedNumbers.has(i)
+  );
 
   const totalCount = activeNums.length + disabledNums.length;
   // 핸드가 2장 이하이면 카드를 전부 숨김
@@ -71,7 +87,8 @@ function renderMyCards(): void {
 function appendCard(cardNum: number, disabled: boolean): void {
   const card = document.createElement("img");
   card.src = `/imges/card-${cardNum}.webp`;
-  card.className = "w-[153px] h-[214px] cursor-pointer transition-transform duration-200 ease-in-out hover:scale-110";
+  card.className =
+    "w-[153px] h-[214px] cursor-pointer transition-transform duration-200 ease-in-out hover:scale-110";
   card.setAttribute("data-card", String(cardNum));
   if (disabled) {
     card.classList.add("opacity-50");
@@ -81,7 +98,8 @@ function appendCard(cardNum: number, disabled: boolean): void {
     if (card.style.pointerEvents === "none") return;
     if (selectedCardNumbers.length >= 2) return;
     selectedCardNumbers.push(cardNum);
-    const slot = selectedCardNumbers.length === 1 ? selectedLeft : selectedRight;
+    const slot =
+      selectedCardNumbers.length === 1 ? selectedLeft : selectedRight;
     slot.style.backgroundImage = `url(${card.src})`;
     slot.setAttribute("data-card-src", card.src);
     card.remove();
@@ -105,7 +123,9 @@ export function setupSlotToggle() {
 
 /** 손패의 카드 클릭 가능 여부 업데이트 */
 function updateHandCardAvailability(): void {
-  const cards = Array.from(myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]"));
+  const cards = Array.from(
+    myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
+  );
   if (selectedCardNumbers.length === 2) {
     cards.forEach((c) => (c.style.pointerEvents = "none"));
   } else {
@@ -210,14 +230,17 @@ function revealOpponentCards(): void {
 const timerDisplay = document.createElement("div");
 timerDisplay.id = "selection-timer";
 timerDisplay.className = "text-white text-xl ml-20 mt-2";
-selectedLeft.parentElement?.parentElement?.insertBefore(timerDisplay, selectedLeft.parentElement);
+selectedLeft.parentElement?.parentElement?.insertBefore(
+  timerDisplay,
+  selectedLeft.parentElement
+);
 
 /** 카드 선택 제한 시간 타임아웃 핸들러 */
 let selectionTimeout: ReturnType<typeof setTimeout>;
 /** 카드 선택 타이머 인터벌 핸들러 */
 let timerInterval: ReturnType<typeof setInterval>;
 /** 카드 선택 시간 만료 여부 */
-let selectionExpired: boolean = false;
+let selectionExpired: any = false;
 
 /** 카드 선택 타이머 시작 */
 function startSelectionTimer(): void {
@@ -245,15 +268,21 @@ function startSelectionTimer(): void {
 
   selectionTimeout = setTimeout(() => {
     selectionExpired = true;
-    const availableCardElements = Array.from(myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]"));
+    const availableCardElements = Array.from(
+      myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
+    );
 
-    const availableCards = availableCardElements.map((card) => Number(card.getAttribute("data-card")));
+    const availableCards = availableCardElements.map((card) =>
+      Number(card.getAttribute("data-card"))
+    );
 
     // 시간 초과 시 남은 카드에서 랜덤으로 선택
     while (selectedCardNumbers.length < 2 && availableCards.length > 0) {
       const randomIndex = Math.floor(Math.random() * availableCards.length);
       const randomCard = availableCards.splice(randomIndex, 1)[0];
-      const cardEl = myCardContainer.querySelector(`img[data-card="${randomCard}"]`) as HTMLImageElement;
+      const cardEl = myCardContainer.querySelector(
+        `img[data-card="${randomCard}"]`
+      ) as HTMLImageElement;
       if (cardEl) {
         cardEl.remove();
         appendCard(randomCard, true);
