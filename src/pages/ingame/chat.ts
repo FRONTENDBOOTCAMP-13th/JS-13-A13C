@@ -31,7 +31,9 @@ const msgInput = document.querySelector<HTMLInputElement>('[name="message"]')!;
 const sendBtn = document.querySelector<HTMLButtonElement>("#sendBtn")!;
 const connectedRoomElem = document.querySelector("#connectedRoom")!;
 const chatScreen = document.querySelector(".addChat")!;
-const refreshBtn = document.querySelector<HTMLButtonElement>("#refreshRoomListBtn");
+const refreshBtn = document.querySelector<HTMLButtonElement>(
+  "#refreshRoomListBtn"
+);
 
 // 현재 사용자 정보 저장을 위한 키 추가
 const CURRENT_USER_KEY = "A13C_CURRENT_USER";
@@ -62,10 +64,13 @@ function addToDeletedRooms(roomId: string) {
 
 // 사용자 정보 저장 함수 추가
 function saveCurrentUser(userIdValue: string, nickNameValue: string) {
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({
-    userId: userIdValue,
-    nickName: nickNameValue
-  }));
+  localStorage.setItem(
+    CURRENT_USER_KEY,
+    JSON.stringify({
+      userId: userIdValue,
+      nickName: nickNameValue,
+    })
+  );
 }
 
 // 사용자 정보 로드 함수
@@ -533,8 +538,10 @@ joinRoomBtn.addEventListener("click", async () => {
         if (joinResult && joinResult.ok) {
           // 사용자 정보 저장 - 새로고침해도 방 참여 유지하기 위함
           saveCurrentUser(userIdValue, nickNameValue);
-          
-          alert(`채팅방 "${newRoomName}"이(가) 생성되었으며 채팅에 참여합니다.`);
+
+          alert(
+            `채팅방 "${newRoomName}"이(가) 생성되었으며 채팅에 참여합니다.`
+          );
           roomName.value = "";
 
           // 실시간 참여자 수 업데이트를 위해 rooms 이벤트 수신
@@ -623,13 +630,13 @@ joinRoomBtn.addEventListener("click", async () => {
       connectedRoomElem.textContent = `${existingRoomName} (입장 중...)`;
 
       const result = await joinRoom(params);
-      
+
       // 기존 방 입장 모드에서 성공 후 UI 업데이트 코드 수정
 
       if (result.ok) {
         // 사용자 정보 저장 - 새로고침해도 방 참여 유지하기 위함
         saveCurrentUser(userIdValue, nickNameValue);
-        
+
         alert(`${existingRoomName} 방에 입장하였습니다.`);
 
         // 참여자 수 증가
@@ -639,28 +646,30 @@ joinRoomBtn.addEventListener("click", async () => {
 
         // 현재 방 정보 저장
         saveCurrentRoom(roomIdValue, existingRoomName, Math.min(newCount, 5));
-        
+
         // 여기에 UI 직접 업데이트 추가 (누락된 부분)
         const displayCount = Math.min(newCount, 5);
         connectedRoomElem.textContent = `${existingRoomName} (${displayCount}/5)`;
-        
 
         // 방 ID를 data-room-id 속성으로도 저장 (퇴장 시 사용)
         enterRoomId.setAttribute("data-room-id", roomIdValue);
 
         // 방 목록에서 참여자 수 업데이트
         updateRoomParticipantCount(roomIdValue, newCount);
-        
+
         // 서버에서 최신 참여자 정보 가져와서 정확히 업데이트
-        socket.emit("get_members", { roomId: roomIdValue }, (membersData: any) => {
-          if (membersData) {
-            const realMemberCount = Object.keys(membersData).length;
-            const displayCount = Math.min(realMemberCount, 5);
-            connectedRoomElem.textContent = `${existingRoomName} (${displayCount}/5)`;
-            updateRoomParticipantCount(roomIdValue, realMemberCount);
+        socket.emit(
+          "get_members",
+          { roomId: roomIdValue },
+          (membersData: any) => {
+            if (membersData) {
+              const realMemberCount = Object.keys(membersData).length;
+              const displayCount = Math.min(realMemberCount, 5);
+              connectedRoomElem.textContent = `${existingRoomName} (${displayCount}/5)`;
+              updateRoomParticipantCount(roomIdValue, realMemberCount);
+            }
           }
-        });
-        
+        );
 
         // 최신 방 목록 정보 로드 및 반영
         socket.emit("rooms", (roomsData: any) => {
@@ -857,7 +866,6 @@ leaveRoomBtn.addEventListener("click", async () => {
     alert("퇴장 중 오류가 발생했습니다. 다시 시도해 주세요.");
     localStorage.removeItem("A13C_LEAVING_ROOM");
     localStorage.removeItem(CURRENT_USER_KEY); // 사용자 정보도 삭제
-    
 
     // 오류 발생해도 로비로 이동
     window.location.href = "/src/pages/lobby.html";
@@ -911,20 +919,21 @@ document.addEventListener("DOMContentLoaded", () => {
       `
       overflow-x: hidden;
       word-wrap: break-word;
-    `);
+    `
+    );
   }
 
   // 로드된 정보 초기화
   loadDeletedRooms();
   loadCacheFromStorage();
-  
+
   // 방 목록 요소가 있는 페이지에서만 방 목록 관련 기능 실행
   const roomList = document.getElementById("roomList");
-  
+
   if (roomList) {
     // 초기 방 목록 로드
     loadRoomList();
-    
+
     // 수동 새로고침 버튼 이벤트 리스너 연결
     if (refreshBtn) {
       refreshBtn.addEventListener("click", () => {
@@ -932,7 +941,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   }
-
 
   // 기존 리스너 모두 제거
   socket.off("members");
@@ -952,45 +960,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const memberCount = Object.keys(members).length;
 
-      // 현재 게임 참가자 닉네임 배열로 출력
-      const nicknameList = Object.values(members).map(member => member.nickName);
-      console.log("현재 방 참여자 닉네임:", nicknameList);
-      
-      // 이전 참가자 수와 비교하여 변경이 있으면 알림
-      const previousCount = roomParticipantCache[currentRoom.roomId] || 0;
-      if (previousCount !== memberCount) {
-        console.log(`참여자 수 변경: ${previousCount} -> ${memberCount}`);
-        
-        // 방 목록에서 실시간으로 참여자 수 업데이트
-        updateRoomParticipantCount(currentRoom.roomId, memberCount);
-        
-        // 다른 사람이 방에 들어오거나 나갔을 때 캐시 및 UI 업데이트
-        roomParticipantCache[currentRoom.roomId] = memberCount;
-        saveCacheToStorage();
-        
-        // 실시간 참여자 수 반영하여 UI 업데이트
-        updateCurrentRoomInfo(members);
-        
-        // 최신 방 목록 로드하여 ui 반영 (수동 새로고침 모드에서는 필요 없음)
-        if (refreshBtn) {
-          // 수동 새로고침 모드에서는 자동으로 방 목록을 갱신하지 않음
-        } else {
-          socket.emit("rooms", (roomsData: any) => {
-            if (roomsData) {
-              renderRoomList(roomsData);
-            }
-          });
+        // 현재 게임 참가자 닉네임 배열로 출력
+        const nicknameList = Object.values(members).map(
+          (member) => member.nickName
+        );
+        console.log("현재 방 참여자 닉네임:", nicknameList);
+
+        // 이전 참가자 수와 비교하여 변경이 있으면 알림
+        const previousCount = roomParticipantCache[currentRoom.roomId] || 0;
+        if (previousCount !== memberCount) {
+          console.log(`참여자 수 변경: ${previousCount} -> ${memberCount}`);
+
+          // 방 목록에서 실시간으로 참여자 수 업데이트
+          updateRoomParticipantCount(currentRoom.roomId, memberCount);
+
+          // 다른 사람이 방에 들어오거나 나갔을 때 캐시 및 UI 업데이트
+          roomParticipantCache[currentRoom.roomId] = memberCount;
+          saveCacheToStorage();
+
+          // 실시간 참여자 수 반영하여 UI 업데이트
+          updateCurrentRoomInfo(members);
+
+          // 최신 방 목록 로드하여 ui 반영 (수동 새로고침 모드에서는 필요 없음)
+          if (refreshBtn) {
+            // 수동 새로고침 모드에서는 자동으로 방 목록을 갱신하지 않음
+          } else {
+            socket.emit("rooms", (roomsData: any) => {
+              if (roomsData) {
+                renderRoomList(roomsData);
+              }
+            });
+          }
         }
       }
     }
-  });
+  );
 
   socket.on("rooms", (roomsData: { [key: string]: RoomInfo }) => {
     const leavingRoomId = localStorage.getItem("A13C_LEAVING_ROOM");
     if (leavingRoomId) {
       return;
     }
-    
+
     // 수동 새로고침 모드에서는 자동으로 방 목록을 갱신하지 않음
     if (!refreshBtn && roomsData) {
       // 현재 방 정보만 업데이트
@@ -1021,11 +1032,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
-  
+
   // 사용자가 이미 방에 참여 중이고 새로고침 한 경우 자동 재접속
   const currentUser = loadCurrentUser();
   const currentRoom = loadCurrentRoom();
-  
+
   if (currentUser && currentRoom) {
     // 사용자 정보와 방 정보를 폼에 채움
     userId.value = currentUser.userId;
@@ -1033,14 +1044,14 @@ document.addEventListener("DOMContentLoaded", () => {
     enterRoomId.value = currentRoom.roomName;
     enterRoomId.setAttribute("data-room-id", currentRoom.roomId);
     connectedRoomElem.textContent = `${currentRoom.roomName} (재접속 중...)`;
-    
+
     // 소켓 재연결 및 방 재입장
     const joinParams: JoinRoomParams = {
       roomId: currentRoom.roomId,
       user_id: currentUser.userId,
-      nickName: currentUser.nickName
+      nickName: currentUser.nickName,
     };
-    
+
     // 약간의 딜레이 후 재입장 시도 (소켓 연결이 완료될 시간 확보)
     setTimeout(async () => {
       try {
@@ -1048,18 +1059,19 @@ document.addEventListener("DOMContentLoaded", () => {
         if (result && result.ok) {
           console.log("페이지 새로고침 후 채팅방에 자동 재입장했습니다.");
           connectedRoomElem.textContent = `${currentRoom.roomName} (${currentRoom.memberCount}/5)`;
-          
+
           // 채팅 화면에 재입장 메시지 표시
           if (chatScreen) {
             const messageElement = document.createElement("div");
-            messageElement.textContent = "페이지 새로고침 후 채팅방에 재입장했습니다.";
+            messageElement.textContent =
+              "페이지 새로고침 후 채팅방에 재입장했습니다.";
             messageElement.style.color = "#888";
             messageElement.style.fontStyle = "italic";
             messageElement.style.padding = "4px 8px";
             chatScreen.appendChild(messageElement);
             chatScreen.scrollTop = chatScreen.scrollHeight;
           }
-          
+
           // 채팅 입력창에 포커스
           if (msgInput) {
             msgInput.focus();
@@ -1070,19 +1082,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }, 1000);
   }
-  
+
   // 로비에서 전달된 정보 처리
   const savedRoomInfo = localStorage.getItem("A13C_CREATE_ROOM_INFO");
   if (savedRoomInfo) {
     try {
       const roomInfo = JSON.parse(savedRoomInfo);
-      
+
       // 생성된지 10분 이내의 정보만 사용
-      if (roomInfo && roomInfo.timestamp && Date.now() - roomInfo.timestamp < 10 * 60 * 1000) {
+      if (
+        roomInfo &&
+        roomInfo.timestamp &&
+        Date.now() - roomInfo.timestamp < 10 * 60 * 1000
+      ) {
         // 사용자 정보 입력
         userId.value = roomInfo.userId || "";
         nickName.value = roomInfo.nickName || "";
-        
+
         // 방 이름 입력
         if (roomInfo.isCreator) {
           // 방 생성자인 경우
@@ -1090,14 +1106,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           // 참여자인 경우
           enterRoomId.value = roomInfo.roomName || "";
-          
+
           // 방 ID가 있으면 데이터 속성으로 저장
           if (roomInfo.roomId) {
             console.log("로비에서 전달받은 방 ID:", roomInfo.roomId);
             enterRoomId.setAttribute("data-room-id", roomInfo.roomId);
           }
         }
-        
+
         // 페이지 로드 후 약간의 딜레이를 두고 자동 입장
         setTimeout(() => {
           joinRoomBtn.click();
