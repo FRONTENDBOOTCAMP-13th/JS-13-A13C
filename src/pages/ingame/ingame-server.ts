@@ -37,7 +37,7 @@ async function updateOpponentNicknames() {
     const joinResult = await joinRoom(joinParams);
     console.log("✅ joinRoom 결과:", joinResult);
 
-    const roomInfo = await getRoomInfo(currentRoom.roomId);
+    const roomInfo = joinResult.roomInfo;
     console.log("✅ roomInfo:", roomInfo);
 
     if (!roomInfo || !roomInfo.memberList) return;
