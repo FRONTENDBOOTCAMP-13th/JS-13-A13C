@@ -58,9 +58,7 @@ function increaseRound(roundScore: Record<string, number>) {
 
   console.log(`라운드 ${currentRound} 승자 ${winner} (점수: ${highestScore})`)
 
-  showRoundWinner();
-
-  if (currentRound > MAX_ROUND){
+  if (currentRound >= MAX_ROUND){
     setTimeout(() => {
       showRanking();
     }, 3000);
@@ -75,137 +73,6 @@ function increaseRound(roundScore: Record<string, number>) {
   });
 }
 
-
-/**
- * 매 라운드 종료 후 화면에 모달로 승자 표시
- */
-function showRoundWinner() {
-  const roundTable = document.createElement("div");
-  roundTable.id = "round-table"
-  roundTable.className = "fixed inset-0 z-50 flex items-center justify-center bg-black/80";
-
-  //테이블 내용 구성
-  fetch("/src/components/score-table/round/round-table.html")
-    .then(response => response.text())
-    .then(html => {
-      // HTML을 DOM으로 파싱
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, "text/html");
-
-      const content = doc.getElementById("score-tables")
-
-      if(content) {
-        roundTable.appendChild(content);
-        document.body.appendChild(roundTable);
-
-        updateRoundWinnerTable();
-
-        updateTotalScoreTable();
-
-        if(currentRound <= MAX_ROUND){
-          setTimeout(() => {
-            const container = document.getElementById('round-table');
-            if(container){
-              container.remove();
-            }
-          },3000);
-        }
-      }
-    })
-    .catch(error => {
-      console.error("라운드 테이블 로드 실패", error);
-    })
-}
-
-
-/**
- * 라운드별 승자 테이블 내용 업데이트
- */
-function updateRoundWinnerTable() {
-  const roundWinnerTable = document.getElementById("round-winner-body");
-  if(!roundWinnerTable) return;
-
-  roundWinnerTable.innerHTML = ""; // 기존 내용 초기화
-
-  roundWinners.forEach(winner => {
-    const row = document.createElement("tr");
-    row.className = "hover: bg-gray-100 cursor-pointer transition-color duration-300";
-
-    if(winner.round === currentRound){
-      row.classList.add("bg-blue-100");
-    }
-
-    row.innerHTML = `
-      <td class="px-4 py-2 border-r border-[#9E844F]">${winner.round}</td>
-      <td class="px-4 py-2 border-r border-[#9E844F]">${winner.winner}</td>
-      <td class="px-4 py-2">${winner.score}</td>
-    `;
-
-    roundWinnerTable.appendChild(row);
-  })
-}
-
-/**
- * 누적 승점을 테이블에 업데이트 (score-table.html)
- */
-function updateTotalScoreTable(){
-  const totalScoreHeader = document.getElementById("total-score-header")
-  const totalScoreRow = document.getElementById("total-score-row");
-
-  if(!totalScoreHeader || !totalScoreRow) return;
-
-  totalScoreHeader.innerHTML = "";
-  totalScoreRow.innerHTML = "";
-
-  //순위 열 추가
-  const rankHeader = document.createElement("th");
-  rankHeader.className = "px-4 py-2 text-center uppercase tracking-wide border-r border-[#9E844F] text-white";
-  rankHeader.textContent = "순위";
-  totalScoreHeader.appendChild(rankHeader);
-
-  //모든 참가자 닉네임 헤더로 추가
-  participantList.forEach(player => {
-    const header = document.createElement("th");
-    header.className = "px-4 py-2 text-center uppercase tracking-wide border-r border-[#9E844F] text-white";
-    header.textContent = player;
-    totalScoreHeader.appendChild(header);
-  });
-
-  //누적 승점에 따른 순위 계산
-  const sortedPlayers = [...participantList].sort((a, b) => (totalScores[b] || 0) - (totalScores[a] || 0));
-  const ranks: Record<string, number> = {};
-
-  let currentRank = 1;
-  let prevScore = -1;
-
-  sortedPlayers.forEach((player, index) => {
-    const score = totalScores[player] || 0;
-    if(score !== prevScore){
-      currentRank = index + 1;
-    }
-    ranks[player] = currentRank;
-    prevScore = score;
-  });
-
-  //순위 셀 추가
-  const rankCell = document.createElement("td");
-  rankCell.className = "px-4 py-2 border-r border-[#9E844F]";
-  rankCell.innerHTML = sortedPlayers.map(player => `${ranks[player]}`).join("<br>");
-  totalScoreRow.appendChild(rankCell);
-
-  //각 참가자 수 점수 추가
-  participantList.forEach(player => {
-    const scoreCell = document.createElement("td");
-    scoreCell.className = "px-4 py-2 border-r border-[#9E844F]";
-
-    if(ranks[player] === 1){
-      scoreCell.className += "text-yellow-300 font-bold";
-    }
-
-    scoreCell.innerHTML = `${totalScores[player] || 0}`;
-    totalScoreRow.appendChild(scoreCell);
-  })
-}
 
 /**
  * 모든 라운드가 끝난 후 최종 순위 표시
