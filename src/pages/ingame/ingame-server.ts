@@ -35,28 +35,27 @@ async function updateOpponentNicknames() {
 
   try {
     const joinResult = await joinRoom(joinParams);
-    console.log("✅ joinRoom 결과:", joinResult);
+    console.log("joinRoom 결과:", joinResult);
 
     const roomInfo = await getRoomInfo(currentRoom.roomId);
-    console.log("✅ roomInfo:", roomInfo);
+    console.log("roomInfo:", roomInfo);
 
     if (!roomInfo || !roomInfo.memberList) return;
 
     const nickNames = Object.values(roomInfo.memberList).map((m) => m.nickName);
-    console.log("✅ nickNames:", nickNames);
-
+    console.log("nickNames:", nickNames);
     for (let i = 1; i <= 4; i++) {
       const el = document.getElementById(`nickname-${i}`);
       const nick = nickNames[i - 1];
-      console.log(`⛳ nickname-${i}:`, el, "| nick:", nick);
+      console.log(`nickname-${i}:`, el, "| nick:", nick);
       if (el && nick) {
         el.textContent = nick;
       } else {
-        console.warn(`⚠️ nickname-${i} 요소 또는 nick이 존재하지 않음`);
+        console.warn(`nickname-${i} 요소 또는 nick이 존재하지 않음`);
       }
     }
   } catch (e) {
-    console.error("❌ joinRoom 또는 getRoomInfo 중 오류 발생:", e);
+    console.error("joinRoom 또는 getRoomInfo 중 오류 발생:", e);
   }
 }
 
