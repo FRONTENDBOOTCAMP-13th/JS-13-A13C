@@ -494,6 +494,7 @@ joinRoomBtn.addEventListener("click", async () => {
         user_id: userIdValue,
         roomName: newRoomName,
         hostName: "A13C",
+        autoClose: true,
       };
 
       const createResult = await createRoom(createParams);
@@ -821,16 +822,21 @@ leaveRoomBtn.addEventListener("click", async () => {
       // 방에서 퇴장 처리 먼저 실행
       await leaveRoom();
 
-      addToDeletedRooms(currentRoomId);
+      const autoClose = room.parents_option?.autoClose !== false
 
-      delete roomParticipantCache[currentRoomId];
-      saveCacheToStorage();
+      if(autoClose){
 
-      const roomListRow = document.querySelector(
-        `tr[data-room-id="${currentRoomId}"]`
-      );
-      if (roomListRow) {
-        roomListRow.remove();
+        addToDeletedRooms(currentRoomId);
+        delete roomParticipantCache[currentRoomId];
+        saveCacheToStorage();
+  
+        const roomListRow = document.querySelector(`tr[data-room-id="${currentRoomId}"]`);
+        if (roomListRow) {
+          roomListRow.remove();
+        }
+        alert("마지막 사용자가 퇴장하여 채팅방이 삭제되었습니다.");
+      }else{
+        alert("채팅방에서 퇴장당했습니다. (방은 유지됩니다.)");
       }
 
       clearCurrentRoom();
@@ -838,8 +844,6 @@ leaveRoomBtn.addEventListener("click", async () => {
       connectedRoomElem.textContent = "";
       enterRoomId.value = "";
       enterRoomId.removeAttribute("data-room-id");
-
-      alert("마지막 사용자가 퇴장하여 채팅방이 삭제되었습니다.");
 
       // 로비로 이동 추가
       setTimeout(() => {
