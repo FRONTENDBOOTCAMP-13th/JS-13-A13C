@@ -1,4 +1,6 @@
 import { socket } from "./A13C-chat.ts";
+import { submitCard, getRoundResults } from "./winning-point.ts";
+import type { PlayerCard } from "./winning-point.ts";
 
 // 데이터 상태 관리를 위한 변수
 let currentRound = 1;
@@ -6,7 +8,25 @@ let MAX_ROUND = 5;
 let participantList: string[] = [];
 const scoresPerRound: Record<number, Record<string, number>> = {};
 const totalScores: Record<string, number> = {};
-const roundWinners: {round: number, winner: string, score: number}[] = [];
+const roundWinners: {round: number, winners: string[], score: number, draw: boolean}[] = [];
+
+/**
+ * 플레이어의 마지막 승리 라운드 찾기
+ * @param player - 플레이어 닉네임
+ * @param winners - 라운드별 승자 정보 배열
+ * @returns 마지막으로 승리한 라운드 번호, 승리한 적 없으면 0
+*/
+// 무승부 시 가장 최근에 승리한 참여자가 최종우승시키기 위한 승리한 마지막 라운드 찾기
+function findLastWinRound(player: string, winners: {round: number, winners: string[]}[]) {
+  // 역순으로 순회하여 가장 최근 승리 라운드 찾기
+  for (let i = winners.length - 1; i >= 0; i--) {
+    if (winners[i].winners.includes(player)) {
+      return winners[i].round;
+    }
+  }
+  return 0; // 승리한 라운드가 없으면 0
+}
+
 
 /**
  * 라운드 증가 함수 - 매 라운드가 끝날 때마다 호출
@@ -20,59 +40,45 @@ function increaseRound(roundScore: Record<string, number>) {
   const roundDisplay = document.querySelectorAll(".mb-2.text-white span.font-bold");
   roundDisplay.forEach(element => {
     element.textContent = `${currentRound} / ${MAX_ROUND}`;
-  })
+  });
   
   // 첫 번째 라운드에서 참가자 목록 초기화
-  if(currentRound === 1){
+  if(currentRound === 1) {
     participantList = Object.keys(roundScore);
     participantList.forEach(player => {
-      totalScores[player] = 0; // 총점 초기화
+      totalScores[player] = 0;
     });
   }
 
   // 현재 라운드 점수 저장
   scoresPerRound[currentRound] = {...roundScore};
-
-  // 누적 점수 계산
-  Object.entries(roundScore).forEach(([player, score]) => {
-    if(!totalScores[player]) totalScores[player] = 0;
-    totalScores[player] += score;
-  })
-
-  // 라운드 승자 결정
-  let highestScore = 0;
-  let winner = '';
   
-  Object.entries(roundScore).forEach(([player, score]) => {
-    if(score > highestScore) {
-      highestScore = score;
-      winner = player;
-    }
-  });
+  // winning-point.ts의 결과 활용
+  const roundResults = getRoundResults();
+  const currentRoundResult = roundResults.find(r => r.round === currentRound - 1);
+  
+  if (currentRoundResult) {
+    roundWinners.push({
+      round: currentRoundResult.round,
+      winners: currentRoundResult.winners,
+      score: currentRoundResult.point,
+      draw: currentRoundResult.draw
+    });
+    
+    // 점수 업데이트
+    currentRoundResult.winners.forEach(winner => {
+      totalScores[winner] = (totalScores[winner] || 0) + currentRoundResult.point;
+    });
+    
+    console.log(`라운드 ${currentRoundResult.round} 승자: ${currentRoundResult.winners.join(', ')} (점수: ${currentRoundResult.point})`);
+  }
 
-  roundWinners.push({
-    round: currentRound,
-    winner: winner,
-    score: highestScore
-  });
-
-  console.log(`라운드 ${currentRound} 승자 ${winner} (점수: ${highestScore})`)
-
-  if (currentRound >= MAX_ROUND){
+  if (currentRound > MAX_ROUND) {
     setTimeout(() => {
       showRanking();
     }, 3000);
   }
-
-  // 서버에 라운드 결과 전송
-  socket.emit("round_result", {
-    round: currentRound,
-    winner: winner,
-    score: highestScore,
-    totalScores: totalScores
-  });
 }
-
 
 /**
  * 모든 라운드가 끝난 후 최종 순위 표시
@@ -149,13 +155,12 @@ function updateFinalRoundWinnerTable() {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td class="px-6 py-3">${winner.round}</td>
-      <td class="px-6 py-3">${winner.winner}</td>
-      <td class="px-6 py-3">${winner.score}</td>
+      <td class="px-6 py-3">${winner.winners.join(', ')}</td>
+      <td class="px-6 py-3">${winner.score}${winner.draw ? ' (무승부)' : ''}</td>
     `;
     roundWinnerBody.appendChild(row);
-  })
+  });
 }
-
 
 /**
  * 최종 누적 점수 테이블 업데이트
@@ -185,20 +190,28 @@ function updateFinalTotalScoreTable() {
   })
 
   // 승점에 따른 순위 계산
-  const sortedPlayers = [...participantList].sort((a, b) => (totalScores[b] || 0) - (totalScores[a] || 0));
+  // 승점에 따른 순위 계산 - 동점자는 최근 라운드 승자 우선
+  const sortedPlayers = [...participantList].sort((a, b) => {
+    const scoreA = totalScores[a] || 0;
+    const scoreB = totalScores[b] || 0;
+    
+    // 점수가 다르면 점수로 정렬
+    if (scoreA !== scoreB) {
+      return scoreB - scoreA;
+    }
+    
+    // 점수가 같으면 가장 최근에 승리한 라운드 찾기
+    const lastWinA = findLastWinRound(a, roundWinners);
+    const lastWinB = findLastWinRound(b, roundWinners);
+    
+    // 최근 승리 라운드가 높은 플레이어 우선
+    return lastWinB - lastWinA;
+  });
   const ranks: Record<string, number> = {};
 
-  // 순위 계산(동점자는 같은 순위)
-  let currentRank = 1;
-  let prevScore = -1;
-
+  // 순위 계산 (동점자는 최근 승리 라운드 순으로 정렬)
   sortedPlayers.forEach((player, index) => {
-    const score = totalScores[player] || 0;
-    if(score !== prevScore){
-      currentRank = index + 1;
-    }
-    ranks[player] = currentRank;
-    prevScore = score;
+    ranks[player] = index + 1;
   })
 
   //순위 셀 추가
@@ -237,13 +250,24 @@ function updateFinalTotalScoreTable() {
 }
 
 //라운드 끝날 때 호출하는 함수
-function completeRound(roundScore: Record<string,number>){
+function completeRound(roundScore: Record<string, number>) {
+  // 전체 참가자 목록 업데이트 (필요한 경우)
+  if (participantList.length === 0) {
+    participantList = Object.keys(roundScore);
+  }
+  
+  // 라운드 증가 및 UI 업데이트
   increaseRound(roundScore);
 }
 
+//서버에서 카드 제출 이벤트를 수신받아 처리함
+socket.on("cardSubmitted", (data: PlayerCard) => {
+  submitCard(data.round, data.nickName, data.card);
+});
+
 // 서버에서 라운드 결과를 수신 받음
 socket.on("game_round_complete", (data: {scores: Record<string, number>}) => {
-  completeRound(data.scores); // 
+  completeRound(data.scores);
 }) 
 
 export { increaseRound, showRanking, completeRound };
