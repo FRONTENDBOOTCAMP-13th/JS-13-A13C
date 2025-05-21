@@ -109,7 +109,14 @@ export function appendCard(cardNum: number, disabled: boolean): void {
     slot.setAttribute("data-card-src", card.src);
     card.remove();
     updateHandCardAvailability();
+    if (selectedCardNumbers.length === 2) {
+      // 카드 2장 뽑혔으니 초기화 버튼 숨기기
+      resetBtn.style.display = "none";
+      // 제출 타이머 자동 시작
+      startSubmitTimer();
+    }
   });
+
   myCardContainer.appendChild(card);
 }
 
@@ -419,7 +426,6 @@ if (selectedCardNumbers.length === 2) {
 // 초기 로직에 타이머 호출
 window.addEventListener("DOMContentLoaded", () => {
   renderMyCards();
-
   revealOpponentCards();
   startSelectionTimer();
   submitBtnFun();
