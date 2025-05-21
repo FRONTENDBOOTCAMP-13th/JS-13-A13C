@@ -52,7 +52,7 @@ let lastDisabled = new Set<number>();
 /** 현재 선택된 카드 번호 배열 (최대 2개) */
 let selectedCardNumbers: number[] = [];
 /** 현재 활성화된 카드 슬롯 ("left" | "right" | null) */
-// let activeCardId: "left" | "right" | null = null;
+let activeSlot: "left" | "right" | null = null;
 
 /**
  * 플레이어의 손패 카드를 렌더링합니다.
@@ -109,21 +109,27 @@ export function appendCard(cardNum: number, disabled: boolean): void {
     slot.setAttribute("data-card-src", card.src);
     card.remove();
     updateHandCardAvailability();
+    if (selectedCardNumbers.length === 2) {
+      // 카드 2장 뽑혔으니 초기화 버튼 숨기기
+      resetBtn.style.display = "none";
+      // 제출 타이머 자동 시작
+      startSubmitTimer();
+    }
   });
+
   myCardContainer.appendChild(card);
 }
 
 /** 슬롯 클릭 시 활성 슬롯을 전환할 수 있게 이벤트 설정 */
-export function setupSlotToggle() {
-  [selectedLeft, selectedRight].forEach((slot) => {
-    slot.addEventListener("click", () => {
-      if (!slot.getAttribute("data-card-src")) return;
-      selectedLeft.classList.remove("border-4", "border-yellow-300");
-      selectedRight.classList.remove("border-4", "border-yellow-300");
-      slot.classList.add("border-4", "border-yellow-300");
-    });
+[selectedLeft, selectedRight].forEach((slot) => {
+  slot.addEventListener("click", () => {
+    if (!slot.dataset.cardSrc) return;
+    selectedLeft.classList.remove("border-4", "border-yellow-300");
+    selectedRight.classList.remove("border-4", "border-yellow-300");
+    slot.classList.add("border-4", "border-yellow-300");
+    activeSlot = slot === selectedLeft ? "left" : "right";
   });
-}
+});
 
 /** 손패의 카드 클릭 가능 여부 업데이트 */
 export function updateHandCardAvailability(): void {
@@ -171,9 +177,6 @@ export function flyCard(
 
 // 리셋 버튼 클릭 핸들러
 resetBtn.addEventListener("click", () => {
-  // let activeCardId: "left" | "right" | null = null;
-  selectedCardNumbers = [];
-  // activeCardId = null;
   [selectedLeft, selectedRight].forEach((el) => {
     el.style.backgroundImage = `url("/imges/card-back.webp")`;
     el.removeAttribute("data-card-src");
@@ -318,8 +321,112 @@ export function revealOpponentCards(): void {
   });
 }
 
-// 초기 렌더 및 이벤트 설정
-renderMyCards();
-setupSlotToggle();
-revealOpponentCards();
-submitBtnFun();
+// --- 타이머 & 자동 선택 기능 추가 ---
+
+// 타이머 표시 요소
+const timerEl = document.getElementById("selection-timer") as HTMLDivElement;
+
+let selectionTime = 8;
+let timerInterval: number;
+
+/** 2장 미만 선택 시, 손패에서 남은 카드 중 무작위로 클릭해 선택 처리 */
+function autoSelectRandom() {
+  const imgs = Array.from(
+    document.querySelectorAll<HTMLImageElement>("#my-cards img[data-card]")
+  );
+  const need = 2 - selectedCardNumbers.length;
+  const available = imgs.slice(); // 복사
+
+  for (let i = 0; i < need; i++) {
+    const idx = Math.floor(Math.random() * available.length);
+    const cardEl = available[idx];
+    available.splice(idx, 1);
+    // 클릭 이벤트 트리거 -> appendCard 쪽 로직이 실행됩니다
+    cardEl.click();
+  }
+  startSubmitTimer();
+}
+
+/** 8초 카운트다운 시작 */
+function startSelectionTimer() {
+  clearInterval(timerInterval);
+  selectionTime = 8;
+  timerEl.textContent = `카드 선택 시간: ${selectionTime}초`;
+
+  timerInterval = window.setInterval(() => {
+    selectionTime--;
+    if (selectionTime > 0) {
+      timerEl.textContent = `카드 선택 시간: ${selectionTime}초`;
+    } else {
+      clearInterval(timerInterval);
+      timerEl.textContent = "시간 종료";
+
+      // 2장 미만이면 자동 선택
+      if (selectedCardNumbers.length < 2) {
+        autoSelectRandom();
+      }
+      // (원하시면 여기서 자동 제출까지 할 수 있지만,
+      // 질문대로 슬롯에만 채우려면 아래 줄은 주석 처리하세요)
+      // submitBtn.click();
+    }
+  }, 1000);
+}
+
+// 2) 슬롯 클릭 시 activeSlot 설정
+[selectedLeft, selectedRight].forEach((slot) => {
+  slot.addEventListener("click", () => {
+    if (!slot.dataset.cardSrc) return;
+    selectedLeft.classList.remove("border-4", "border-yellow-300");
+    selectedRight.classList.remove("border-4", "border-yellow-300");
+    slot.classList.add("border-4", "border-yellow-300");
+    activeSlot = slot === selectedLeft ? "left" : "right";
+  });
+});
+
+// 3) 제출까지 남은 시간 표시 요소
+const submitTimerEl = document.getElementById(
+  "selection-timer"
+) as HTMLDivElement;
+
+let submitTime = 8;
+let submitInterval: number;
+
+/** 4) 제출 타이머 시작 */
+function startSubmitTimer() {
+  clearInterval(submitInterval);
+  submitTime = 8;
+  submitTimerEl.textContent = `제출 시간: ${submitTime}초`;
+
+  submitInterval = window.setInterval(() => {
+    submitTime--;
+    if (submitTime > 0) {
+      submitTimerEl.textContent = `제출 시간: ${submitTime}초`;
+    } else {
+      clearInterval(submitInterval);
+      submitTimerEl.textContent = "제출 시간 종료";
+
+      // 5) 아직 슬롯을 선택하지 않았으면 랜덤으로 하나 선택
+      if (!activeSlot) {
+        activeSlot = Math.random() < 0.5 ? "left" : "right";
+        const slotEl = activeSlot === "left" ? selectedLeft : selectedRight;
+        slotEl.classList.add("border-4", "border-yellow-300");
+      }
+
+      // 6) submit 버튼 클릭
+      submitBtn.click();
+    }
+  }, 1000);
+}
+
+// 7) 카드가 두 장 선택되는 시점에 호출하도록, appendCard 클릭 핸들러 안에 아래 추가
+if (selectedCardNumbers.length === 2) {
+  startSubmitTimer();
+}
+
+// 초기 로직에 타이머 호출
+window.addEventListener("DOMContentLoaded", () => {
+  renderMyCards();
+  revealOpponentCards();
+  startSelectionTimer();
+  submitBtnFun();
+});

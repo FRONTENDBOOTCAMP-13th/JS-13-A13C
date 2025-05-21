@@ -81,7 +81,6 @@ const selectedRight = document.getElementById(
   "selected-right"
 ) as HTMLDivElement;
 
-
 const isHost = localStorage
   .getItem("A13C_CREATE_ROOM_INFO")
   ?.includes('"isCreator":true');
@@ -98,8 +97,6 @@ overlay.innerHTML = isHost
      </div>`
   : `<p class="pointer-events-none">방장이 게임을 시작할 때까지 기다려주세요</p>`;
 document.body.appendChild(overlay);
-
-
 
 export function sendStep1Cards(): void {
   const card1 = Number(
