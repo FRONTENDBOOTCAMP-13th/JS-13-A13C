@@ -1,3 +1,7 @@
+import {
+  getTotalPoints,
+  getRoundResults,
+} from "../../../pages/ingame/winning-point.ts";
 import { getRoomInfo } from "../../../pages/ingame/A13C-chat.ts";
 
 // 현재 방 정보 로드
@@ -23,52 +27,49 @@ async function updateScoreTable() {
 
   const totalScoreHeader = document.getElementById("total-score-header");
   const totalScoreRow = document.getElementById("total-score-row");
+  const totals = getTotalPoints();
+
+  const mappedTotals = nicknames.map((nick) => {
+    const found = totals.find((t) => t.nickName === nick);
+    return { nickName: nick, totalPoint: found ? found.totalPoint : 0 };
+  });
+
   if (totalScoreHeader && totalScoreRow) {
-    totalScoreHeader.innerHTML = "";
-    totalScoreRow.innerHTML = "";
-
-    nicknames.forEach((nick) => {
-      const th = document.createElement("th");
-      th.className = "px-6 py-3 text-center";
-      th.textContent = nick;
-      totalScoreHeader.appendChild(th);
-
-      const td = document.createElement("td");
-      td.className = "px-6 py-3 text-center";
-      td.textContent = `${Math.floor(Math.random() * 30)}점`;
-      totalScoreRow.appendChild(td);
-    });
+    totalScoreHeader.innerHTML = mappedTotals
+      .map((t) => `<th class="px-6 py-3">${t.nickName}</th>`)
+      .join("");
+    totalScoreRow.innerHTML = mappedTotals
+      .map((t) => `<td class="px-6 py-3 text-center">${t.totalPoint}</td>`)
+      .join("");
   }
 
   const roundWinnerBody = document.getElementById("round-winner-body");
   if (roundWinnerBody) {
     roundWinnerBody.innerHTML = "";
-    nicknames.forEach((nick, index) => {
-      const tr = document.createElement("tr");
-
-      const roundTd = document.createElement("td");
-      roundTd.className = "px-6 py-3 text-center";
-      roundTd.textContent = `${index + 1}라운드`;
-
-      const winnerTd = document.createElement("td");
-      winnerTd.className = "px-6 py-3 text-center";
-      winnerTd.textContent = nick;
-
-      const scoreTd = document.createElement("td");
-      scoreTd.className = "px-6 py-3 text-center";
-      scoreTd.textContent = `${Math.floor(Math.random() * 10)}점`;
-
-      tr.appendChild(roundTd);
-      tr.appendChild(winnerTd);
-      tr.appendChild(scoreTd);
-
-      roundWinnerBody.appendChild(tr);
+    const roundResults = getRoundResults();
+    roundResults.forEach(({ round, winners, point, draw }) => {
+      if (draw) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="px-6 py-3 text-center">${round}</td>
+          <td class="px-6 py-3 text-center">무승부</td>
+          <td class="px-6 py-3 text-center">1</td>
+        `;
+        roundWinnerBody.appendChild(tr);
+      } else {
+        winners.forEach((winner) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="px-6 py-3 text-center">${round}</td>
+            <td class="px-6 py-3 text-center">${winner}</td>
+            <td class="px-6 py-3 text-center">${point}</td>
+          `;
+          roundWinnerBody.appendChild(tr);
+        });
+      }
     });
   }
 }
-
-// 페이지 진입 시 즉시 호출
-updateScoreTable();
 
 // 오버레이
 export async function showScoreTable() {
@@ -88,11 +89,11 @@ export async function showScoreTable() {
   // 화면에 표시
   overlay.style.display = "flex";
 
-  // 5초 후 자동 제거
+  // 4초 후 자동 제거
   setTimeout(() => {
     overlay.style.display = "none";
   }, 4000);
 }
 
-// TODO 호출 부분은 ingame에서 라운드 종료 판단 후 호출하도록 수정해야 함
+// TODO ingame에서 라운드 종료 판단 후 호출하도록 수정해야 함
 showScoreTable();
