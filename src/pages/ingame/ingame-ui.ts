@@ -57,7 +57,7 @@ let lastDisabled = new Set<number>();
 /** 현재 선택된 카드 번호 배열 (최대 2개) */
 let selectedCardNumbers: number[] = [];
 /** 현재 활성화된 카드 슬롯 ("left" | "right" | null) */
-let activeCardId: "left" | "right" | null = null;
+// let activeCardId: "left" | "right" | null = null;
 
 /**
  * 플레이어의 손패 카드를 렌더링합니다.
@@ -126,7 +126,8 @@ export function setupSlotToggle() {
       selectedLeft.classList.remove("border-4", "border-yellow-300");
       selectedRight.classList.remove("border-4", "border-yellow-300");
       slot.classList.add("border-4", "border-yellow-300");
-      activeCardId = slot === selectedLeft ? "left" : "right";
+      // let activeCardId: "left" | "right" | null = null;
+      // activeCardId = slot === selectedLeft ? "left" : "right";
     });
   });
 }
@@ -173,13 +174,14 @@ function flyCard(fromEl: HTMLElement, toEl: HTMLElement, src: string): void {
 
 // 리셋 버튼 클릭 핸들러
 resetBtn.addEventListener("click", () => {
+  // let activeCardId: "left" | "right" | null = null;
   [selectedLeft, selectedRight].forEach((el) => {
     el.style.backgroundImage = `url(/imges/card-back.webp)`;
     el.removeAttribute("data-card-src");
     el.classList.remove("border-4", "border-yellow-300");
   });
   selectedCardNumbers = [];
-  activeCardId = null;
+  // activeCardId = null;
   tempDisabled.clear();
   lastDisabled.clear();
   removedNumbers.clear();
@@ -187,80 +189,125 @@ resetBtn.addEventListener("click", () => {
 });
 
 // 제출 버튼 클릭 핸들러
-submitBtn.addEventListener("click", () => {
-  activeCardId = selectedLeft.getAttribute("data-card-src")
-    ? "left"
-    : selectedRight.getAttribute("data-card-src")
-      ? "right"
-      : null;
-  if (!activeCardId) {
-    alert("카드를 선택해주세요");
-    return;
-  }
+function submitBtnFun() {
+  submitBtn.addEventListener("click", () => {
+    // 1️⃣ 활성 슬롯 확인
+    const activeCardId = selectedLeft.getAttribute("data-card-src")
+      ? "left"
+      : selectedRight.getAttribute("data-card-src")
+        ? "right"
+        : null;
+    if (!activeCardId) {
+      alert("카드를 선택해주세요");
+      return;
+    }
 
-  const [a, b] = selectedCardNumbers;
-  const keepNum = activeCardId === "left" ? a : b;
-  const loseNum = activeCardId === "left" ? b : a;
-  const keepSrc = `/imges/card-${keepNum}.webp`;
-  const loseSrc = `/imges/card-${loseNum}.webp`;
-  selectedLeft.style.backgroundImage = `url("${keepSrc}")`;
-  selectedRight.style.backgroundImage = `url("${loseSrc}")`;
-  flyCard(selectedLeft, scoreBoard, keepSrc);
-  flyCard(selectedRight, tempStorage, loseSrc);
-  removedNumbers.add(keepNum);
-  tempDisabled = new Set(lastDisabled);
-  lastDisabled.clear();
-  lastDisabled.add(loseNum);
-  [selectedLeft, selectedRight].forEach((el) => {
-    el.style.backgroundImage = `url("/imges/card-back.webp")`;
-    el.removeAttribute("data-card-src");
-    el.classList.remove("border-4", "border-yellow-300");
+    // 2️⃣ 선택된 카드 번호 분해
+    const [a, b] = selectedCardNumbers;
+    const keepNum = activeCardId === "left" ? a : b;
+    const loseNum = activeCardId === "left" ? b : a;
+
+    // 3️⃣ 이미지 경로 설정
+    const keepSrc = `/imges/card-${keepNum}.webp`;
+    const loseSrc = `/imges/card-${loseNum}.webp`;
+
+    // 4️⃣ 카드 비행 애니메이션 실행
+    flyCard(selectedLeft, scoreBoard, keepSrc);
+    flyCard(selectedRight, tempStorage, loseSrc);
+
+    // 5️⃣ 상태 업데이트
+    removedNumbers.add(keepNum);
+    tempDisabled = new Set(lastDisabled);
+    lastDisabled.clear();
+    lastDisabled.add(loseNum);
+    tempDisabled = new Set(lastDisabled);
+
+    // 6️⃣ 슬롯 초기화
+    [selectedLeft, selectedRight].forEach((el) => {
+      el.style.backgroundImage = `url("/imges/card-back.webp")`;
+      el.removeAttribute("data-card-src");
+      el.classList.remove("border-4", "border-yellow-300");
+    });
+    selectedCardNumbers = [];
+    // activeCardId = null;
+
+    // 7️⃣ 내 카드 UI 재렌더링
+    renderMyCards();
+
+    // 8️⃣ 서버로 제출 메시지 전송
+    sendMsg(
+      `님이 선택한 카드는 ${keepNum}번 카드, 선택하지 않은 카드는 ${loseNum}번 카드입니다.`
+    );
+    console.log("전송된 오른쪽 카드 번호:", loseNum);
+    console.log("전송된 왼쪽 카드 번호:", keepNum);
   });
-  activeCardId = null;
-  selectedCardNumbers = [];
-  tempDisabled = new Set(lastDisabled);
-  renderMyCards();
+}
+
+socket.on("message", (data: object) => {
+  submitBtnFun();
+  sendMsg<object>({ msg: data });
+  console.log("수신된 카드 src:", data);
 });
 
 // 상대 플레이어 카드 공개 (테스트용)
 export function revealOpponentCards(): void {
   const opponentContainers =
     document.querySelectorAll<HTMLDivElement>(".flex.space-x-1");
-
-  const fakeOpponentCards = Array.from({ length: 4 }, () => {
-    const a = Math.floor(Math.random() * 8) + 1;
-    let b;
-    do {
-      b = Math.floor(Math.random() * 8) + 1;
-    } while (b === a);
-    return [a, b];
-  });
+  // 테스트용 더미 카드 번호 생성
+  const fakeOpponentCards = Array.from(
+    { length: opponentContainers.length },
+    () => {
+      const a = Math.floor(Math.random() * 8) + 1;
+      let b: number;
+      do {
+        b = Math.floor(Math.random() * 8) + 1;
+      } while (b === a);
+      return [a, b] as [number, number];
+    }
+  );
 
   opponentContainers.forEach((container, i) => {
     const imgs = container.querySelectorAll<HTMLImageElement>("img");
+
+    // 카드 이미지와 data-card 속성 세팅
     imgs.forEach((img, j) => {
       const num = fakeOpponentCards[i][j];
       img.src = `/imges/card-${num}.webp`;
       img.setAttribute("data-card", String(num));
+      img.classList.remove("border-4", "border-yellow-300", "opacity-50");
     });
-  });
 
-  opponentContainers.forEach((container) => {
-    const imgs = container.querySelectorAll<HTMLImageElement>("img");
+    // 클릭 핸들러 등록
     imgs.forEach((img) => {
       img.addEventListener("click", () => {
-        // 선택 표시 로직은 그대로 유지
-        imgs.forEach((i) => {
-          i.classList.remove("border-4", "border-yellow-300");
-          i.classList.add("opacity-50");
+        // 1️⃣ 선택 표시 토글
+        imgs.forEach((el) => {
+          el.classList.remove("border-4", "border-yellow-300");
+          el.classList.add("opacity-50");
         });
         img.classList.add("border-4", "border-yellow-300");
         img.classList.remove("opacity-50");
 
-        const numStr = img.getAttribute("data-card");
-        if (numStr) {
-          sendMsg(`${numStr}번 카드가 제출됐습니다.`);
-          console.log("전송된 카드 번호:", numStr);
+        // 2️⃣ 선택한 카드와 비활성 카드 번호 가져오기
+        const selected = img.getAttribute("data-card");
+        const other = Array.from(imgs)
+          .find((el) => el !== img)
+          ?.getAttribute("data-card");
+
+        // 3️⃣ 닉네임 추출
+        const parent = container.parentElement;
+        let nickname = `플레이어${i + 1}`;
+        const nickEl = parent?.querySelector(
+          `#nickname-${i + 1}`
+        ) as HTMLElement;
+        if (nickEl && nickEl.textContent) nickname = nickEl.textContent;
+
+        // 4️⃣ 서버로 메시지 전송
+        if (selected && other) {
+          sendMsg(
+            `${nickname}님이 선택한 카드는 ${selected}번 카드, 선택하지 않은 카드는 ${other}번 카드입니다.`
+          );
+          console.log(`선택 카드: ${selected}, 비활성 카드: ${other}`);
         }
       });
     });
@@ -277,3 +324,4 @@ socket.on("message", (data: object) => {
 renderMyCards();
 setupSlotToggle();
 revealOpponentCards();
+submitBtnFun();
