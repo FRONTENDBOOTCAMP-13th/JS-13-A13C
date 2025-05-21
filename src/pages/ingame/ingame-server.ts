@@ -2,7 +2,7 @@
 import "../../style.css";
 import "./ingame-ui.ts";
 import { sendMsg, socket, joinRoom, getRoomInfo } from "./A13C-chat.ts";
-import type { RoomMembers, RoomMember, JoinRoomParams } from "./A13C-chat.ts";
+import type { RoomMembers,  JoinRoomParams } from "./A13C-chat.ts";
 import "./chat.ts";
 
 function loadCurrentRoom() {
@@ -63,10 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
   updateOpponentNicknames();
 });
 
-interface TempCard {
-  card: number;
-  returnRound: number;
-}
+// interface TempCard {
+//   card: number;
+//   returnRound: number;
+// }
 
 interface Step1Payload {
   action: "step1";
@@ -75,12 +75,12 @@ interface Step1Payload {
   card2: number;
 }
 
-let currentRound = 1;
+// let currentRound = 1;
 let selectedCardNumbers: number[] = [];
-let activeCardId: "left" | "right" | null = null;
-let mySubmittedCard: number | null = null;
-let tempStorage: TempCard[] = [];
-const submittedCards: { [playerId: string]: number } = {};
+// let activeCardId: "left" | "right" | null = null;
+// let mySubmittedCard: number | null = null;
+// let tempStorage: TempCard[] = [];
+// const submittedCards: { [playerId: string]: number } = {};
 
 const selectedLeft = document.getElementById("selected-left") as HTMLDivElement;
 const selectedRight = document.getElementById(
@@ -89,9 +89,9 @@ const selectedRight = document.getElementById(
 const resetBtn = document.querySelector(
   "#submitbutton button:nth-child(1)"
 ) as HTMLButtonElement;
-const submitBtn = document.querySelector(
-  "#submitbutton button:nth-child(2)"
-) as HTMLButtonElement;
+// const submitBtn = document.querySelector(
+//   "#submitbutton button:nth-child(2)"
+// ) as HTMLButtonElement;
 const myCardContainer = document.getElementById("my-cards") as HTMLDivElement;
 const scoreBoard = document.getElementById("final-card-area") as HTMLDivElement;
 const tempStorageArea = document.getElementById(
@@ -174,40 +174,13 @@ function setupSubmitCardClick(): void {
   selectedLeft.addEventListener("click", () => {
     selectedLeft.classList.add("border-4", "border-yellow-300");
     selectedRight.classList.remove("border-4", "border-yellow-300");
-    activeCardId = "left";
+    // activeCardId = "left";
   });
   selectedRight.addEventListener("click", () => {
     selectedRight.classList.add("border-4", "border-yellow-300");
     selectedLeft.classList.remove("border-4", "border-yellow-300");
-    activeCardId = "right";
+    // activeCardId = "right";
   });
-}
-
-function flyCard(fromEl: HTMLElement, toEl: HTMLElement, src: string): void {
-  const fromRect = fromEl.getBoundingClientRect();
-  const toRect = toEl.getBoundingClientRect();
-  const card = document.createElement("img");
-  card.src = src;
-  const m = src.match(/card-(\d+)\.webp/);
-  if (m) card.setAttribute("data-card", m[1]);
-  card.className = "card-fly";
-  card.style.left = `${fromRect.left}px`;
-  card.style.top = `${fromRect.top}px`;
-  document.body.appendChild(card);
-  requestAnimationFrame(() => {
-    card.style.transform = `translate(${toRect.left - fromRect.left}px, ${toRect.top - fromRect.top}px)`;
-  });
-
-  setTimeout(() => {
-    card.remove();
-    const finalCard = document.createElement("img");
-    finalCard.src = src;
-    finalCard.className = "w-[80px] h-[110px]";
-    if (m) finalCard.setAttribute("data-card", m[1]);
-    toEl.innerHTML = "";
-    toEl.appendChild(finalCard);
-    updateHandCardAvailability();
-  }, 500);
 }
 
 function sendStep1Cards(): void {
@@ -231,7 +204,7 @@ sendStep1Cards();
 
 resetBtn.addEventListener("click", () => {
   selectedCardNumbers = [];
-  activeCardId = null;
+  // activeCardId = null;
   selectedLeft.style.backgroundImage = `url("/imges/card-back.webp")`;
   selectedRight.style.backgroundImage = `url("/imges/card-back.webp")`;
   selectedLeft.removeAttribute("data-card-src");
@@ -241,33 +214,6 @@ resetBtn.addEventListener("click", () => {
   scoreBoard.innerHTML = "";
   tempStorageArea.innerHTML = "";
   renderMyCards();
-});
-
-submitBtn.addEventListener("click", () => {
-  const keepEl = activeCardId === "left" ? selectedLeft : selectedRight;
-  const removeEl = activeCardId === "left" ? selectedRight : selectedLeft;
-  const keepSrc = keepEl.getAttribute("data-card-src");
-  const removeSrc = removeEl.getAttribute("data-card-src");
-  if (!activeCardId || !keepSrc || keepSrc.includes("card-back")) {
-    alert("카드를 선택해주세요");
-    return;
-  }
-  flyCard(keepEl, scoreBoard, keepSrc);
-  const m = keepSrc.match(/card-(\d+)\.webp/);
-  if (m) {
-    mySubmittedCard = Number(m[1]);
-    submittedCards["me"] = mySubmittedCard;
-  }
-  if (removeSrc) {
-    const m2 = removeSrc.match(/card-(\d+)\.webp/);
-    if (m2) {
-      const num = Number(m2[1]);
-      tempStorage.push({ card: num, returnRound: currentRound + 2 });
-      flyCard(removeEl, tempStorageArea, removeSrc);
-    }
-  }
-  selectedCardNumbers = [];
-  activeCardId = null;
 });
 
 export function removeOverlay(): boolean {
