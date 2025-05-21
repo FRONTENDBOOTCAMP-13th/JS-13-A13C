@@ -1,3 +1,9 @@
+import {
+  getTotalPoints,
+  getRoundResults,
+} from "../../pages/ingame/winning-point.ts";
+import { getRoomInfo } from "../../pages/ingame/A13C-chat.ts";
+
 const showButton = document.getElementById("show-button") as HTMLButtonElement;
 const scoreTables = document.getElementById("score-tables") as HTMLDivElement;
 
@@ -25,8 +31,6 @@ scoreTables.addEventListener("mouseleave", () => {
   scoreTables.classList.add("hidden");
 });
 
-import { getRoomInfo } from "../../pages/ingame/A13C-chat.ts";
-
 // 현재 방 정보 로드 함수
 function loadCurrentRoom() {
   const saved = sessionStorage.getItem("A13C_CURRENT_ROOM");
@@ -50,50 +54,51 @@ async function updateScoreTable() {
   // 닉네임 배열 추출
   const nicknames = Object.values(roomInfo.memberList).map((m) => m.nickName);
 
-  // 누적 승점 테이블 바디 업데이트
+  // 누적 승점 테이블
   const totalScoreHeader = document.getElementById("total-score-header");
-  const totalScoreTable = document.getElementById("total-score-row");
-  if (totalScoreHeader && totalScoreTable) {
-    totalScoreHeader.innerHTML = "";
-    nicknames.forEach((nick) => {
-      const td = document.createElement("td");
-      td.className = "px-6 py-3 text-center";
-      td.textContent = nick;
-      totalScoreHeader.appendChild(td);
-    });
+  const totalScoreRow = document.getElementById("total-score-row");
+  const totals = getTotalPoints();
 
-    totalScoreTable.innerHTML = "";
-    nicknames.forEach(() => {
-      const scoreTd = document.createElement("td");
-      scoreTd.className = "px-6 py-3 text-center";
-      scoreTd.textContent = `${Math.floor(Math.random() * 30)}점`;
-      totalScoreTable.appendChild(scoreTd);
-    });
+  // 닉네임 순서대로, 없는 닉네임은 0점
+  const mappedTotals = nicknames.map((nick) => {
+    const found = totals.find((t) => t.nickName === nick);
+    return { nickName: nick, totalPoint: found ? found.totalPoint : 0 };
+  });
+
+  if (totalScoreHeader && totalScoreRow) {
+    totalScoreHeader.innerHTML = mappedTotals
+      .map((t) => `<th class="px-6 py-3">${t.nickName}</th>`)
+      .join("");
+    totalScoreRow.innerHTML = mappedTotals
+      .map((t) => `<td class="px-6 py-3 text-center">${t.totalPoint}</td>`)
+      .join("");
   }
-  // 라운드 별 우승자 테이블 바디 업데이트
+
+  // 라운드 별 우승자 테이블
   const roundWinnerBody = document.getElementById("round-winner-body");
   if (roundWinnerBody) {
     roundWinnerBody.innerHTML = "";
-    nicknames.forEach((nick, index) => {
-      const tr = document.createElement("tr");
-
-      const roundTd = document.createElement("td");
-      roundTd.className = "px-6 py-3 text-center";
-      roundTd.textContent = `${index + 1}라운드`;
-
-      const nickTd = document.createElement("td");
-      nickTd.className = "px-6 py-3 text-center";
-      nickTd.textContent = nick;
-
-      const scoreTd = document.createElement("td");
-      scoreTd.className = "px-6 py-3 text-center";
-      scoreTd.textContent = `${Math.floor(Math.random() * 10)}점`;
-
-      tr.appendChild(roundTd);
-      tr.appendChild(nickTd);
-      tr.appendChild(scoreTd);
-
-      roundWinnerBody.appendChild(tr);
+    const roundResults = getRoundResults();
+    roundResults.forEach(({ round, winners, point, draw }) => {
+      if (draw) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="px-6 py-3 text-center">${round}</td>
+          <td class="px-6 py-3 text-center">무승부</td>
+          <td class="px-6 py-3 text-center">1</td>
+        `;
+        roundWinnerBody.appendChild(tr);
+      } else {
+        winners.forEach((winner) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="px-6 py-3 text-center">${round}</td>
+            <td class="px-6 py-3 text-center">${winner}</td>
+            <td class="px-6 py-3 text-center">${point}</td>
+          `;
+          roundWinnerBody.appendChild(tr);
+        });
+      }
     });
   }
 }
