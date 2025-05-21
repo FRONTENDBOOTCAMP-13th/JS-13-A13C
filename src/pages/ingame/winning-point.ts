@@ -77,8 +77,9 @@ export function getTotalPoints() {
   }));
 }
 
-// // 실제 동작: 카드 제출 시점에 submitCard 호출
-// import { submitCard, renderScoreTables } from "./winning-point";
+// // TODO 실제 동작: 카드 제출 시점에 submitCard 호출
+// import { submitCard } from "./winning-point";
+// import { updateScoreTable } from "../components/score-table/table.ts"; // UI 갱신용 함수 import
 
 // // 예시: 서버에서 카드 제출 이벤트를 받았을 때
 // socket.on("cardSubmitted", (data) => {
@@ -86,5 +87,5 @@ export function getTotalPoints() {
 //   submitCard(data.round, data.nickName, data.card);
 
 //   // 결과를 UI에 반영 (라운드 결과 및 누적 승점 테이블 갱신)
-//   renderScoreTables();
+//   updateScoreTable();
 // });
