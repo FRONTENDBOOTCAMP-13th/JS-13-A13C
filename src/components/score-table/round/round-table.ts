@@ -1,8 +1,12 @@
+import {
+  getTotalPoints,
+  getRoundResults,
+} from "../../../pages/ingame/winning-point.ts";
 import { getRoomInfo } from "../../../pages/ingame/A13C-chat.ts";
 
 // 현재 방 정보 로드
 function loadCurrentRoom() {
-  const saved = localStorage.getItem("A13C_CURRENT_ROOM");
+  const saved = sessionStorage.getItem("A13C_CURRENT_ROOM");
   if (!saved) return null;
   try {
     return JSON.parse(saved);
@@ -23,66 +27,73 @@ async function updateScoreTable() {
 
   const totalScoreHeader = document.getElementById("total-score-header");
   const totalScoreRow = document.getElementById("total-score-row");
+  const totals = getTotalPoints();
+
+  const mappedTotals = nicknames.map((nick) => {
+    const found = totals.find((t) => t.nickName === nick);
+    return { nickName: nick, totalPoint: found ? found.totalPoint : 0 };
+  });
+
   if (totalScoreHeader && totalScoreRow) {
-    totalScoreHeader.innerHTML = "";
-    totalScoreRow.innerHTML = "";
-
-    nicknames.forEach((nick) => {
-      const th = document.createElement("th");
-      th.className = "px-6 py-3 text-center";
-      th.textContent = nick;
-      totalScoreHeader.appendChild(th);
-
-      const td = document.createElement("td");
-      td.className = "px-6 py-3 text-center";
-      td.textContent = `${Math.floor(Math.random() * 30)}점`;
-      totalScoreRow.appendChild(td);
-    });
+    totalScoreHeader.innerHTML = mappedTotals
+      .map((t) => `<th class="px-6 py-3">${t.nickName}</th>`)
+      .join("");
+    totalScoreRow.innerHTML = mappedTotals
+      .map((t) => `<td class="px-6 py-3 text-center">${t.totalPoint}</td>`)
+      .join("");
   }
 
   const roundWinnerBody = document.getElementById("round-winner-body");
   if (roundWinnerBody) {
     roundWinnerBody.innerHTML = "";
-    nicknames.forEach((nick, index) => {
-      const tr = document.createElement("tr");
-
-      const roundTd = document.createElement("td");
-      roundTd.className = "px-6 py-3 text-center";
-      roundTd.textContent = `${index + 1}라운드`;
-
-      const winnerTd = document.createElement("td");
-      winnerTd.className = "px-6 py-3 text-center";
-      winnerTd.textContent = nick;
-
-      const scoreTd = document.createElement("td");
-      scoreTd.className = "px-6 py-3 text-center";
-      scoreTd.textContent = `${Math.floor(Math.random() * 10)}점`;
-
-      tr.appendChild(roundTd);
-      tr.appendChild(winnerTd);
-      tr.appendChild(scoreTd);
-
-      roundWinnerBody.appendChild(tr);
+    const roundResults = getRoundResults();
+    roundResults.forEach(({ round, winners, point, draw }) => {
+      if (draw) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="px-6 py-3 text-center">${round}</td>
+          <td class="px-6 py-3 text-center">무승부</td>
+          <td class="px-6 py-3 text-center">1</td>
+        `;
+        roundWinnerBody.appendChild(tr);
+      } else {
+        winners.forEach((winner) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="px-6 py-3 text-center">${round}</td>
+            <td class="px-6 py-3 text-center">${winner}</td>
+            <td class="px-6 py-3 text-center">${point}</td>
+          `;
+          roundWinnerBody.appendChild(tr);
+        });
+      }
     });
   }
 }
 
-// 페이지 진입 시 즉시 호출
-updateScoreTable();
+// 오버레이
+export async function showScoreTable() {
+  const overlay = document.getElementById("round-overlay");
+  const content = document.getElementById("round-overlay-content");
+  if (!overlay || !content) return;
 
-// 테이블 표시 함수 (외부에서 사용 가능)
-// export async function showScoreTable() {
-//   await updateScoreTable();
-//   const scoreTables = document.getElementById("score-tables");
-//   if (scoreTables) {
-//     scoreTables.classList.remove("hidden");
-//   }
-// }
+  // HTML 불러오기
+  const html = await fetch(
+    "/src/components/score-table/round/round-table.html"
+  ).then((res) => res.text());
+  content.innerHTML = html;
 
-// 다른 스크립트에서 불러올 때 사용
-// import { showScoreTable } from "./경로/scoreTable.ts";
+  // 점수 테이블 렌더링
+  await updateScoreTable();
 
-// // 라운드가 끝났을 때 호출
-// function onRoundEnd() {
-//   showScoreTable();
-// }
+  // 화면에 표시
+  overlay.style.display = "flex";
+
+  // 4초 후 자동 제거
+  setTimeout(() => {
+    overlay.style.display = "none";
+  }, 4000);
+}
+
+// TODO ingame에서 라운드 종료 판단 후 호출하도록 수정해야 함
+showScoreTable();

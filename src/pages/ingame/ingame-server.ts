@@ -2,7 +2,7 @@
 import "../../style.css";
 import "./ingame-ui.ts";
 import { sendMsg, socket, joinRoom, getRoomInfo } from "./A13C-chat.ts";
-import type { RoomMembers,  JoinRoomParams } from "./A13C-chat.ts";
+import type { RoomMembers, JoinRoomParams } from "./A13C-chat.ts";
 import "./chat.ts";
 
 function loadCurrentRoom() {
@@ -35,27 +35,27 @@ async function updateOpponentNicknames() {
 
   try {
     const joinResult = await joinRoom(joinParams);
-    console.log("joinRoom 결과:", joinResult);
+    console.log("✅ joinRoom 결과:", joinResult);
 
     const roomInfo = await getRoomInfo(currentRoom.roomId);
-    console.log("roomInfo:", roomInfo);
+    console.log("✅ roomInfo:", roomInfo);
 
     if (!roomInfo || !roomInfo.memberList) return;
 
     const nickNames = Object.values(roomInfo.memberList).map((m) => m.nickName);
-    console.log("nickNames:", nickNames);
+    console.log("✅ nickNames:", nickNames);
     for (let i = 1; i <= 4; i++) {
       const el = document.getElementById(`nickname-${i}`);
       const nick = nickNames[i - 1];
-      console.log(`nickname-${i}:`, el, "| nick:", nick);
+      console.log(`⛳ nickname-${i}:`, el, "| nick:", nick);
       if (el && nick) {
         el.textContent = nick;
       } else {
-        console.warn(`nickname-${i} 요소 또는 nick이 존재하지 않음`);
+        console.warn(`⚠️ nickname-${i} 요소 또는 nick이 존재하지 않음`);
       }
     }
   } catch (e) {
-    console.error("joinRoom 또는 getRoomInfo 중 오류 발생:", e);
+    console.error("❌ joinRoom 또는 getRoomInfo 중 오류 발생:", e);
   }
 }
 
@@ -253,39 +253,67 @@ socket.on("message", (data: Step1Payload) => {
   }
 });
 
-// members 이벤트를 통해 닉네임 할당
 socket.on("members", (members: RoomMembers) => {
-  console.log("members 이벤트 수신:", members);
-  // 현재 사용자 정보 로드
   const savedUser = localStorage.getItem("A13C_CURRENT_USER");
-  let myNick = "";
+  if (!savedUser) return;
 
-  if (savedUser) {
-    try {
-      const parsed = JSON.parse(savedUser);
-      myNick = parsed.nickName;
-    } catch (e) {
-      console.error("사용자 정보 파싱 오류:", e);
-    }
+  let myNick = "";
+  try {
+    const parsed = JSON.parse(savedUser);
+    myNick = parsed.nickName;
+  } catch (e) {
+    console.error("❌ 사용자 정보 파싱 실패:", e);
+    return;
   }
 
-  // 나를 제외한 상대방 목록 추출
-  const otherMembers = Object.values(members).filter(
-    (m) => m.nickName !== myNick
-  );
+  // 소켓 ID 기준 정렬
+  const sortedMembers = Object.entries(members)
+    .sort(([idA], [idB]) => (idA > idB ? 1 : -1))
+    .map(([_, member]) => member);
+
+  // ✅ 현재 사용자의 위치 파악
+  const myIndex = sortedMembers.findIndex((m) => m.nickName === myNick);
+
+  // ✅ 현재 사용자 기준으로, 본인을 제외한 순서 보장된 배열 생성
+  const otherMembers = [
+    ...sortedMembers.slice(0, myIndex),
+    ...sortedMembers.slice(myIndex + 1),
+  ];
 
   console.log(
-    "상대방 닉네임 목록:",
+    "🎯 나를 제외한 순서 보장 닉네임:",
     otherMembers.map((m) => m.nickName)
   );
 
-  // nickname-1 ~ nickname-4에 상대 닉네임 넣기
-  otherMembers.forEach((member, index) => {
-    const nicknameEl = document.getElementById(`nickname-${index + 1}`);
-    if (nicknameEl) {
-      nicknameEl.textContent = member.nickName;
-    } else {
-      console.warn(`nickname-${index + 1} 요소를 찾을 수 없음`);
+  const updateNicknames = () => {
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(`nickname-${i}`);
+      if (el) {
+        el.textContent = otherMembers[i - 1]?.nickName ?? "";
+      }
+    }
+  };
+
+  const observer = new MutationObserver(() => {
+    const ready = otherMembers.every((_, i) =>
+      document.getElementById(`nickname-${i + 1}`)
+    );
+    if (ready) {
+      updateNicknames();
+      observer.disconnect();
     }
   });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // 혹시 이미 준비됐으면 바로 적용
+  setTimeout(() => {
+    const ready = otherMembers.every((_, i) =>
+      document.getElementById(`nickname-${i + 1}`)
+    );
+    if (ready) {
+      updateNicknames();
+      observer.disconnect();
+    }
+  }, 300);
 });
