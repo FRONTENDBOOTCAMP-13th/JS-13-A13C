@@ -1,8 +1,8 @@
 import {
   getTotalPoints,
   getRoundResults,
-} from "../../../pages/ingame/winning-point.ts";
-import { getRoomInfo } from "../../../pages/ingame/A13C-chat.ts";
+} from "./winning-point.ts";
+import { getRoomInfo } from "../A13C-chat.ts";
 
 // 현재 방 정보 로드
 function loadCurrentRoom() {

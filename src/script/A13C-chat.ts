@@ -5,7 +5,7 @@ import io from "socket.io-client";
  */
 export interface ChatMessage {
   nickName: string;
-  msg: string;
+  msg: ChoiceTwoCard | ChoiceOneCard;
 }
 
 /**
@@ -27,14 +27,13 @@ export interface RoomMembers {
   // 인터페이스에 정의할 여러 속성들이 동일한 타입을 가지고 있을 때 모든 속성을 기술하지 않고 인덱스 시그니처 하나로 정의 가능
   // "key"라는 문자 대신 아무 문자나 사용 가능
   // 속성명의 타입은 string, number, symbol만 사용 가능
-  [key: string]: RoomMember;
+  [key: string]: Player;
 }
 
 /**
  * 채팅방의 전체 정보를 정의하는 인터페이스
  */
 export interface RoomInfo {
-  [x: string]: any;
   roomId: string;
   user_id: string;
   hostName: string;
@@ -52,15 +51,16 @@ export interface CreateRoomParams {
   roomName: string;
   hostName: string;
   autoClose?: boolean;
+  capacity?: number;
 }
 
 /**
  * 채팅방 생성 응답을 정의하는 인터페이스
  */
 export interface CreateRoomResponse {
-  roomInfo: any;
-  success: boolean;
-  roomList: { [key: string]: RoomInfo };
+  ok: boolean;
+  message: string;
+  roomInfo: RoomInfo;
 }
 
 /**
@@ -76,7 +76,7 @@ export interface JoinRoomParams {
  * 채팅방 입장 응답을 정의하는 인터페이스
  */
 export interface JoinRoomResponse {
-  ok: number;
+  ok: boolean;
   message: string;
   roomInfo: RoomInfo;
 }
@@ -87,6 +87,35 @@ export interface JoinRoomResponse {
 export interface RoomsResponse {
   [key: string]: RoomInfo;
 }
+
+export interface ChoiceTwoCard{
+  action: 'twocard';
+  user_id: string;
+  left: number;
+  right: number;
+}
+
+export interface ChoiceOneCard{
+  action: 'onecard';
+  user_id: string;
+  choice: number;
+}
+
+export interface Player{
+  nickName: string;
+  score: number;
+  twocard: number[];
+  onecard: number;
+}
+
+export interface RoundResult{
+  round: number;
+  winners: string[];
+  point: number;
+  draw: boolean;
+}
+
+
 
 // npm i @types/socket.io-client 필요
 export const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team02");
