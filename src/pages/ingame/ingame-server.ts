@@ -140,7 +140,7 @@ function updateHandCardAvailability(): void {
   });
 }
 
-function renderMyCards(): void {
+export function renderMyCards(): void {
   myCardContainer.innerHTML = "";
   for (let i = 1; i <= 8; i++) {
     if (selectedCardNumbers.includes(i)) continue;
