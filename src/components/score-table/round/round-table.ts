@@ -96,4 +96,4 @@ export async function showScoreTable() {
 }
 
 // TODO ingame에서 라운드 종료 판단 후 호출하도록 수정해야 함
-showScoreTable();
+// showScoreTable();

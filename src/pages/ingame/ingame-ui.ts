@@ -1,4 +1,4 @@
-import { sendMsg, socket } from "./A13C-chat";
+import { sendMsg } from "./A13C-chat";
 
 // 모듈 스크립트는 defer 동작하므로 DOMContentLoaded 이벤트 불필요
 
@@ -22,6 +22,11 @@ const myCardContainer = document.getElementById("my-cards") as HTMLDivElement;
 const scoreBoard = document.getElementById("final-card-area") as HTMLDivElement;
 /** 임시 저장 카드 영역 */
 const tempStorage = document.getElementById("temp-card-area") as HTMLDivElement;
+const tempStorageArea = document.getElementById(
+  "temp-card-area"
+) as HTMLDivElement;
+
+// let activeCardId: "left" | "right" | null = null;
 
 window.addEventListener("DOMContentLoaded", () => {
   if (
@@ -54,7 +59,7 @@ let activeSlot: "left" | "right" | null = null;
  * removedNumbers와 tempDisabled를 고려하여 활성/비활성 카드를 구분하고,
  * 핸드 카드 수가 2장 이하일 경우 렌더를 종료합니다.
  */
-function renderMyCards(): void {
+export function renderMyCards(): void {
   myCardContainer.innerHTML = "";
   const activeNums: number[] = [];
   for (let i = 1; i <= 8; i++) {
@@ -84,7 +89,7 @@ function renderMyCards(): void {
  * @param cardNum - 카드 번호
  * @param disabled - 비활성화 여부
  */
-function appendCard(cardNum: number, disabled: boolean): void {
+export function appendCard(cardNum: number, disabled: boolean): void {
   const card = document.createElement("img");
   card.src = `/imges/card-${cardNum}.webp`;
   card.className =
@@ -120,7 +125,7 @@ function appendCard(cardNum: number, disabled: boolean): void {
 });
 
 /** 손패의 카드 클릭 가능 여부 업데이트 */
-function updateHandCardAvailability(): void {
+export function updateHandCardAvailability(): void {
   const cards = Array.from(
     myCardContainer.querySelectorAll<HTMLImageElement>("img[data-card]")
   );
@@ -135,7 +140,11 @@ function updateHandCardAvailability(): void {
 }
 
 /** 카드 이동 애니메이션 처리 */
-function flyCard(fromEl: HTMLElement, toEl: HTMLElement, src: string): void {
+export function flyCard(
+  fromEl: HTMLElement,
+  toEl: HTMLElement,
+  src: string
+): void {
   const fromRect = fromEl.getBoundingClientRect();
   const toRect = toEl.getBoundingClientRect();
   const dx = toRect.left - fromRect.left;
@@ -162,20 +171,20 @@ function flyCard(fromEl: HTMLElement, toEl: HTMLElement, src: string): void {
 // 리셋 버튼 클릭 핸들러
 resetBtn.addEventListener("click", () => {
   [selectedLeft, selectedRight].forEach((el) => {
-    el.style.backgroundImage = `url(/imges/card-back.webp)`;
+    el.style.backgroundImage = `url("/imges/card-back.webp")`;
     el.removeAttribute("data-card-src");
     el.classList.remove("border-4", "border-yellow-300");
   });
-  selectedCardNumbers = [];
-  // activeCardId = null;
   tempDisabled.clear();
   lastDisabled.clear();
   removedNumbers.clear();
+  scoreBoard.innerHTML = "";
+  tempStorageArea.innerHTML = "";
   renderMyCards();
 });
 
 // 제출 버튼 클릭 핸들러
-function submitBtnFun() {
+export function submitBtnFun() {
   submitBtn.addEventListener("click", () => {
     // 1️⃣ 활성 슬롯 확인
     const activeCardId = selectedLeft.getAttribute("data-card-src")
@@ -229,11 +238,16 @@ function submitBtnFun() {
   });
 }
 
-socket.on("message", () => {
-  submitBtnFun();
-  // sendMsg<object>({ msg: data });
-  // console.log("수신된 카드 src:", data);
-});
+export function setupSubmitCardClick(): void {
+  selectedLeft.addEventListener("click", () => {
+    selectedLeft.classList.add("border-4", "border-yellow-300");
+    selectedRight.classList.remove("border-4", "border-yellow-300");
+  });
+  selectedRight.addEventListener("click", () => {
+    selectedRight.classList.add("border-4", "border-yellow-300");
+    selectedLeft.classList.remove("border-4", "border-yellow-300");
+  });
+}
 
 // 상대 플레이어 카드 공개 (테스트용)
 export function revealOpponentCards(): void {
@@ -299,12 +313,6 @@ export function revealOpponentCards(): void {
     });
   });
 }
-
-socket.on("message", () => {
-  revealOpponentCards();
-  // sendMsg<object>({ msg: data });
-  // appendToChat();
-});
 
 // --- 타이머 & 자동 선택 기능 추가 ---
 

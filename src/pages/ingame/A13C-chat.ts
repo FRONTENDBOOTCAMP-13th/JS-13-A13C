@@ -51,6 +51,7 @@ export interface CreateRoomParams {
   user_id: string;
   roomName: string;
   hostName: string;
+  autoClose?: boolean;
 }
 
 /**
@@ -155,10 +156,10 @@ export function joinRoom(params: JoinRoomParams): Promise<JoinRoomResponse> {
 
 /**
  * 모든 채팅방 목록을 조회하는 함수
- * @param queryString - 캐시 방지를 위한 쿼리 문자열 (선택적)
+ * @param _queryString - 캐시 방지를 위한 쿼리 문자열 (선택적)
  * @returns Promise<RoomsResponse> - 전체 채팅방 목록
  */
-export function getRooms(queryString = ""): Promise<RoomsResponse> {
+export function getRooms(_queryString = ""): Promise<RoomsResponse> { //queryString 앞에 _를 붙여 사용되지 않고 있음을 나타냄
   return new Promise((resolve) => {
     socket.emit("rooms", (rooms: RoomsResponse) => {
       resolve(rooms);
