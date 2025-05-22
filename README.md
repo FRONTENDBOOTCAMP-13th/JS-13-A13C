@@ -53,6 +53,7 @@ A13C - 하나 빼기 게임
 | 카드 관리        | 사용된 카드는 제거, 미사용 카드는 한 라운드 임시 보관 후 재사용     | ⭐⭐⭐    |  구성연    | 
 | 라운드 관리       | 현재 라운드 번호를 관리하며, 라운드 종료 시 자동으로 라운드 번호를 증가시켜 다음 라운드로 진행 | ⭐⭐⭐    | 우영찬 |  
 | 라운드 결과  | 각 라운드 종료 시, 결과를 시각화한 테이블을 새로 생성하여 표시        | ⭐⭐     | 정예빈 |      
+| 라운드 표시   | 결과 표시 후, 다음 라운드 시작 문구를 화면에 출력 | ⭐⭐     | 박정우 |
 | 결과 처리        | 5라운드 종료 후 승점 → 라운드 승리 횟수 → 마지막 승리자 순으로 우승자 결정 | ⭐⭐⭐    |  우영찬    |
 | 타이머 기능      | 카드 선택에 제한 시간 적용, 시간 초과 시 자동 선택 처리                     | ⭐    |  미완료   | 
 
@@ -109,9 +110,51 @@ A13C - 하나 빼기 게임
 <br>
 <br><br>
 
-## 📂 프로젝트 구조 
 
-<br>
+
+## 📁 src 폴더 구조
+
+```
+src/
+├── components/
+│   ├── btn/
+│   │   └── btn.html
+│   ├── main-container/
+│   │   └── main-container.html
+│   ├── modal/
+│   │   └── modal.html
+│   └── score-table/
+│       ├── round/
+│       │   └── round-table.html
+│       └── score-table.html
+├── pages/
+│   ├── chat.html
+│   ├── ingame.html
+│   ├── lobby.html
+│   └── rule.html
+│       └── rule.ts
+├── script/
+│   ├── A13C-chat.ts
+│   ├── index.ts
+│   ├── ingame/
+│   │   ├── chat.ts
+│   │   ├── index.ts
+│   │   ├── ingame-ui.ts
+│   │   ├── round-start.ts
+│   │   ├── round-table.ts
+│   │   ├── score-table.ts
+│   │   ├── store.ts
+│   │   └── winning-point.ts
+│   └── lobby/
+│       ├── create-room-modal.ts
+│       ├── index.ts
+│       ├── join-room-modal.ts
+│       └── lobby-scroll.ts
+├── main.ts
+├── style.css
+└── vite-env.d.ts
+```
+
 <br><br>
 
 ## ▶ 실행 방법 
@@ -135,11 +178,6 @@ A13C - 하나 빼기 게임
 <br>
 <br><br>
 
-## 📷 구현 결과
 
-
-
-<br><br>
-<br><br>
 
 📌 컨벤션 및 자세한 문서는 [GitHub Wiki에서 확인하기](https://github.com/FRONTENDBOOTCAMP-13th/JS-13-A13C/wiki)
