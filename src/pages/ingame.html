@@ -37,50 +37,8 @@
     </div>
 
     <!-- 상대 카드 -->
-    <div class="flex justify-start items-center py-5 ml-30 -translate-y-5">
-      <!-- 내카드 제외용 더미란 추가 -->
-      <div class="flex flex-col items-center mr-6">
-        <div class="flex space-x-1">
-          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
-          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
-        </div>
-        <p class="text-white mt-2 text-center text-sm" id="nickname-1"></p>
-      </div>
-
-      <!-- 플레이어 2 -->
-      <div class="flex flex-col items-center mr-6">
-        <div class="flex space-x-1">
-          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
-          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
-        </div>
-        <p class="text-white mt-2 text-center text-sm" id="nickname-2"></p>
-      </div>
-
-      <!-- 플레이어 3 -->
-      <div class="flex flex-col items-center mr-6">
-        <div class="flex space-x-1">
-          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
-          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
-        </div>
-        <p class="text-white mt-2 text-center text-sm" id="nickname-3"></p>
-      </div>
-
-      <!-- 플레이어 4 -->
-      <div class="flex flex-col items-center mr-6">
-        <div class="flex space-x-1">
-          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
-          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
-        </div>
-        <p class="text-white mt-2 text-center text-sm" id="nickname-4"></p>
-      </div>
-      <!-- 플레이어 5 -->
-      <div class="flex flex-col items-center">
-        <div class="flex space-x-1">
-          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
-          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
-        </div>
-        <p class="text-white mt-2 text-center text-sm" id="nickname-5"></p>
-      </div>
+    <div id="your-cards" class="flex justify-start items-center py-5 ml-30 -translate-y-5">
+      
     </div>
 
     <!-- 최종카드제출창 + 임시보관구역 정렬 -->
@@ -353,7 +311,81 @@
         id="round-overlay-content"
         style="background: white; padding: 20px; border-radius: 8px"
       >
-        <!-- 여기에 round-table.html 내용이 삽입됨 -->
+        
+      
+        <!-- 전체 화면을 덮는 어두운 배경 + 가운데 테이블 -->
+        <div
+          id="score-tables"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 text-white"
+        >
+          <div
+            class="bg-gray-900 rounded-xl border-2 border-[#bba16d] p-6 shadow-[0_0_15px_#9E844F] max-w-xl w-full flex flex-col gap-6 items-center"
+          >
+            <!-- 총점 테이블 -->
+            <div class="w-full">
+              <h2 class="text-xl font-bold mb-4 text-center text-white">
+                누적 승점
+              </h2>
+              <table
+                class="w-full table-auto border-collapse rounded-lg overflow-hidden text-sm"
+              >
+                <thead class="bg-gray-800 border-b border-[#9E844F]">
+                  <tr
+                    id="total-score-header"
+                    class="text-center font-semibold uppercase tracking-wide text-white"
+                  >
+                    <!-- 동적으로 채워짐 -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    id="total-score-row"
+                    class="bg-gray-900 text-center font-medium hover:bg-[#9E844F]/30 transition-colors duration-300"
+                  >
+                    <!-- 동적으로 채워짐 -->
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 라운드별 승자 테이블 -->
+            <div class="w-full">
+              <h2 class="text-xl font-bold mb-4 text-center text-white">
+                라운드별 승자
+              </h2>
+              <table
+                class="w-full table-auto border-collapse rounded-lg overflow-hidden text-sm"
+              >
+                <thead class="bg-gray-800 border-b border-[#9E844F]">
+                  <tr>
+                    <th
+                      class="px-4 py-2 text-center font-semibold uppercase tracking-wide border-r border-[#9E844F] text-white"
+                    >
+                      라운드
+                    </th>
+                    <th
+                      class="px-4 py-2 text-center font-semibold uppercase tracking-wide border-r border-[#9E844F] text-white"
+                    >
+                      닉네임
+                    </th>
+                    <th
+                      class="px-4 py-2 text-center font-semibold uppercase tracking-wide text-white"
+                    >
+                      승점
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="round-winner-body2"
+                  class="bg-gray-900 text-center font-medium hover:bg-[#9E844F]/30 transition-colors duration-300"
+                >
+                  <!-- 동적으로 채워짐 -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </body>

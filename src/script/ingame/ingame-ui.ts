@@ -494,6 +494,13 @@ socket.on("message", (data: ChatMessage) => {
         console.log("승자 정보", getResult(round));
         nextRound();
         showScoreTable();
+        if(getRound() > 5){
+          showScoreTable(30);
+          // 최종 순위 보여주기
+          
+        }else{
+          showScoreTable();
+        }
       }
     }
   }
