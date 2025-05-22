@@ -573,10 +573,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   
-  // 이벤트 리스너 등록
-  socket.off("members");
-  socket.off("rooms");
-  
   // 멤버 목록 변경 이벤트
   socket.on("members", () => {
     // 방 목록 갱신으로 간소화

@@ -66,6 +66,7 @@ getRoomInfo();
 socket.on("members", refreMembers);
 
 function refreMembers(members: Player[]) {
+  console.log("refreMembers", members);
 
   setPlayerList(Object.values(members));
 
