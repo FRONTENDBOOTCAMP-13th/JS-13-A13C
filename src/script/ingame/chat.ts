@@ -119,7 +119,7 @@ interface CurrentRoomInfo {
 }
 
 // 현재 방 정보 저장
-function saveCurrentRoom(roomId: string, roomName: string, memberCount: number) {
+export function saveCurrentRoom(roomId: string, roomName: string, memberCount: number) {
   const currentRoom: CurrentRoomInfo = {
     roomId,
     roomName,
@@ -489,6 +489,11 @@ msgInput.addEventListener("keydown", (e) => {
 const messageCache = new Set<string>();
 socket.on("message", (data: any) => {
   if (!chatScreen) return;
+
+  // 게임 액션 메시지만 필터링하고 시스템 메시지는 표시
+  if(data && typeof data.msg === 'object' && (data.msg.action === 'twocard' || data.msg.action === 'onecard')){
+    return;
+  }
   
   // 중복 메시지 필터링
   const msgId = typeof data === 'object' ? 
