@@ -12,19 +12,20 @@ import {
   getPlayerCount,
   getPlayerList,
   getRoomName,
-  getRound,
-  getUserId,
+  // getRound,
+  // getUserId,
   setPlayerList,
   setRoomName,
   setUserId,
 } from "./store";
 import { saveCurrentRoom } from "./chat";
 
-const urlParams = new URLSearchParams(location.search);
-const roomId = urlParams.get("roomId");
-const nickName = urlParams.get("nickName");
+
 
 async function enterRoom() {
+  const urlParams = new URLSearchParams(location.search);
+  const roomId = urlParams.get("roomId");
+  const nickName = urlParams.get("nickName");
   if (roomId && nickName) {
     const params: JoinRoomParams = {
       roomId,
@@ -34,7 +35,7 @@ async function enterRoom() {
 
     const joinRoomRes = await joinRoom(params);
     // console.log('joinRoomRes', joinRoomRes);
-    if(joinRoomRes.ok){
+    if (joinRoomRes.ok) {
       setUserId(nickName);
       const playerList = Object.values(joinRoomRes.roomInfo.memberList);
       // console.log('플레이어 목록', playerList);
@@ -46,9 +47,10 @@ async function enterRoom() {
       saveCurrentRoom(roomId, joinRoomRes.roomInfo.roomName, playerList.length);
       // console.log("savedCurrentRoomInfo:", JSON.parse(sessionStorage.getItem("A13C_CURRENT_ROOM") || "null"));
 
-      document.querySelector('#connectedRoom')!.innerHTML = `방이름: ${getRoomName()} (${getPlayerCount()}/5)`;
+      document.querySelector("#connectedRoom")!.innerHTML =
+        `방이름: ${getRoomName()} (${getPlayerCount()}/5)`;
       // alert(`"${getRoomName()}" 방에 입장하였습니다.`);
-    }else{
+    } else {
       alert(joinRoomRes.message);
     }
   } else {
@@ -67,7 +69,6 @@ enterRoom();
 socket.on("members", refreMembers);
 
 function refreMembers(members: Player[]) {
-
   setPlayerList(Object.values(members));
 
   const playerList = getPlayerList();
@@ -78,18 +79,19 @@ function refreMembers(members: Player[]) {
     const player = playerList[i];
 
     // if (getUserId() !== player.nickName) {
-      document.querySelector(`#nickname-${player.nickName}`)!.textContent = player.nickName;
+    document.querySelector(`#nickname-${player.nickName}`)!.textContent =
+      player.nickName;
     // }
   }
-  document.querySelector("#connectedRoom")!.innerHTML = `방이름: ${getRoomName()} (${getPlayerCount()}/5)`;
-};
+  document.querySelector("#connectedRoom")!.innerHTML =
+    `방이름: ${getRoomName()} (${getPlayerCount()}/5)`;
+}
 
-function initCards(){
-  
-  const yourCards = document.querySelector('#your-cards')!;
+function initCards() {
+  const yourCards = document.querySelector("#your-cards")!;
   const playerList = getPlayerList();
-  let cards = '';
-  playerList.forEach(player => {
+  let cards = "";
+  playerList.forEach((player) => {
     cards += `
       <div class="flex flex-col items-center mr-6">
         <div class="flex space-x-1">
