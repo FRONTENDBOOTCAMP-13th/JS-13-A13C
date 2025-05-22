@@ -4,26 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>score table 컴포넌트 | A13C</title>
-    <link rel="icon" type="image/svg+xml" href="/public/logo.webp" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="preload" href="/font/pretendardvariable.css" as="style" />
     <link rel="stylesheet" href="/font/pretendardvariable.css" />
     <script type="module" src="/src/main.ts"></script>
-    <script
-      type="module"
-      src="/src/components/score-table/score-table.ts"
-    ></script>
+    <script type="module" src="/src/script/ingame/score-table.ts"></script>
+    <script type="module" src="/src/script/ingame/chat.ts"></script>
+    <script type="module" src="/src/script/ingame/store.ts"></script>
   </head>
   <body
     class="flex flex-col p-20 h-screen gap-10 text-white bg-[var(--main-color)]"
   >
     <div class="relative inline-flex w-fit group">
       <!-- 버튼 -->
-      <button
-        class="bg-[#9E844F] text-white font-semibold px-4 py-2 rounded-[30px]"
-        id="show-button"
-      >
+      <button id="show-button" type="button" class="btn btn-active">
         승점 확인
       </button>
+      <!-- <button class="bg-[#9E844F] text-white font-semibold px-4 py-2 rounded-[30px]" >승점 확인</button> -->
 
       <!-- 호버 시 -->
       <div
@@ -46,76 +43,31 @@
               <th class="px-6 py-3">승점</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td class="px-6 py-3 text-center">1</td>
-              <td class="px-6 py-3 text-center">
-                <div class="max-w-[80px] truncate mx-auto">apple</div>
-              </td>
-              <td class="px-6 py-3 text-center">1점</td>
-            </tr>
-            <tr>
-              <td class="px-6 py-3 text-center">2</td>
-              <td class="px-6 py-3 text-center">
-                <div class="max-w-[80px] truncate mx-auto">banana</div>
-              </td>
-              <td class="px-6 py-3 text-center">2점</td>
-            </tr>
-            <tr>
-              <td class="px-6 py-3 text-center">3</td>
-              <td class="px-6 py-3 text-center">
-                <div class="max-w-[80px] truncate mx-auto">pineapple</div>
-              </td>
-              <td class="px-6 py-3 text-center">2점</td>
-            </tr>
-            <tr>
-              <td class="px-6 py-3 text-center">4</td>
-              <td class="px-6 py-3 text-center">
-                <div class="max-w-[80px] truncate mx-auto">notebook</div>
-              </td>
-              <td class="px-6 py-3 text-center">2점</td>
-            </tr>
-            <tr>
-              <td class="px-6 py-3 text-center">5</td>
-              <td class="px-6 py-3 text-center">
-                <div class="max-w-[80px] truncate mx-auto">refrigerator</div>
-              </td>
-              <td class="px-6 py-3 text-center">2점</td>
-            </tr>
-            <!-- 밑 여백을 위한 빈칸 -->
-            <tr>
-              <th colspan="3" class="text-center text-lg pt-2.5"></th>
-            </tr>
+          <tbody id="round-winner-body">
+            <!-- 내용은 동적으로 채워짐 -->
           </tbody>
         </table>
 
         <!-- 누적 승점 테이블 -->
         <table
           class="table-auto w-[26.875rem] mt-2 border border-[#9E844F] text-white bg-[rgba(29,28,30,0.7)]"
+          id="total-score-table"
         >
           <thead>
             <tr>
               <th colspan="5" class="text-center text-lg pt-5">누적 승점</th>
             </tr>
-            <tr>
-              <th class="px-4 py-2 max-w-[90px] truncate">apple</th>
-              <th class="px-4 py-2 max-w-[90px] truncate">banana</th>
-              <th class="px-4 py-2 max-w-[90px] truncate">pineapple</th>
-              <th class="px-4 py-2 max-w-[90px] truncate">notebook</th>
-              <th class="px-4 py-2 max-w-[90px] truncate">refrigerator</th>
+            <tr id="total-score-header">
+              <!-- 헤더는 동적으로 채워짐 -->
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td class="px-4 py-2 text-center">5</td>
-              <td class="px-4 py-2 text-center">10</td>
-              <td class="px-4 py-2 text-center">8</td>
-              <td class="px-4 py-2 text-center">7</td>
-              <td class="px-4 py-2 text-center">2</td>
+            <tr id="total-score-row">
+              <!-- 점수는 동적으로 채워짐 -->
             </tr>
             <!-- 밑 여백을 위한 빈칸 -->
             <tr>
-              <th colspan="3" class="text-center text-lg pt-2.5"></th>
+              <th colspan="5" class="text-center text-lg pt-2.5"></th>
             </tr>
           </tbody>
         </table>

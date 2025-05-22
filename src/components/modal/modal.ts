@@ -1,43 +1,28 @@
 // DOM 선택 부분
-const modalDialog = document.querySelector(
-  ".modal-dialog"
-) as HTMLDialogElement | null;
-const showModalButton = document.querySelector(
-  ".show-modal-dialog"
-) as HTMLButtonElement | null;
-const closeModalButton = document.querySelector(
-  ".close-modal-dialog"
-) as HTMLButtonElement | null;
+const modalDialog = document.querySelector(".modal-dialog") as HTMLDialogElement | null;
+const createRoomButton = document.querySelector("#create-room-btn") as HTMLButtonElement | null;
+const closeModalButton = document.querySelector(".close-modal-dialog") as HTMLButtonElement | null;
 
 // 함수 구현 부분
-const openModal = () => {
-  if (modalDialog) modalDialog.showModal();
-};
-
-const closeModal = () => {
-  if (modalDialog) modalDialog.close();
-};
+const openModal = () => modalDialog?.showModal();
+const closeModal = () => modalDialog?.close();
 
 // 이벤트 등록
-if (showModalButton) {
-  showModalButton.addEventListener("click", openModal);
-}
-
-if (closeModalButton) {
-  closeModalButton.addEventListener("click", closeModal);
-}
+createRoomButton?.addEventListener("click", openModal);
+closeModalButton?.addEventListener("click", closeModal);
 
 // 닉네임 입력 처리 (영어만, 10자 이내)
-const nicknameInput = document.getElementById("modal-form") as HTMLInputElement;
-nicknameInput.addEventListener("input", () => {
-  let filtered = nicknameInput.value.replace(/[^a-zA-Z]/g, "");
+const nicknameInput = document.querySelectorAll<HTMLInputElement>(".filter-english");
+nicknameInput.forEach((input) => {
+  input.addEventListener("input", () => {
+    let filtered = input.value.replace(/[^a-zA-Z0-9]/g, "");
 
-  // 10자 초과 시 자르기
-  if (filtered.length > 10) {
-    filtered = filtered.slice(0, 10);
-  }
+    if (filtered.length > 10) {
+      filtered = filtered.slice(0, 10);
+    }
 
-  nicknameInput.value = filtered;
+    input.value = filtered;
+  });
 });
 
 // 방 제목 입력 처리 (아무 문자 가능, 10자 이내)
