@@ -5,7 +5,7 @@ import {
   type ChatMessage,
   type ChoiceOneCard,
   type Player,
-  getRoomInfo,
+  // getRoomInfo,
 } from "../A13C-chat";
 
 import {
@@ -16,14 +16,14 @@ import {
   getUserId,
   isAllDone,
   getResult,
-  setPlayerList,
+  // setPlayerList,
 } from "./store";
 import { getRoundResult } from "./winning-point";
 
 import { showScoreTable } from "./round-table";
 
 const urlParams = new URLSearchParams(window.location.search);
-const roomId = urlParams.get("roomId");
+export const roomId = urlParams.get("roomId");
 
 // 왼쪽 카드 선택 슬롯
 const selectedLeft = document.getElementById("selected-left") as HTMLDivElement;
