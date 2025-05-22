@@ -7,13 +7,7 @@
     <link rel="preload" href="/font/pretendardvariable.css" as="style" />
     <link rel="stylesheet" href="/font/pretendardvariable.css" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <script src="https://fesp-api.koyeb.app/socket.io/socket.io.js"></script>
-    <script type="module" src="/src/main.ts"></script>
-    <script type="module" src="/src/components/modal/modal.ts"></script>
-    <script type="module" src="/src/pages/lobby/lobby.ts"></script>
-    <script type="module" src="/src/pages/lobby/lobby-scroll.ts"></script>
-    <script type="module" src="/src/pages/ingame/A13C-chat.ts"></script>
-    <script type="module" src="/src/pages/ingame/chat.ts"></script>
+    <script type="module" src="/src/script/lobby/index.ts"></script>
   </head>
   <body class="font-pretendard">
     <!-- 스크린 리더 사용자를 위한 페이지 소개 시작 -->
@@ -38,8 +32,8 @@
 
           <!-- 게임 시작 버튼 시작-->
           <div class="button-groups absolute bottom-53 left-1/2 -translate-x-1/2">
-            <button type="button" class="show-modal-dialog btn btn-active mr-25">방 만들기</button>
-            <button type="button" class="show-room-btn btn btn-active">참여하기</button>
+            <button type="button" id="create-room-btn" class="btn btn-active mr-25">방 만들기</button>
+            <button type="button" id="show-room-btn" class="btn btn-active">참여하기</button>
           </div>
           <!-- 게임 시작 버튼 종료 -->
 
@@ -67,18 +61,6 @@
                   />
                   <br />
                   <!-- 생성할 방 이름 폼 종료 -->
-
-                  <!-- 유저 id 폼 시작 -->
-                  <label for="userId" class="mr-6">사용할 유저 ID</label>
-                  <input
-                    type="text"
-                    id="userId"
-                    name="userId"
-                    class="filter-english border rounded-[8px] px-3 py-2 focus:outline-none focus:ring focus:border-blue-300 w-[320px]"
-                    placeholder="영어, 10자 이내"
-                  />
-                  <br />
-                  <!-- 유저 id 폼 종료 -->
 
                   <!-- 사용할 닉네임 폼 시작 -->
                   <label for="nickName" class="mr-6">사용할 닉네임</label>
@@ -129,7 +111,6 @@
             <!-- 참여하기 버튼 시작 -->
             <div id="join-form" class="mt-4 hidden space-y-3 bg-white text-black">
               <p class="text-lg">선택한 방: <span id="selectedRoomName" class="font-bold"></span></p>
-              <input type="text" id="joinUserId" placeholder="유저 ID" class="w-full px-3 py-2 rounded text-black" />
               <input type="text" id="joinNickName" placeholder="닉네임" class="w-full px-3 py-2 rounded text-black" />
               <button id="finalJoinBtn" class="btn btn-active w-full">입장하기</button>
             </div>
