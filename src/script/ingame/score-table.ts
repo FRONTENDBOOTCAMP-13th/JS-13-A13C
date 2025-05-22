@@ -1,4 +1,3 @@
-
 import { getRoomInfo } from "../A13C-chat.ts";
 import { getResults } from "./store.ts";
 import { getTotalPoints } from "./winning-point.ts";
@@ -32,32 +31,43 @@ scoreTables.addEventListener("mouseleave", () => {
 
 // 현재 방 정보 로드 함수
 function loadCurrentRoom() {
-  const saved = sessionStorage.getItem("A13C_CURRENT_ROOM");
-  if (!saved) return null;
-  try {
-    return JSON.parse(saved);
-  } catch {
-    return null;
+  const savedRoom = sessionStorage.getItem("A13C_CURRENT_ROOM");
+  console.log(
+    "A13C_CURRENT_ROOM:",
+    sessionStorage.getItem("A13C_CURRENT_ROOM")
+  );
+
+  if (savedRoom) {
+    try {
+      return JSON.parse(savedRoom);
+    } catch {
+      return null;
+    }
   }
+  return null;
 }
 
 // 승점 테이블 갱신 함수
 async function updateScoreTable() {
   const currentRoom = loadCurrentRoom();
-  if (!currentRoom) return;
-
+  if (!currentRoom) {
+    console.log("currentRoom 없음");
+    return;
+  }
   // 방 정보 요청
   const roomInfo = await getRoomInfo(currentRoom.roomId);
-  if (!roomInfo || !roomInfo.memberList) return;
-
+  if (!roomInfo || !roomInfo.memberList) {
+    console.log("roomInfo 없음", roomInfo);
+    return;
+  }
   // 닉네임 배열 추출
   const nicknames = Object.values(roomInfo.memberList).map((m) => m.nickName);
-
+  console.log("닉네임 목록:", nicknames);
   // 누적 승점 테이블
   const totalScoreHeader = document.getElementById("total-score-header");
   const totalScoreRow = document.getElementById("total-score-row");
   const totals = getTotalPoints();
-  // const totals = getTotalPoints();
+  console.log("누적 승점:", totals);
 
   // 닉네임 순서대로, 없는 닉네임은 0점
   const mappedTotals = nicknames.map((nick) => {
@@ -108,6 +118,5 @@ showButton.addEventListener("mouseenter", async () => {
   await updateScoreTable();
   scoreTables.classList.remove("hidden");
 });
-
 
 export default {};
