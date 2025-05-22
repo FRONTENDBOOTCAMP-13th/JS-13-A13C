@@ -273,15 +273,15 @@ joinRoomBtn.addEventListener("click", async () => {
       
       const result = await joinRoom(joinParams);
       if (result.ok) {
-        setTimeout(() => {
-          alert(`${roomNameValue} 방에 입장했습니다.`);
-        }, 100);
+        // setTimeout(() => {
+        //   alert(`${roomNameValue} 방에 입장했습니다.`);
+        // }, 100);
         connectedRoomElem.textContent = `${roomNameValue} (접속 중...)`;
         saveCurrentRoom(roomIdValue, roomNameValue, 1);
         
-        setTimeout(() => {
-          sendSystemMessage(`${nickNameValue}님이 입장했습니다.`);
-        }, 800);
+        // setTimeout(() => {
+        //   sendSystemMessage(`${nickNameValue}님이 입장했습니다.`);
+        // }, 800);
       } else {
         alert(result.message || "방 입장에 실패했습니다.");
       }
