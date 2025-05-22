@@ -58,7 +58,7 @@ async function updateScoreTable() {
   }
 
   // 라운드 별 우승자 테이블
-  const roundWinnerBody = document.getElementById("round-winner-body");
+  const roundWinnerBody = document.getElementById("round-winner-body2");
   if (roundWinnerBody) {
     roundWinnerBody.innerHTML = "";
     const roundResults = getResults();
@@ -87,19 +87,11 @@ async function updateScoreTable() {
 }
 
 // 오버레이
-export async function showScoreTable() {
+export async function showScoreTable(overlayTime = 4) {
   const overlay = document.getElementById("round-overlay");
   const content = document.getElementById("round-overlay-content");
   if (!overlay || !content) return;
 
-  // HTML 불러오기
-  const html = await fetch(
-    "/src/components/score-table/round/round-table.html"
-  ).then((res) => res.text());
-  content.innerHTML = html;
-
-  // DOM이 그려진 뒤에 테이블 갱신
-  await new Promise((r) => setTimeout(r, 0));
   await updateScoreTable();
 
   // 화면에 표시
@@ -108,7 +100,7 @@ export async function showScoreTable() {
   // 4초 후 자동 제거
   setTimeout(() => {
     overlay.style.display = "none";
-  }, 4000);
+  }, 1000 * overlayTime);
 }
 
 // TODO ingame에서 라운드 종료 판단 후 호출하도록

@@ -1,7 +1,8 @@
 import "../../style.css";
 import "./ingame-ui.ts";
-import { sendMsg, socket } from "../A13C-chat.ts";
+import { getRoomInfo, sendMsg, socket } from "../A13C-chat.ts";
 import "./chat.ts";
+import { getPlayerList, nextRound } from "./store.ts";
 
 // 오버레이 제거
 export function removeOverlay() {
@@ -20,10 +21,11 @@ export function showRoundStartOverlay(r: number) {
   setTimeout(() => ol.remove(), 3500);
 }
 
-// 호스트 여부 판단 (게임 시작 오버레이용)
-const isHost = localStorage
-  .getItem("A13C_CREATE_ROOM_INFO")
-  ?.includes('"isCreator":true');
+const urlParams = new URLSearchParams(location.search);
+const roomId = urlParams.get("roomId")!;
+const nickName = urlParams.get("nickName")!;
+
+const isHost = (await getRoomInfo(roomId)).hostName === nickName;
 
 // 처음 대기/게임시작 오버레이 생성
 const overlay = document.createElement("div");
@@ -45,6 +47,8 @@ if (isHost) {
     sendMsg("게임시작");
   });
 }
+
+
 
 // 모든 사용자: 게임 시작 메시지 수신 시 1라운드 오버레이 표시
 socket.on("message", (data: any) => {
