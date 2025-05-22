@@ -11,7 +11,7 @@ import {
   getRooms,
 } from "../../script/A13C-chat.ts";
 import type {
-  ChatMessage,
+  // ChatMessage,
   CreateRoomParams,
   JoinRoomParams,
   RoomInfo,

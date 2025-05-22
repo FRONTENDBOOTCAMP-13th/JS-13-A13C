@@ -70,7 +70,7 @@ let lastDisabled = new Set<number>();
 /** 현재 선택된 카드 번호 배열 (최대 2개) */
 let selectedCardNumbers: number[] = [];
 /** 현재 활성화된 카드 슬롯 ("left" | "right" | null) */
-let activeSlot: "left" | "right" | null = null;
+// let activeSlot: "left" | "right" | null = null;
 
 /**
  * 플레이어의 손패 카드를 렌더링합니다.
@@ -206,7 +206,7 @@ socket.on("message", (data: ChatMessage) => {
     selectedLeft.classList.remove("border-4", "border-yellow-300");
     selectedRight.classList.remove("border-4", "border-yellow-300");
     slot.classList.add("border-4", "border-yellow-300");
-    activeSlot = slot === selectedLeft ? "left" : "right";
+    // activeSlot = slot === selectedLeft ? "left" : "right";
   });
 });
 
@@ -462,7 +462,7 @@ function startSelectionTimer() {
     selectedLeft.classList.remove("border-4", "border-yellow-300");
     selectedRight.classList.remove("border-4", "border-yellow-300");
     slot.classList.add("border-4", "border-yellow-300");
-    activeSlot = slot === selectedLeft ? "left" : "right";
+    // activeSlot = slot === selectedLeft ? "left" : "right";
   });
 });
 
