@@ -46,7 +46,7 @@ async function getRoomInfo() {
       console.log("savedCurrentRoomInfo:", JSON.parse(sessionStorage.getItem("A13C_CURRENT_ROOM") || "null"));
 
       document.querySelector('#connectedRoom')!.innerHTML = `방이름: ${getRoomName()} (${getPlayerCount()}/5)`;
-      alert(`"${getRoomName()}" 방에 입장하였습니다.`);
+      // alert(`"${getRoomName()}" 방에 입장하였습니다.`);
     }else{
       alert(joinRoomRes.message);
     }

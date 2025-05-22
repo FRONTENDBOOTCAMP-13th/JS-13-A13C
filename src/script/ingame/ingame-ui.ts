@@ -148,7 +148,7 @@ function choiceCard(card: HTMLImageElement, cardNum: number) {
       right: selectedCardNumbers[1],
     };
 
-    console.log("카드 두개 선택 완료", choiceCard);
+    // console.log("카드 두개 선택 완료", choiceCard);
     sendMsg<ChoiceTwoCard>(choiceCard);
   }
 }
@@ -383,30 +383,30 @@ export function revealSubmittedCards(): void {
   });
 }
 // 3️⃣ 1초마다 방 정보 가져와서 전체 UI 갱신
-async function pollRoomState(): Promise<void> {
-  if (!roomId) return;
+// async function pollRoomState(): Promise<void> {
+//   if (!roomId) return;
 
-  const roomInfo = await getRoomInfo(roomId); // 1️⃣
-  setPlayerList(Object.values(roomInfo.memberList)); // 2️⃣
-  refreMembers(getPlayerList()); // 3️⃣
+//   const roomInfo = await getRoomInfo(roomId); // 1️⃣
+//   setPlayerList(Object.values(roomInfo.memberList)); // 2️⃣
+//   refreMembers(getPlayerList()); // 3️⃣
 
-  // — 여기서 “내” 슬롯만 숨기기 —
-  const players = getPlayerList();
-  const myId = getUserId();
-  const myIndex = players.findIndex((pl: Player) => pl.nickName === myId); // 4️⃣
-  const myContainer =
-    document.querySelectorAll<HTMLDivElement>(".opponent-cards")[myIndex]; // 5️⃣
-  myContainer?.querySelectorAll<HTMLImageElement>("img").forEach((img) => {
-    img.classList.add("sr-only"); // 6️⃣
-  });
+//   // — 여기서 “내” 슬롯만 숨기기 —
+//   const players = getPlayerList();
+//   const myId = getUserId();
+//   const myIndex = players.findIndex((pl: Player) => pl.nickName === myId); // 4️⃣
+//   const myContainer =
+//     document.querySelectorAll<HTMLDivElement>(".opponent-cards")[myIndex]; // 5️⃣
+//   myContainer?.querySelectorAll<HTMLImageElement>("img").forEach((img) => {
+//     img.classList.add("sr-only"); // 6️⃣
+//   });
 
-  revealOpponentCards(); // 7️⃣
-  revealExcludedCards(); // 8️⃣
-  if (isAllDone()) {
-    // 9️⃣
-    revealSubmittedCards(); // 10️⃣
-  }
-}
+//   revealOpponentCards(); // 7️⃣
+//   revealExcludedCards(); // 8️⃣
+//   if (isAllDone()) {
+//     // 9️⃣
+//     revealSubmittedCards(); // 10️⃣
+//   }
+// }
 
 export function refreMembers(members: Player[]): void {
   members.forEach((player, i) => {
@@ -425,6 +425,8 @@ socket.on("message", (data: ChatMessage) => {
     return; // 채팅 메시지는 무시
   }
   const player = getPlayer(data.msg.user_id);
+
+  console.log(player, '제출한 카드', );
 
   // 타입가드
   if (player) {
@@ -450,7 +452,7 @@ socket.on("message", (data: ChatMessage) => {
       }
       revealOpponentCards();
     } else if (data.msg.action === "onecard") {
-      console.log("여기 작동되는지 ", data);
+      // console.log("여기 작동되는지 ", data);
       player.onecard = data.msg.choice;
 
       // // 1️⃣ 플레이어 인덱스 찾기
@@ -483,7 +485,8 @@ socket.on("message", (data: ChatMessage) => {
       // }
 
       handleAutoSelectionAndMove();
-
+      console.log('플레이어 상태', getPlayerList());
+      console.log('isAllDone', isAllDone());
       if (isAllDone()) {
         const round = getRound();
         console.log(round, "라운드 종료");
@@ -495,7 +498,7 @@ socket.on("message", (data: ChatMessage) => {
     }
   }
 
-  console.log("카드 제출 정보 추가", getPlayerList());
+  // console.log("카드 제출 정보 추가", getPlayerList());
 });
 
 // 초기 로직에 타이머 호출
@@ -503,8 +506,8 @@ window.addEventListener("DOMContentLoaded", () => {
   renderMyCards(); // 내 카드 초기 렌더링
   setupSubmitCardClick(); // 슬롯 클릭 바인딩
   // revealOpponentCards(); // 초기 테스트용 호출은 pollRoomState에서 이미 처리되므로 중복이면 지워도 OK
-  pollRoomState(); // 초기 동기화
-  setInterval(pollRoomState, 1000); // 1초 폴링
+  // pollRoomState(); // 초기 동기화
+  // setInterval(pollRoomState, 1000); // 1초 폴링
   submitBtnFun();
 });
 
