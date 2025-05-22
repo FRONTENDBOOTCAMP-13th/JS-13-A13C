@@ -16,7 +16,9 @@
     <!-- 스크린 리더 사용자를 위한 페이지 소개 종료 -->
 
     <!-- 모바일 접근 차단 시작 -->
-    <div class="bg-(--main-color) h-screen xl:hidden flex justify-center items-center flex-col px-6">
+    <div
+      class="bg-(--main-color) h-screen xl:hidden flex justify-center items-center flex-col px-6"
+    >
       <img src="/logo.svg" alt="" />
       <div class="font-bold text-4xl text-(--white) text-center">
         <p class="my-5">이 콘텐츠는 PC에서만 이용 가능합니다.</p>
@@ -32,19 +34,37 @@
           <img src="/imges/main-backgrund.webp" alt="" width="1310" />
 
           <!-- 게임 시작 버튼 시작-->
-          <div class="button-groups absolute bottom-53 left-1/2 -translate-x-1/2">
-            <button type="button" id="create-room-btn" class="btn btn-active mr-25">방 만들기</button>
-            <button type="button" id="show-room-btn" class="btn btn-active">참여하기</button>
+          <div
+            class="button-groups absolute bottom-53 left-1/2 -translate-x-1/2"
+          >
+            <button
+              type="button"
+              id="create-room-btn"
+              class="btn btn-active mr-25"
+            >
+              방 만들기
+            </button>
+            <button type="button" id="show-room-btn" class="btn btn-active">
+              참여하기
+            </button>
           </div>
           <!-- 게임 시작 버튼 종료 -->
 
           <!-- 방만들기 모달 시작 -->
           <!-- 사용자 입력폼 -->
-          <dialog class="modal-dialog w-[500px] h-[350px] rounded-[30px] shadow-2xl bg-[rgba(129,125,125,0.7)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center" aria-labelledby="">
-            <div class="modal-layout pt-20 relative text-white flex flex-col items-center justify-center h-full">
+          <dialog
+            class="modal-dialog w-[500px] h-[350px] rounded-[30px] shadow-2xl bg-[rgba(129,125,125,0.7)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center"
+            aria-labelledby=""
+          >
+            <div
+              class="modal-layout pt-20 relative text-white flex flex-col items-center justify-center h-full"
+            >
               <div class="contents-layout">
                 <!-- 닫기 버튼 시작-->
-                <button type="button" class="close-modal-dialog absolute top-5 right-5 cursor-pointer">
+                <button
+                  type="button"
+                  class="close-modal-dialog absolute top-5 right-5 cursor-pointer"
+                >
                   <img src="/imges/close.webp" alt="닫기" />
                 </button>
                 <!-- 닫기 버튼 종료-->
@@ -76,23 +96,37 @@
                 </div>
               </div>
 
-              <button id="joinRoomBtn" class="btn btn-active my-3">채팅방 입장</button>
+              <button id="joinRoomBtn" class="btn btn-active my-3">
+                채팅방 입장
+              </button>
             </div>
           </dialog>
           <!-- 방만들기 모달 종료 -->
 
           <!-- 하단 저작권 표기 시작 -->
-          <footer class="copyright absolute w-full bottom-15 text-center text-gray-400" aria-label="저작권 정보 표시입니다.">
-            <p>Copyright &copy; 2025. A13C Corporation (구성연, 박정우, 우영찬, 정예빈) All right reserved.</p>
+          <footer
+            class="copyright absolute w-full bottom-15 text-center text-gray-400"
+            aria-label="저작권 정보 표시입니다."
+          >
+            <p>
+              Copyright &copy; 2025. A13C Corporation (구성연, 박정우, 우영찬,
+              정예빈) All right reserved.
+            </p>
             <p>2024. 본 프로젝트는 넷플릭스와 무관한 팬 제작물입니다.</p>
           </footer>
           <!-- 하단 저작권 표기 종료 -->
         </div>
         <!-- 방 참여하기 버튼 누르면 생기는 팝업 시작-->
-        <div class="show-room-list hidden fixed top-0 left-0 w-full h-screen bg-(--black)/60 hide-scrollbar">
-          <div class="flex justify-center items-center flex-col h-screen relative">
+        <div
+          class="show-room-list hidden fixed top-0 left-0 w-full h-screen bg-(--black)/60 hide-scrollbar"
+        >
+          <div
+            class="flex justify-center items-center flex-col h-screen relative"
+          >
             <!-- 방 목록 -->
-            <div class="room-list-container w-full max-w-2xl mx-auto bg-gray-200/80 p-6 rounded-lg shadow-lg">
+            <div
+              class="room-list-container w-full max-w-2xl mx-auto bg-gray-200/80 p-6 rounded-lg shadow-lg"
+            >
               <table class="table-auto w-full text-center border-collapse">
                 <thead>
                   <!-- bg-gray-700 text-white -->
@@ -110,10 +144,22 @@
             </div>
 
             <!-- 참여하기 버튼 시작 -->
-            <div id="join-form" class="mt-4 hidden space-y-3 bg-white text-black">
-              <p class="text-lg">선택한 방: <span id="selectedRoomName" class="font-bold"></span></p>
-              <input type="text" id="joinNickName" placeholder="닉네임" class="w-full px-3 py-2 rounded text-black" />
-              <button id="finalJoinBtn" class="btn btn-active w-full">입장하기</button>
+            <div
+              id="join-form"
+              class="mt-4 p-4 hidden space-y-3 bg-white text-black"
+            >
+              <p class="text-lg">
+                선택한 방: <span id="selectedRoomName" class="font-bold"></span>
+              </p>
+              <input
+                type="text"
+                id="joinNickName"
+                placeholder="닉네임"
+                class="w-full px-3 py-2 rounded text-black"
+              />
+              <button id="finalJoinBtn" class="btn btn-active w-full">
+                입장하기
+              </button>
             </div>
 
             <!-- 닫기 버튼 클릭 시작 -->
