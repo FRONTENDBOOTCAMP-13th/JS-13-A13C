@@ -1,5 +1,20 @@
-import { type ChoiceTwoCard, sendMsg, socket, type ChatMessage, type ChoiceOneCard, getRoomInfo } from "../A13C-chat";
-import { nextRound, getPlayer, getPlayerList, getRound, getUserId, isAllDone, getResult } from "./store";
+import {
+  type ChoiceTwoCard,
+  sendMsg,
+  socket,
+  type ChatMessage,
+  type ChoiceOneCard,
+  // getRoomInfo,
+} from "../A13C-chat";
+import {
+  nextRound,
+  getPlayer,
+  getPlayerList,
+  getRound,
+  getUserId,
+  isAllDone,
+  getResult,
+} from "./store";
 import { getRoundResult } from "./winning-point";
 
 // 모듈 스크립트는 defer 동작하므로 DOMContentLoaded 이벤트 불필요
@@ -106,32 +121,31 @@ export function appendCard(cardNum: number, disabled: boolean): void {
   myCardContainer.appendChild(card);
 }
 
-function choiceCard(card: HTMLImageElement, cardNum: number){
+function choiceCard(card: HTMLImageElement, cardNum: number) {
   if (card.style.pointerEvents === "none") return;
-    if (selectedCardNumbers.length >= 2) return;
-    selectedCardNumbers.push(cardNum);
-    const slot =
-      selectedCardNumbers.length === 1 ? selectedLeft : selectedRight;
-    slot.style.backgroundImage = `url(${card.src})`;
-    slot.setAttribute("data-card-src", card.src);
-    card.remove();
-    updateHandCardAvailability();
-    if (selectedCardNumbers.length === 2) {
-      // 카드 2장 뽑혔으니 초기화 버튼 숨기기
-      resetBtn.style.display = "none";
-      // 제출 타이머 자동 시작
-      startSubmitTimer();
-      
-      const choiceCard: ChoiceTwoCard = {
-        action: 'twocard',
-        user_id: getUserId(),
-        left: selectedCardNumbers[0],
-        right: selectedCardNumbers[1]
-      };
-      
-      console.log('카드 두개 선택 완료', choiceCard);
-      sendMsg<ChoiceTwoCard>(choiceCard);
-    }
+  if (selectedCardNumbers.length >= 2) return;
+  selectedCardNumbers.push(cardNum);
+  const slot = selectedCardNumbers.length === 1 ? selectedLeft : selectedRight;
+  slot.style.backgroundImage = `url(${card.src})`;
+  slot.setAttribute("data-card-src", card.src);
+  card.remove();
+  updateHandCardAvailability();
+  if (selectedCardNumbers.length === 2) {
+    // 카드 2장 뽑혔으니 초기화 버튼 숨기기
+    resetBtn.style.display = "none";
+    // 제출 타이머 자동 시작
+    startSubmitTimer();
+
+    const choiceCard: ChoiceTwoCard = {
+      action: "twocard",
+      user_id: getUserId(),
+      left: selectedCardNumbers[0],
+      right: selectedCardNumbers[1],
+    };
+
+    console.log("카드 두개 선택 완료", choiceCard);
+    sendMsg<ChoiceTwoCard>(choiceCard);
+  }
 }
 
 /**
@@ -143,24 +157,22 @@ socket.on("message", (data: ChatMessage) => {
   console.log(data.msg);
   const player = getPlayer(data.msg.user_id);
 
-  if(player){
-    if(data.msg.action === 'twocard'){
+  if (player) {
+    if (data.msg.action === "twocard") {
       player.twocard = [data.msg.left, data.msg.right];
-    }else if(data.msg.action === 'onecard'){
+    } else if (data.msg.action === "onecard") {
       player.onecard = data.msg.choice;
-      if(isAllDone()){
+      if (isAllDone()) {
         const round = getRound();
-        console.log(round, '라운드 종료');
+        console.log(round, "라운드 종료");
         getRoundResult(getPlayerList(), round);
-        console.log('승자 정보', getResult(round));
+        console.log("승자 정보", getResult(round));
         nextRound();
       }
-
-      
     }
   }
 
-  console.log('카드 제출 정보 추가', getPlayerList());
+  console.log("카드 제출 정보 추가", getPlayerList());
 });
 
 /** 슬롯 클릭 시 활성 슬롯을 전환할 수 있게 이벤트 설정 */
@@ -285,7 +297,7 @@ export function submitBtnFun() {
     // );
 
     const choice: ChoiceOneCard = {
-      action: 'onecard',
+      action: "onecard",
       user_id: getUserId(),
       choice: keepNum,
     };
@@ -373,54 +385,54 @@ export function revealOpponentCards(): void {
 
 // --- 타이머 & 자동 선택 기능 추가 ---
 
-// 타이머 표시 요소
-const timerEl = document.getElementById("selection-timer") as HTMLDivElement;
+// // 타이머 표시 요소
+// const timerEl = document.getElementById("selection-timer") as HTMLDivElement;
 
-let selectionTime = 8;
-let timerInterval: number;
+// let selectionTime = 8;
+// let timerInterval: number;
 
-/** 2장 미만 선택 시, 손패에서 남은 카드 중 무작위로 클릭해 선택 처리 */
-function autoSelectRandom() {
-  const imgs = Array.from(
-    document.querySelectorAll<HTMLImageElement>("#my-cards img[data-card]")
-  );
-  const need = 2 - selectedCardNumbers.length;
-  const available = imgs.slice(); // 복사
+// /** 2장 미만 선택 시, 손패에서 남은 카드 중 무작위로 클릭해 선택 처리 */
+// function autoSelectRandom() {
+//   const imgs = Array.from(
+//     document.querySelectorAll<HTMLImageElement>("#my-cards img[data-card]")
+//   );
+//   const need = 2 - selectedCardNumbers.length;
+//   const available = imgs.slice(); // 복사
 
-  for (let i = 0; i < need; i++) {
-    const idx = Math.floor(Math.random() * available.length);
-    const cardEl = available[idx];
-    available.splice(idx, 1);
-    // 클릭 이벤트 트리거 -> appendCard 쪽 로직이 실행됩니다
-    cardEl.click();
-  }
-  startSubmitTimer();
-}
+//   for (let i = 0; i < need; i++) {
+//     const idx = Math.floor(Math.random() * available.length);
+//     const cardEl = available[idx];
+//     available.splice(idx, 1);
+//     // 클릭 이벤트 트리거 -> appendCard 쪽 로직이 실행됩니다
+//     cardEl.click();
+//   }
+//   startSubmitTimer();
+// }
 
 /** 8초 카운트다운 시작 */
-function startSelectionTimer() {
-  clearInterval(timerInterval);
-  selectionTime = 8;
-  timerEl.textContent = `카드 선택 시간: ${selectionTime}초`;
+// function startSelectionTimer() {
+//   clearInterval(timerInterval);
+//   selectionTime = 8;
+//   timerEl.textContent = `카드 선택 시간: ${selectionTime}초`;
 
-  timerInterval = window.setInterval(() => {
-    selectionTime--;
-    if (selectionTime > 0) {
-      timerEl.textContent = `카드 선택 시간: ${selectionTime}초`;
-    } else {
-      clearInterval(timerInterval);
-      timerEl.textContent = "시간 종료";
+//   timerInterval = window.setInterval(() => {
+//     selectionTime--;
+//     if (selectionTime > 0) {
+//       timerEl.textContent = `카드 선택 시간: ${selectionTime}초`;
+//     } else {
+//       clearInterval(timerInterval);
+//       timerEl.textContent = "시간 종료";
 
-      // 2장 미만이면 자동 선택
-      if (selectedCardNumbers.length < 2) {
-        autoSelectRandom();
-      }
-      // (원하시면 여기서 자동 제출까지 할 수 있지만,
-      // 질문대로 슬롯에만 채우려면 아래 줄은 주석 처리하세요)
-      // submitBtn.click();
-    }
-  }, 1000);
-}
+//       // 2장 미만이면 자동 선택
+//       if (selectedCardNumbers.length < 2) {
+//         autoSelectRandom();
+//       }
+//       // (원하시면 여기서 자동 제출까지 할 수 있지만,
+//       // 질문대로 슬롯에만 채우려면 아래 줄은 주석 처리하세요)
+//       // submitBtn.click();
+//     }
+//   }, 1000);
+// }
 
 // 2) 슬롯 클릭 시 activeSlot 설정
 [selectedLeft, selectedRight].forEach((slot) => {
@@ -480,6 +492,5 @@ window.addEventListener("DOMContentLoaded", () => {
   // startSelectionTimer();
   submitBtnFun();
 });
-
 
 export default {};
