@@ -40,7 +40,7 @@ joinRoomBtn.addEventListener("click", async () => {
     user_id: nickName,
     roomName,
     hostName: nickName, // 방 생성자
-    autoClose: false,
+    autoColse: true,
     capacity: 5,
   };
 

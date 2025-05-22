@@ -17,6 +17,7 @@ import {
   setRoomName,
   setUserId,
 } from "./store";
+import { saveCurrentRoom } from "./chat";
 
 const urlParams = new URLSearchParams(location.search);
 const roomId = urlParams.get("roomId");
@@ -39,6 +40,11 @@ async function getRoomInfo() {
       setPlayerList(playerList);
       setRoomName(joinRoomRes.roomInfo.roomName);
       refreMembers(playerList);
+
+      //방 정보 저장
+      saveCurrentRoom(roomId, joinRoomRes.roomInfo.roomName, playerList.length);
+      console.log("savedCurrentRoomInfo:", JSON.parse(sessionStorage.getItem("A13C_CURRENT_ROOM") || "null"));
+
       document.querySelector('#connectedRoom')!.innerHTML = `방이름: ${getRoomName()} (${getPlayerCount()}/5)`;
       alert(`"${getRoomName()}" 방에 입장하였습니다.`);
     }else{
