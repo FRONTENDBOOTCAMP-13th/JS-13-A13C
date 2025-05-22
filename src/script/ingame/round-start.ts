@@ -10,7 +10,7 @@ export function removeOverlay() {
 }
 
 // ROUND 시작 오버레이
-function showRoundStartOverlay(r: number) {
+export function showRoundStartOverlay(r: number) {
   const ol = document.createElement("div");
   ol.id = "round-start-overlay";
   ol.className =
@@ -21,11 +21,12 @@ function showRoundStartOverlay(r: number) {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  // 호스트 여부 판단 (게임 시작 오버레이용)
   const isHost = localStorage
     .getItem("A13C_CREATE_ROOM_INFO")
     ?.includes('"isCreator":true');
 
-  // 오버레이를 생성∙삽입
+  // 처음 대기/게임시작 오버레이 생성
   const overlay = document.createElement("div");
   overlay.id = "game-overlay";
   overlay.className =
@@ -38,7 +39,7 @@ window.addEventListener("DOMContentLoaded", () => {
     : `<p class="pointer-events-none">방장이 게임을 시작할 때까지 기다려주세요</p>`;
   document.body.appendChild(overlay);
 
-  //  호스트 버튼 핸들러도 여기에
+  // 호스트 클릭 핸들러
   if (isHost) {
     document.getElementById("startGameBtn")!.addEventListener("click", () => {
       removeOverlay();
@@ -46,7 +47,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  //  모든 사용자: 메시지 수신 시 오버레이 제거
+  // 모든 사용자: 게임 시작 메시지 수신 시 1라운드 오버레이 표시
   socket.on("message", (data: any) => {
     const action = typeof data === "string" ? data : data?.msg;
     if (action === "게임시작") {
@@ -54,4 +55,25 @@ window.addEventListener("DOMContentLoaded", () => {
       showRoundStartOverlay(1);
     }
   });
+
+  // Score overlay가 사라진 후 다음 ROUND 표시를 위한 Observer
+  let roundCounter = 1;
+  const scoreOverlay = document.getElementById("round-overlay");
+  if (scoreOverlay) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === "style") {
+          const disp = (mutation.target as HTMLElement).style.display;
+          if (disp === "none" && roundCounter < 5) {
+            roundCounter++;
+            showRoundStartOverlay(roundCounter);
+          }
+        }
+      });
+    });
+    observer.observe(scoreOverlay, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+  }
 });
