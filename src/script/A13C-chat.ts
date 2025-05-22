@@ -115,6 +115,15 @@ export interface RoundResult{
   draw: boolean;
 }
 
+/**
+ * 모든 방 삭제
+ * @description 생성된 모든 방을 삭제합니다. 개발중에 만들어진 불필요한 방을 정리할때 사용합니다.
+ * 서버에 cleanRooms 이벤트를 발생시켜 모든 방을 삭제합니다.
+ */
+export function cleanRooms() {
+  socket.emit('cleanRooms');
+}
+
 
 
 // npm i @types/socket.io-client 필요
@@ -184,6 +193,20 @@ export function joinRoom(params: JoinRoomParams): Promise<JoinRoomResponse> {
 }
 
 /**
+ * 채팅방을 삭제하는 함수
+ * @param roomId - 삭제할 채팅방의 ID
+ * @returns Promise<{ok: boolean, message: string}> - 채팅방 삭제 결과
+ */
+export function deleteRoom(roomId: string): Promise<{ok: boolean, message: string}> {
+  return new Promise((resolve) => {
+    socket.emit("deleteRoom", { roomId }, (response: {ok: boolean, message: string}) => {
+      console.log(`방 삭제 응답 (${roomId}):`, response);
+      resolve(response);
+    });
+  });
+}
+
+/**
  * 모든 채팅방 목록을 조회하는 함수
  * @param _queryString - 캐시 방지를 위한 쿼리 문자열 (선택적)
  * @returns Promise<RoomsResponse> - 전체 채팅방 목록
@@ -228,14 +251,13 @@ export function sendMsg<T>(msg: T): void {
   socket.emit("message", msg);
 }
 
-/**
- * 채팅 메시지 수신 이벤트 리스너
- * @description 다른 사용자가 보낸 채팅 메시지를 수신할 때 호출됩니다.
- * @param data - 수신된 채팅 메시지 정보 (발신자 닉네임과 메시지 내용)
- */
-socket.on("message", (data: ChatMessage) => {
-  console.log(`${data.nickName}: ${data.msg}`);
-});
+// 사용자 입장/퇴장 메시지 표시 함수 추가 
+export function systemMessage(message: string): void {
+  socket.emit("message", {
+    nickName: "시스템",
+    msg: message
+  });
+}
 
 /**
  * 채팅방 목록 수신 이벤트 리스너

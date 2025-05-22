@@ -27,6 +27,7 @@ if(roomId && nickName) {
     setRoomName(joinRoomRes.roomInfo.roomName);
     refreMembers(playerList);
     document.querySelector('#connectedRoom')!.innerHTML = `방이름: ${getRoomName()} (${getPlayerCount()}/5)`;
+    alert(`"${getRoomName()}" 방에 입장하였습니다.`);
   }else{
     alert(joinRoomRes.message);
   }
