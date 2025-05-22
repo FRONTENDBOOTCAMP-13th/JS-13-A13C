@@ -37,8 +37,8 @@
     </div>
 
     <!-- 상대 카드 -->
-    <div class="flex justify-start items-center py-5 ml-65 -translate-y-5">
-      <!-- 플레이어 1 -->
+    <div class="flex justify-start items-center py-5 ml-30 -translate-y-5">
+      <!-- 내카드 제외용 더미란 추가 -->
       <div class="flex flex-col items-center mr-6">
         <div class="flex space-x-1">
           <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
@@ -66,12 +66,20 @@
       </div>
 
       <!-- 플레이어 4 -->
-      <div class="flex flex-col items-center">
+      <div class="flex flex-col items-center mr-6">
         <div class="flex space-x-1">
           <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
           <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
         </div>
         <p class="text-white mt-2 text-center text-sm" id="nickname-4"></p>
+      </div>
+      <!-- 플레이어 5 -->
+      <div class="flex flex-col items-center">
+        <div class="flex space-x-1">
+          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
+          <img src="/imges/card-back.webp" class="w-[115px] h-[168px]" />
+        </div>
+        <p class="text-white mt-2 text-center text-sm" id="nickname-5"></p>
       </div>
     </div>
 
@@ -87,11 +95,11 @@
           id="final-card-area"
           class="mt-2 flex justify-center items-center flex-wrap gap-2"
         >
-          <div id="palyer-select-card-1"></div>
-          <div id="palyer-select-card-2"></div>
-          <div id="palyer-select-card-3"></div>
-          <div id="palyer-select-card-4"></div>
-          <div id="palyer-select-card-5"></div>
+          <div id="player-select-card-1"></div>
+          <div id="player-select-card-2"></div>
+          <div id="player-select-card-3"></div>
+          <div id="player-select-card-4"></div>
+          <div id="player-select-card-5"></div>
         </div>
       </div>
 
@@ -122,32 +130,6 @@
       >
         <!-- 왼쪽: 라운드 표시 -->
         <div class="flex flex-col items-start ml-15 justify-center mr-6">
-          <div class="mb-2 text-white">
-            라운드 <span class="font-bold">1 / 5</span>
-          </div>
-          <div class="flex space-x-2">
-            <span
-              class="w-6 h-6 rounded-full bg-blue-500 text-xs text-white flex items-center justify-center"
-              >1</span
-            >
-            <span
-              class="w-6 h-6 rounded-full bg-[#9C9E64] text-xs text-white flex items-center justify-center"
-              >2</span
-            >
-            <span
-              class="w-6 h-6 rounded-full bg-[#659E64] text-xs text-white flex items-center justify-center"
-              >3</span
-            >
-            <span
-              class="w-6 h-6 rounded-full bg-[#159779] text-xs text-white flex items-center justify-center"
-              >4</span
-            >
-            <span
-              class="w-6 h-6 rounded-full bg-[#583BFF] text-xs text-white flex items-center justify-center"
-              >5</span
-            >
-          </div>
-
           <!-- 승점 테이블 시작 -->
           <div class="relative inline-flex w-fit group">
             <!-- 버튼 -->
@@ -313,16 +295,39 @@
     <!-- 인게임 채팅 종료 -->
 
     <!-- 에러코드 없에기 위한 코드 시작 -->
-    <div class="absolute top-50 right-0 z-1">
-      <input type="text" name="userId" placeholder="사용자 아이디" /><br />
-      <input type="text" name="roomName" placeholder="생성할 방 이름" />
+    <div class="absolute -top-5 right-5 z-20">
+      <input
+        type="text"
+        name="userId"
+        placeholder="사용자 아이디"
+        class="sr-only"
+      /><br />
+      <input
+        type="text"
+        name="roomName"
+        placeholder="생성할 방 이름"
+        class="sr-only"
+      />
       <br />
-      <input type="text" name="enterRoomId" placeholder="참여할 방 이름" />
-      <input type="text" name="nickName" placeholder="사용할 닉네임" />
-      <button id="joinRoomBtn" class="border border-red-300">
+      <input
+        type="text"
+        name="enterRoomId"
+        placeholder="참여할 방 이름"
+        class="sr-only"
+      />
+      <input
+        type="text"
+        name="nickName"
+        placeholder="사용할 닉네임"
+        class="sr-only"
+      />
+      <button id="joinRoomBtn" class="border border-red-300 sr-only">
         채팅방 입장
       </button>
-      <button id="leaveRoomBtn" class="border border-red-300">
+      <button
+        id="leaveRoomBtn"
+        class="btn btn-active font-semibold mt-4 px-4 py-2 rounded-[30px]"
+      >
         채팅방 나가기
       </button>
       <br />
