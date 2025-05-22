@@ -1,18 +1,18 @@
 import { getRooms } from "../A13C-chat";
 
 // 방 리스트를 보여주는 팝업창
-const showRoomList = document.querySelector(".show-room-list") as HTMLDivElement;
+const showRoomList = document.querySelector(
+  ".show-room-list"
+) as HTMLDivElement;
 
 // 방 목록을 보여주는 <tbody> 요소
 const roomListContainer = document.getElementById("roomList")!;
-
 
 // 참여하기버튼, 방 만들기 버튼
 const buttonGroups = document.querySelector(".button-groups") as HTMLDivElement;
 
 // 닫기 버튼
 const closeBtn = document.querySelector(".close-btn") as HTMLDivElement;
-
 
 // 방 참여하기 버튼
 const joinForm = document.getElementById("join-form")!;
@@ -21,12 +21,12 @@ const joinForm = document.getElementById("join-form")!;
 const selectedRoomNameElem = document.getElementById("selectedRoomName")!;
 
 // 유저 닉네임 입력란
-const joinNickName = document.getElementById("joinNickName") as HTMLInputElement;
+const joinNickName = document.getElementById(
+  "joinNickName"
+) as HTMLInputElement;
 
 // 참여하기 > 입장하기 버튼
 const finalJoinBtn = document.getElementById("finalJoinBtn")!;
-
-
 
 // 실시간 업데이트를 위한 타이머
 let updateInterval: number | null = null;
@@ -48,13 +48,11 @@ styles.innerHTML = `
 `;
 document.head.appendChild(styles);
 
-
 /**
  * 방 목록 렌더링 함수
  */
 async function renderRoomList() {
   try {
-
     const rooms = await getRooms();
 
     if (!rooms || Object.keys(rooms).length === 0) {
@@ -89,7 +87,9 @@ async function renderRoomList() {
       row.setAttribute("data-room-name", room.roomName);
 
       // 참여자 수 계산
-      const memberCount = room.memberList ? Object.keys(room.memberList).length : 0;
+      const memberCount = room.memberList
+        ? Object.keys(room.memberList).length
+        : 0;
       const displayCount = Math.min(memberCount, 5);
       const isFull = memberCount >= 5;
 
@@ -143,7 +143,9 @@ roomListContainer.addEventListener("click", (e) => {
   if (!target) return;
 
   // 이전에 선택된 방의 하이라이트 제거
-  document.querySelectorAll("#roomList tr.selected-room").forEach((el) => el.classList.remove("selected-room"));
+  document
+    .querySelectorAll("#roomList tr.selected-room")
+    .forEach((el) => el.classList.remove("selected-room"));
 
   // 현재 선택한 방 하이라이트
   target.classList.add("selected-room");
@@ -156,7 +158,9 @@ roomListContainer.addEventListener("click", (e) => {
   selectedRoomNameElem.textContent = roomName;
   joinForm.classList.remove("hidden");
 
-  const enterRoomId = document.getElementById("enterRoomId") as HTMLInputElement;
+  const enterRoomId = document.getElementById(
+    "enterRoomId"
+  ) as HTMLInputElement;
 
   if (enterRoomId) {
     enterRoomId.value = roomName;
@@ -170,11 +174,12 @@ roomListContainer.addEventListener("click", (e) => {
   joinNickName.focus();
 });
 
-
 // 참여하기 > 입장하기 버튼 클릭
 finalJoinBtn.addEventListener("click", () => {
   const nickName = joinNickName.value.trim();
-  const enterRoomId = document.getElementById("enterRoomId") as HTMLInputElement;
+  const enterRoomId = document.getElementById(
+    "enterRoomId"
+  ) as HTMLInputElement;
   const roomId = enterRoomId?.getAttribute("data-room-id") || "";
 
   if (!nickName) {
@@ -184,6 +189,16 @@ finalJoinBtn.addEventListener("click", () => {
 
   // 사용자 정보 별도 저장 (다음 입력 시 사용)
   localStorage.setItem("A13C_USER_INFO", nickName);
+
+  // 참여자 모드이므로 isCreator:false 로 덮어쓰기
+  localStorage.setItem(
+    "A13C_CREATE_ROOM_INFO",
+    JSON.stringify({
+      user_id: nickName,
+      roomId,
+      isCreator: false,
+    })
+  );
 
   // ingame.html로 이동
   window.location.href = `/src/pages/ingame.html?roomId=${roomId}&nickName=${nickName}`;
@@ -210,7 +225,6 @@ export function showRoomListPopup() {
   }
 }
 
-
 // 참여하기 닫기
 closeBtn.addEventListener("click", showRoomListPopup);
 
@@ -219,7 +233,6 @@ if (!showRoomList.classList.contains("hidden")) {
   renderRoomList();
   startRoomListTimer();
 }
-
 
 // 페이지 종료 시 타이머 정리
 window.addEventListener("beforeunload", () => {
