@@ -4,29 +4,45 @@ import { getTotalPoints } from "./winning-point.ts";
 
 // 현재 방 정보 로드
 function loadCurrentRoom() {
-  const saved = sessionStorage.getItem("A13C_CURRENT_ROOM");
-  if (!saved) return null;
-  try {
-    return JSON.parse(saved);
-  } catch {
-    return null;
+  const savedRoom = sessionStorage.getItem("A13C_CURRENT_ROOM");
+  console.log(
+    "A13C_CURRENT_ROOM:",
+    sessionStorage.getItem("A13C_CURRENT_ROOM")
+  );
+
+  if (savedRoom) {
+    try {
+      return JSON.parse(savedRoom);
+    } catch {
+      return null;
+    }
   }
+  return null;
 }
 
 // 총점 및 라운드 승자 테이블 갱신
 async function updateScoreTable() {
   const currentRoom = loadCurrentRoom();
-  if (!currentRoom) return;
-
+  if (!currentRoom) {
+    console.log("currentRoom 없음");
+    return;
+  }
+  // 방 정보 요청
   const roomInfo = await getRoomInfo(currentRoom.roomId);
-  if (!roomInfo || !roomInfo.memberList) return;
-
+  if (!roomInfo || !roomInfo.memberList) {
+    console.log("roomInfo 없음", roomInfo);
+    return;
+  }
+  // 닉네임 배열 추출
   const nicknames = Object.values(roomInfo.memberList).map((m) => m.nickName);
-
+  console.log("닉네임 목록:", nicknames);
+  // 누적 승점 테이블
   const totalScoreHeader = document.getElementById("total-score-header");
   const totalScoreRow = document.getElementById("total-score-row");
   const totals = getTotalPoints();
+  console.log("누적 승점:", totals);
 
+  // 닉네임 순서대로, 없는 닉네임은 0점
   const mappedTotals = nicknames.map((nick) => {
     const found = totals.find((t) => t.nickName === nick);
     return { nickName: nick, totalPoint: found ? found.totalPoint : 0 };
@@ -41,6 +57,7 @@ async function updateScoreTable() {
       .join("");
   }
 
+  // 라운드 별 우승자 테이블
   const roundWinnerBody = document.getElementById("round-winner-body");
   if (roundWinnerBody) {
     roundWinnerBody.innerHTML = "";
@@ -81,7 +98,8 @@ export async function showScoreTable() {
   ).then((res) => res.text());
   content.innerHTML = html;
 
-  // 점수 테이블 렌더링
+  // DOM이 그려진 뒤에 테이블 갱신
+  await new Promise((r) => setTimeout(r, 0));
   await updateScoreTable();
 
   // 화면에 표시
