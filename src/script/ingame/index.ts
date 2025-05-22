@@ -30,24 +30,29 @@ async function getRoomInfo() {
       nickName,
     };
 
-    const joinRoomRes = await joinRoom(params);
-    console.log("joinRoomRes", joinRoomRes);
-    if (joinRoomRes.ok) {
-      setUserId(nickName);
-      const playerList = Object.values(joinRoomRes.roomInfo.memberList);
-      console.log("플레이어 목록", playerList);
-      setPlayerList(playerList);
-      setRoomName(joinRoomRes.roomInfo.roomName);
-      refreMembers(playerList);
-      document.querySelector("#connectedRoom")!.innerHTML =
-        `${getRoomName()} (${getPlayerCount()}/5)`;
-    } else {
-      alert(joinRoomRes.message);
-    }
-  } else {
+if(roomId && nickName) {
+  const params: JoinRoomParams = {
+    roomId,
+    user_id: nickName,
+    nickName,
+  };
+
+  const joinRoomRes = await joinRoom(params);
+  console.log('joinRoomRes', joinRoomRes);
+  if(joinRoomRes.ok){
+    setUserId(nickName);
+    const playerList = Object.values(joinRoomRes.roomInfo.memberList);
+    console.log('플레이어 목록', playerList);
+    setPlayerList(playerList);
+    setRoomName(joinRoomRes.roomInfo.roomName);
+    refreMembers(playerList);
+    document.querySelector('#connectedRoom')!.innerHTML = `방이름: ${getRoomName()} (${getPlayerCount()}/5)`;
+    alert(`"${getRoomName()}" 방에 입장하였습니다.`);
+  }else{
+    alert(joinRoomRes.message);
+}else {
     alert("잘못된 경로로 접근했습니다. 로비로 이동합니다.");
     location.href = "/src/pages/lobby.html";
-  }
 }
 
 getRoomInfo();
