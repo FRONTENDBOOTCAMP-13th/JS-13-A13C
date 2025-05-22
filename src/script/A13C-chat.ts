@@ -127,7 +127,7 @@ export function cleanRooms() {
 
 
 // npm i @types/socket.io-client 필요
-export const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team02");
+export const socket = io("wss://fesp-api.koyeb.app/febc13-chat/team02");
 
 /**
  * 소켓 연결 이벤트 리스너
