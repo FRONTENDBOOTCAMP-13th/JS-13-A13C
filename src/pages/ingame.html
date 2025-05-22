@@ -85,13 +85,13 @@
         <p class="text-sm">제출한 카드 <span id="round-number">1</span></p>
         <div
           id="final-card-area"
-          class="mt-2 flex justify-center items-center flex-wrap w-[30%]"
+          class="mt-2 flex justify-center items-center flex-wrap gap-2"
         >
-          <div id="palyer-card-1"class="w-[30%]">1</div>
-          <div id="palyer-card-2"class="w-[30%]">1</div>
-          <div id="palyer-card-3"class="w-[30%]">1</div>
-          <div id="palyer-card-4"class="w-[30%]">1</div>
-          <div id="palyer-card-5"class="w-[30%]">1</div>
+          <div id="palyer-select-card-1"></div>
+          <div id="palyer-select-card-2"></div>
+          <div id="palyer-select-card-3"></div>
+          <div id="palyer-select-card-4"></div>
+          <div id="palyer-select-card-5"></div>
         </div>
       </div>
 
@@ -104,13 +104,13 @@
 
         <div
           id="temp-card-area"
-          class="mt-2 flex justify-center items-center flex-wrap"
+          class="mt-2 flex justify-center items-center flex-wrap gap-2"
         >
-          <div id="palyer-card-1" class="w-[30%]">2</div>
-          <div id="palyer-card-2" class="w-[30%]">2</div>
-          <div id="palyer-card-3" class="w-[30%]">2</div>
-          <div id="palyer-card-4" class="w-[30%]">2</div>
-          <div id="palyer-card-5" class="w-[30%]">2</div>
+          <div id="palyer-temporarily-card-1">2</div>
+          <div id="palyer-temporarily-card-2">2</div>
+          <div id="palyer-temporarily-card-3">2</div>
+          <div id="palyer-temporarily-card-4">2</div>
+          <div id="palyer-temporarily-card-5">2</div>
         </div>
       </div>
     </div>
@@ -313,7 +313,7 @@
     <!-- 인게임 채팅 종료 -->
 
     <!-- 에러코드 없에기 위한 코드 시작 -->
-    <div class="absolute top-50 right-0 z-1">
+    <div class="absolute top-50 right-0 z-1 sr-only">
       <input type="text" name="userId" placeholder="사용자 아이디" /><br />
       <input type="text" name="roomName" placeholder="생성할 방 이름" />
       <br />
