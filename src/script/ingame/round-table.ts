@@ -1,5 +1,5 @@
 import { getRoomInfo } from "../A13C-chat.ts";
-import { getResults } from "./store.ts";
+import { getResults, isAllDone } from "./store.ts";
 import { getTotalPoints } from "./winning-point.ts";
 
 // 현재 방 정보 로드
@@ -93,5 +93,7 @@ export async function showScoreTable() {
   }, 4000);
 }
 
-// TODO ingame에서 라운드 종료 판단 후 호출하도록 수정해야 함
-// showScoreTable();
+// TODO ingame에서 라운드 종료 판단 후 호출하도록
+if (isAllDone()) {
+  showScoreTable();
+}
