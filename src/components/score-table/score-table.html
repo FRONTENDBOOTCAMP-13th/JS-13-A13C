@@ -8,26 +8,34 @@
     <link rel="preload" href="/font/pretendardvariable.css" as="style" />
     <link rel="stylesheet" href="/font/pretendardvariable.css" />
     <script type="module" src="/src/main.ts"></script>
-    <script
-      type="module"
-      src="/src/components/score-table/score-table.ts"
-    ></script>
-    <script type="module" src="/src/pages/ingame/chat.ts"></script>
-    <script type="module" src="/src/pages/ingame/A13C-chat.ts"></script>
+    <script type="module" src="/src/script/ingame/score-table.ts"></script>
+    <script type="module" src="/src/script/ingame/chat.ts"></script>
+    <script type="module" src="/src/script/ingame/store.ts"></script>
   </head>
-  <body class="flex flex-col p-20 h-screen gap-10 text-white bg-[var(--main-color)]">
+  <body
+    class="flex flex-col p-20 h-screen gap-10 text-white bg-[var(--main-color)]"
+  >
     <div class="relative inline-flex w-fit group">
       <!-- 버튼 -->
-      <button id="show-button" type="button" class="btn btn-active">승점 확인</button>
+      <button id="show-button" type="button" class="btn btn-active">
+        승점 확인
+      </button>
       <!-- <button class="bg-[#9E844F] text-white font-semibold px-4 py-2 rounded-[30px]" >승점 확인</button> -->
 
       <!-- 호버 시 -->
-      <div class="absolute top-full left-0 mt-2 hidden group-hover:block z-10" id="score-tables">
+      <div
+        class="absolute top-full left-0 mt-2 hidden group-hover:block z-10"
+        id="score-tables"
+      >
         <!-- 라운드 별 우승자 테이블 -->
-        <table class="table-auto w-[26.875rem] border border-[#9E844F] text-white bg-[rgba(29,28,30,0.7)]">
+        <table
+          class="table-auto w-[26.875rem] border border-[#9E844F] text-white bg-[rgba(29,28,30,0.7)]"
+        >
           <thead>
             <tr>
-              <th colspan="3" class="text-center text-lg pt-5">라운드 별 우승자</th>
+              <th colspan="3" class="text-center text-lg pt-5">
+                라운드 별 우승자
+              </th>
             </tr>
             <tr>
               <th class="px-6 py-3">라운드</th>
