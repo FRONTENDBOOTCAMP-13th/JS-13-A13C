@@ -50,7 +50,7 @@ export interface CreateRoomParams {
   user_id: string;
   roomName: string;
   hostName: string;
-  autoClose?: boolean;
+  autoColse?: boolean;
   capacity?: number;
 }
 
