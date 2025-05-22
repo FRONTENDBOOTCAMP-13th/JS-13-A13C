@@ -114,44 +114,45 @@ A13C - 하나 빼기 게임
 ## 📁 src 폴더 구조
 
 ```
-src/
-├── components/
-│   ├── btn/
-│   │   └── btn.html
-│   ├── main-container/
-│   │   └── main-container.html
-│   ├── modal/
-│   │   └── modal.html
-│   └── score-table/
-│       ├── round/
-│       │   └── round-table.html
-│       └── score-table.html
-├── pages/
-│   ├── chat.html
-│   ├── ingame.html
-│   ├── lobby.html
-│   └── rule.html
-│       └── rule.ts
-├── script/
-│   ├── A13C-chat.ts
-│   ├── index.ts
-│   ├── ingame/
-│   │   ├── chat.ts
-│   │   ├── index.ts
-│   │   ├── ingame-ui.ts
-│   │   ├── round-start.ts
-│   │   ├── round-table.ts
-│   │   ├── score-table.ts
-│   │   ├── store.ts
-│   │   └── winning-point.ts
-│   └── lobby/
-│       ├── create-room-modal.ts
-│       ├── index.ts
-│       ├── join-room-modal.ts
-│       └── lobby-scroll.ts
-├── main.ts
-├── style.css
-└── vite-env.d.ts
+📦 src
+├── 📁 components               # 공용 컴포넌트
+│   ├── 📁 btn                 # 버튼 컴포넌트
+│   │   └── 📄 btn.html
+│   ├── 📁 main-container      # 메인 컨테이너
+│   │   └── 📄 main-container.html
+│   ├── 📁 modal               # 모달 관련
+│   │   └── 📄 modal.html
+│   └── 📁 score-table         # 점수 테이블
+│       ├── 📁 round           # 라운드 테이블
+│       │   └── 📄 round-table.html
+│       └── 📄 score-table.html
+├── 📁 pages                    
+│   ├── 📄 chat.html           # 채팅
+│   ├── 📄 ingame.html         # 인게임
+│   ├── 📄 lobby.html          # 로비
+│   └── 📁 rule                # 게임 룰
+│       └── 📄 rule.ts
+├── 📁 script                  
+│   ├── 📄 A13C-chat.ts        # 채팅 로직
+│   ├── 📄 index.ts            
+│   ├── 📁 ingame              # 인게임 스크립트
+│   │   ├── 📄 chat.ts
+│   │   ├── 📄 index.ts
+│   │   ├── 📄 ingame-ui.ts
+│   │   ├── 📄 round-start.ts
+│   │   ├── 📄 round-table.ts
+│   │   ├── 📄 score-table.ts
+│   │   ├── 📄 store.ts
+│   │   └── 📄 winning-point.ts
+│   └── 📁 lobby               # 로비 관련 스크립트
+│       ├── 📄 create-room-modal.ts
+│       ├── 📄 index.ts
+│       ├── 📄 join-room-modal.ts
+│       └── 📄 lobby-scroll.ts
+├── 📄 main.ts                 
+├── 📄 style.css               
+└── 📄 vite-env.d.ts           
+
 ```
 
 <br><br>
