@@ -39,7 +39,6 @@ export default defineConfig({
         mainContainer: "./src/components/main-container/main-container.html",
         modal: "./src/components/modal/modal.html",
         scoreTable: "./src/components/score-table/score-table.html",
-        testIngame: "./src/components/score-table/test-ingame.html",
         roundTable: "./src/components/score-table/round/round-table.html",
       },
     },

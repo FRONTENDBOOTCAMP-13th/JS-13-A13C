@@ -5,7 +5,7 @@ import io from "socket.io-client";
  */
 export interface ChatMessage {
   nickName: string;
-  msg: string;
+  msg: ChoiceTwoCard | ChoiceOneCard;
 }
 
 /**
@@ -27,14 +27,13 @@ export interface RoomMembers {
   // 인터페이스에 정의할 여러 속성들이 동일한 타입을 가지고 있을 때 모든 속성을 기술하지 않고 인덱스 시그니처 하나로 정의 가능
   // "key"라는 문자 대신 아무 문자나 사용 가능
   // 속성명의 타입은 string, number, symbol만 사용 가능
-  [key: string]: RoomMember;
+  [key: string]: Player;
 }
 
 /**
  * 채팅방의 전체 정보를 정의하는 인터페이스
  */
 export interface RoomInfo {
-  [x: string]: any;
   roomId: string;
   user_id: string;
   hostName: string;
@@ -51,15 +50,17 @@ export interface CreateRoomParams {
   user_id: string;
   roomName: string;
   hostName: string;
+  autoColse?: boolean;
+  capacity?: number;
 }
 
 /**
  * 채팅방 생성 응답을 정의하는 인터페이스
  */
 export interface CreateRoomResponse {
-  roomInfo: any;
-  success: boolean;
-  roomList: { [key: string]: RoomInfo };
+  ok: boolean;
+  message: string;
+  roomInfo: RoomInfo;
 }
 
 /**
@@ -75,7 +76,7 @@ export interface JoinRoomParams {
  * 채팅방 입장 응답을 정의하는 인터페이스
  */
 export interface JoinRoomResponse {
-  ok: number;
+  ok: boolean;
   message: string;
   roomInfo: RoomInfo;
 }
@@ -86,6 +87,44 @@ export interface JoinRoomResponse {
 export interface RoomsResponse {
   [key: string]: RoomInfo;
 }
+
+export interface ChoiceTwoCard{
+  action: 'twocard';
+  user_id: string;
+  left: number;
+  right: number;
+}
+
+export interface ChoiceOneCard{
+  action: 'onecard';
+  user_id: string;
+  choice: number;
+}
+
+export interface Player{
+  nickName: string;
+  score: number;
+  twocard: number[];
+  onecard: number;
+}
+
+export interface RoundResult{
+  round: number;
+  winners: string[];
+  point: number;
+  draw: boolean;
+}
+
+/**
+ * 모든 방 삭제
+ * @description 생성된 모든 방을 삭제합니다. 개발중에 만들어진 불필요한 방을 정리할때 사용합니다.
+ * 서버에 cleanRooms 이벤트를 발생시켜 모든 방을 삭제합니다.
+ */
+export function cleanRooms() {
+  socket.emit('cleanRooms');
+}
+
+
 
 // npm i @types/socket.io-client 필요
 export const socket = io("ws://fesp-api.koyeb.app/febc13-chat/team02");
@@ -154,11 +193,25 @@ export function joinRoom(params: JoinRoomParams): Promise<JoinRoomResponse> {
 }
 
 /**
+ * 채팅방을 삭제하는 함수
+ * @param roomId - 삭제할 채팅방의 ID
+ * @returns Promise<{ok: boolean, message: string}> - 채팅방 삭제 결과
+ */
+export function deleteRoom(roomId: string): Promise<{ok: boolean, message: string}> {
+  return new Promise((resolve) => {
+    socket.emit("deleteRoom", { roomId }, (response: {ok: boolean, message: string}) => {
+      console.log(`방 삭제 응답 (${roomId}):`, response);
+      resolve(response);
+    });
+  });
+}
+
+/**
  * 모든 채팅방 목록을 조회하는 함수
- * @param queryString - 캐시 방지를 위한 쿼리 문자열 (선택적)
+ * @param _queryString - 캐시 방지를 위한 쿼리 문자열 (선택적)
  * @returns Promise<RoomsResponse> - 전체 채팅방 목록
  */
-export function getRooms(queryString = ""): Promise<RoomsResponse> {
+export function getRooms(_queryString = ""): Promise<RoomsResponse> { //queryString 앞에 _를 붙여 사용되지 않고 있음을 나타냄
   return new Promise((resolve) => {
     socket.emit("rooms", (rooms: RoomsResponse) => {
       resolve(rooms);
@@ -198,14 +251,13 @@ export function sendMsg<T>(msg: T): void {
   socket.emit("message", msg);
 }
 
-/**
- * 채팅 메시지 수신 이벤트 리스너
- * @description 다른 사용자가 보낸 채팅 메시지를 수신할 때 호출됩니다.
- * @param data - 수신된 채팅 메시지 정보 (발신자 닉네임과 메시지 내용)
- */
-socket.on("message", (data: ChatMessage) => {
-  console.log(`${data.nickName}: ${data.msg}`);
-});
+// 사용자 입장/퇴장 메시지 표시 함수 추가 
+export function systemMessage(message: string): void {
+  socket.emit("message", {
+    nickName: "시스템",
+    msg: message
+  });
+}
 
 /**
  * 채팅방 목록 수신 이벤트 리스너

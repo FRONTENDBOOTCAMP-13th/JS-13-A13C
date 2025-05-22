@@ -8,12 +8,9 @@
     <link rel="preload" href="/font/pretendardvariable.css" as="style" />
     <link rel="stylesheet" href="/font/pretendardvariable.css" />
     <script type="module" src="/src/main.ts"></script>
-    <script
-      type="module"
-      src="/src/components/score-table/round/round-table.ts"
-    ></script>
-    <script type="module" src="/src/pages/ingame/chat.ts"></script>
-    <script type="module" src="/src/pages/ingame/A13C-chat.ts"></script>
+    <script type="module" src="/src/script/ingame/round-table.ts"></script>
+    <script type="module" src="/src/script/ingame/chat.ts"></script>
+    <script type="module" src="/src/script/ingame/store.ts"></script>
   </head>
   <body class="m-0 p-0 overflow-hidden">
     <!-- 전체 화면을 덮는 어두운 배경 + 가운데 테이블 -->
@@ -69,12 +66,12 @@
                 <th
                   class="px-4 py-2 text-center font-semibold uppercase tracking-wide border-r border-[#9E844F] text-white"
                 >
-                  승자
+                  닉네임
                 </th>
                 <th
                   class="px-4 py-2 text-center font-semibold uppercase tracking-wide text-white"
                 >
-                  점수
+                  승점
                 </th>
               </tr>
             </thead>
