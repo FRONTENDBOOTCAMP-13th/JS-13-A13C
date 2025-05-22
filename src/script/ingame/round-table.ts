@@ -1,8 +1,6 @@
-import {
-  getTotalPoints,
-  getRoundResults,
-} from "./winning-point.ts";
 import { getRoomInfo } from "../A13C-chat.ts";
+import { getResults } from "./store.ts";
+import { getTotalPoints } from "./winning-point.ts";
 
 // 현재 방 정보 로드
 function loadCurrentRoom() {
@@ -46,7 +44,7 @@ async function updateScoreTable() {
   const roundWinnerBody = document.getElementById("round-winner-body");
   if (roundWinnerBody) {
     roundWinnerBody.innerHTML = "";
-    const roundResults = getRoundResults();
+    const roundResults = getResults();
     roundResults.forEach(({ round, winners, point, draw }) => {
       if (draw) {
         const tr = document.createElement("tr");
