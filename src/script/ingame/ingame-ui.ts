@@ -154,7 +154,9 @@ function choiceCard(card: HTMLImageElement, cardNum: number) {
  * @param data - 수신된 채팅 메시지 정보 (발신자 닉네임과 메시지 내용)
  */
 socket.on("message", (data: ChatMessage) => {
-  console.log(data.msg);
+  if (!data.msg || typeof data.msg !== 'object' || !data.msg.action) {
+    return; // 채팅 메시지는 무시
+  }
   const player = getPlayer(data.msg.user_id);
 
   if (player) {
