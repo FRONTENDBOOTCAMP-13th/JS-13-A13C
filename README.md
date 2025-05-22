@@ -86,12 +86,14 @@ A13C - 하나 빼기 게임
 
 [![Notion](https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white)](https://www.notion.so/A13C-1ed73873401a80e6864dd461a67f92b9?pvs=4)
 
+<br>
+
+## 🦅 팀 목표
+### 🔥**될 때까지**🔥
+
+<br>
 
 ## 👥 팀원 소개  
-
-
-
-
 
 
 | ![구성연](https://github.com/user-attachments/assets/0a7fffb8-8f77-4987-9ba4-de12b154ab66) | ![정우님](https://github.com/user-attachments/assets/39a201c3-cd6a-4c28-aba6-ac11cf704074) | ![영찬님](https://github.com/user-attachments/assets/4e205e59-c43a-4a11-ad4c-bef0451fd73b) | ![예빈님](https://github.com/user-attachments/assets/3c9688e5-f6c2-4d71-a69a-60d7b61d0924) |
@@ -100,7 +102,7 @@ A13C - 하나 빼기 게임
 | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/koo-rogie) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/jungwoo0601) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Yujin0528) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yebin-jeong) |
 | [rn5184@naver.com](mailto:rn5184@naver.com) | [pjw1346799@naver.com](mailto:pjw1346799@naver.com) | [wooych4931@gmail.com](mailto:wooych4931@gmail.com) | [2022112390@dgu.ac.kr](mailto:2022112390@dgu.ac.kr) |
 | ISFP | ENTJ | ISFJ | ISTJ |
-
+| 갈등 없이 협력하며 멋진 결과 만들어가요! 다들 화이팅입니다! |  |협업을 통해 완성도를 높이고, 모르는 건 기록하며 성장하기| 끝까지 노력해서 재밌는 게임 만들어 봅시다! |
 
 
 </div>
