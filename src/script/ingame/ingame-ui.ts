@@ -4,6 +4,7 @@ import {
   socket,
   type ChatMessage,
   type ChoiceOneCard,
+  type Player,
   // getRoomInfo,
 } from "../A13C-chat";
 import {
@@ -69,7 +70,7 @@ let lastDisabled = new Set<number>();
 /** 현재 선택된 카드 번호 배열 (최대 2개) */
 let selectedCardNumbers: number[] = [];
 /** 현재 활성화된 카드 슬롯 ("left" | "right" | null) */
-let activeSlot: "left" | "right" | null = null;
+// let activeSlot: "left" | "right" | null = null;
 
 /**
  * 플레이어의 손패 카드를 렌더링합니다.
@@ -134,7 +135,7 @@ function choiceCard(card: HTMLImageElement, cardNum: number) {
     // 카드 2장 뽑혔으니 초기화 버튼 숨기기
     resetBtn.style.display = "none";
     // 제출 타이머 자동 시작
-    startSubmitTimer();
+    // startSubmitTimer();
 
     const choiceCard: ChoiceTwoCard = {
       action: "twocard",
@@ -161,9 +162,30 @@ socket.on("message", (data: ChatMessage) => {
 
   if (player) {
     if (data.msg.action === "twocard") {
+      // 상대 카드 불러오기
       player.twocard = [data.msg.left, data.msg.right];
+
+      // 상대 카드를 ui로 렌더링
+      const containers =
+        document.querySelectorAll<HTMLDivElement>(".opponent-cards");
+
+      // 플레이어 리스트에서 해당 유저 위치 찾기
+      const idx = getPlayerList().findIndex(
+        (p) => p.nickName === data.msg.user_id
+      );
+
+      // 상대 카드를 이미지로 렌더링
+      if (idx >= 0 && containers[idx]) {
+        const imgs = containers[idx].querySelectorAll<HTMLImageElement>("img"); // 4️⃣
+        const [l, r] = player.twocard;
+        imgs[0].src = `/imges/card-${l}.webp`; // 5️⃣
+        imgs[1].src = `/imges/card-${r}.webp`; // 6️⃣
+      }
+      revealOpponentCards();
     } else if (data.msg.action === "onecard") {
       player.onecard = data.msg.choice;
+
+      handleAutoSelectionAndMove();
       if (isAllDone()) {
         const round = getRound();
         console.log(round, "라운드 종료");
@@ -184,7 +206,7 @@ socket.on("message", (data: ChatMessage) => {
     selectedLeft.classList.remove("border-4", "border-yellow-300");
     selectedRight.classList.remove("border-4", "border-yellow-300");
     slot.classList.add("border-4", "border-yellow-300");
-    activeSlot = slot === selectedLeft ? "left" : "right";
+    // activeSlot = slot === selectedLeft ? "left" : "right";
   });
 });
 
@@ -270,42 +292,47 @@ export function submitBtnFun() {
     const keepSrc = `/imges/card-${keepNum}.webp`;
     const loseSrc = `/imges/card-${loseNum}.webp`;
 
-    // 4️⃣ 카드 비행 애니메이션 실행
-    flyCard(selectedLeft, scoreBoard, keepSrc);
-    flyCard(selectedRight, tempStorage, loseSrc);
+    // 4️⃣ 내 슬롯 요소 선택
+    const myIdx = getPlayerList().findIndex(
+      (p: Player) => p.nickName === getUserId()
+    );
+    const playerNum = myIdx + 1;
+    const selectedSlot = document.getElementById(
+      `palyer-select-card-${playerNum}`
+    );
+    const tempSlot = document.getElementById(
+      `palyer-temporarily-card-${playerNum}`
+    );
+    if (!selectedSlot || !tempSlot) return;
 
-    // 5️⃣ 상태 업데이트
+    // 5️⃣ 카드 비행 애니메이션 실행
+    flyCard(selectedLeft, selectedSlot, keepSrc);
+    flyCard(selectedRight, tempSlot, loseSrc);
+
+    // 6️⃣ 상태 업데이트
     removedNumbers.add(keepNum);
     tempDisabled = new Set(lastDisabled);
     lastDisabled.clear();
     lastDisabled.add(loseNum);
     tempDisabled = new Set(lastDisabled);
 
-    // 6️⃣ 슬롯 초기화
+    // 7️⃣ 슬롯 UI 및 내 카드 재렌더링
     [selectedLeft, selectedRight].forEach((el) => {
       el.style.backgroundImage = `url("/imges/card-back.webp")`;
       el.removeAttribute("data-card-src");
       el.classList.remove("border-4", "border-yellow-300");
     });
     selectedCardNumbers = [];
-    // activeCardId = null;
-
-    // 7️⃣ 내 카드 UI 재렌더링
     renderMyCards();
 
-    // 8️⃣ 서버로 제출 메시지 전송
-    // sendMsg(
-    //   `님이 선택한 카드는 ${keepNum}번 카드, 선택하지 않은 카드는 ${loseNum}번 카드입니다.`
-    // );
-
+    // 8️⃣ 메시지 전송 및 내 화면 갱신
     const choice: ChoiceOneCard = {
       action: "onecard",
       user_id: getUserId(),
       choice: keepNum,
     };
     sendMsg(choice);
-    // console.log("전송된 오른쪽 카드 번호:", loseNum);
-    // console.log("전송된 왼쪽 카드 번호:", keepNum);
+    handleAutoSelectionAndMove();
   });
 }
 
@@ -320,178 +347,171 @@ export function setupSubmitCardClick(): void {
   });
 }
 
-// 상대 플레이어 카드 공개 (테스트용)
+// 상대 플레이어 카드 공개
 export function revealOpponentCards(): void {
   const opponentContainers =
     document.querySelectorAll<HTMLDivElement>(".flex.space-x-1");
-  // 테스트용 더미 카드 번호 생성
-  const fakeOpponentCards = Array.from(
-    { length: opponentContainers.length },
-    () => {
-      const a = Math.floor(Math.random() * 8) + 1;
-      let b: number;
-      do {
-        b = Math.floor(Math.random() * 8) + 1;
-      } while (b === a);
-      return [a, b] as [number, number];
-    }
-  );
 
   opponentContainers.forEach((container, i) => {
-    const imgs = container.querySelectorAll<HTMLImageElement>("img");
+    const player = getPlayerList()[i];
+    if (!player || !player.twocard) return;
+    if (player.twocard) {
+      const [l, r] = player.twocard;
+      const imgs = container.querySelectorAll<HTMLImageElement>("img");
+      imgs[0].src = `/imges/card-${l}.webp`;
+      imgs[1].src = `/imges/card-${r}.webp`;
+    }
+  });
 
-    // 카드 이미지와 data-card 속성 세팅
-    imgs.forEach((img, j) => {
-      const num = fakeOpponentCards[i][j];
-      img.src = `/imges/card-${num}.webp`;
-      img.setAttribute("data-card", String(num));
-      img.classList.remove("border-4", "border-yellow-300", "opacity-50");
-    });
+  opponentContainers.forEach((container, i) => {
+    const parent = container.parentElement;
+    const nickEl = parent?.querySelector<HTMLElement>(`#nickname-${i + 1}`);
+    if (!nickEl) return;
 
-    // 클릭 핸들러 등록
-    imgs.forEach((img) => {
-      img.addEventListener("click", () => {
-        // 1️⃣ 선택 표시 토글
-        imgs.forEach((el) => {
-          el.classList.remove("border-4", "border-yellow-300");
-          el.classList.add("opacity-50");
-        });
-        img.classList.add("border-4", "border-yellow-300");
-        img.classList.remove("opacity-50");
+    // 기존 textContent가 있으면 그대로 사용, 없으면 기본값 할당
+    const nickname = nickEl.textContent ?? `플레이어${i + 1}`;
+    nickEl.textContent = nickname;
+  });
+}
 
-        // 2️⃣ 선택한 카드와 비활성 카드 번호 가져오기
-        const selected = img.getAttribute("data-card");
-        const other = Array.from(imgs)
-          .find((el) => el !== img)
-          ?.getAttribute("data-card");
+function handleAutoSelectionAndMove(): void {
+  const players = getPlayerList();
+  // ① final-card-area 안의 슬롯들(플레이어 수만큼) 선택
+  const slots = Array.from(
+    document.querySelectorAll<HTMLDivElement>(
+      "#final-card-area > div[id^='palyer-select-card-']"
+    )
+  );
 
-        // 3️⃣ 닉네임 추출
-        const parent = container.parentElement;
-        let nickname = `플레이어${i + 1}`;
-        const nickEl = parent?.querySelector(
-          `#nickname-${i + 1}`
-        ) as HTMLElement;
-        if (nickEl && nickEl.textContent) nickname = nickEl.textContent;
+  // ② 모든 슬롯 초기화
+  slots.forEach((slot) => {
+    slot.innerHTML = "";
+  });
 
-        // 4️⃣ 서버로 메시지 전송
-        if (selected && other) {
-          sendMsg(
-            `${nickname}님이 선택한 카드는 ${selected}번 카드, 선택하지 않은 카드는 ${other}번 카드입니다.`
-          );
-          console.log(`선택 카드: ${selected}, 비활성 카드: ${other}`);
-        }
-      });
-    });
+  // ③ 플레이어 리스트 순서대로 슬롯에 한 장씩 배치
+  players.forEach((player, idx) => {
+    // onecard가 숫자일 때만 렌더
+    if (typeof player.onecard === "number") {
+      const slot = slots[idx];
+      if (!slot) return;
+
+      const img = document.createElement("img");
+      img.src = `/imges/card-${player.onecard}.webp`;
+      img.className = "w-[80px] h-[110px]"; // 필요시 조정
+      slot.appendChild(img);
+    }
   });
 }
 
 // --- 타이머 & 자동 선택 기능 추가 ---
 
-// // 타이머 표시 요소
-// const timerEl = document.getElementById("selection-timer") as HTMLDivElement;
+// 타이머 표시 요소
+const timerEl = document.getElementById("selection-timer") as HTMLDivElement;
 
-// let selectionTime = 8;
-// let timerInterval: number;
+let selectionTime = 8;
+let timerInterval: number;
 
-// /** 2장 미만 선택 시, 손패에서 남은 카드 중 무작위로 클릭해 선택 처리 */
-// function autoSelectRandom() {
-//   const imgs = Array.from(
-//     document.querySelectorAll<HTMLImageElement>("#my-cards img[data-card]")
-//   );
-//   const need = 2 - selectedCardNumbers.length;
-//   const available = imgs.slice(); // 복사
+/** 2장 미만 선택 시, 손패에서 남은 카드 중 무작위로 클릭해 선택 처리 */
+function autoSelectRandom() {
+  const imgs = Array.from(
+    document.querySelectorAll<HTMLImageElement>("#my-cards img[data-card]")
+  );
+  const need = 2 - selectedCardNumbers.length;
+  const available = imgs.slice(); // 복사
 
-//   for (let i = 0; i < need; i++) {
-//     const idx = Math.floor(Math.random() * available.length);
-//     const cardEl = available[idx];
-//     available.splice(idx, 1);
-//     // 클릭 이벤트 트리거 -> appendCard 쪽 로직이 실행됩니다
-//     cardEl.click();
-//   }
-//   startSubmitTimer();
-// }
+  for (let i = 0; i < need; i++) {
+    const idx = Math.floor(Math.random() * available.length);
+    const cardEl = available[idx];
+    available.splice(idx, 1);
+    // 클릭 이벤트 트리거 -> appendCard 쪽 로직이 실행됩니다
+    cardEl.click();
+  }
+  // startSubmitTimer();
+}
 
 /** 8초 카운트다운 시작 */
-// function startSelectionTimer() {
-//   clearInterval(timerInterval);
-//   selectionTime = 8;
-//   timerEl.textContent = `카드 선택 시간: ${selectionTime}초`;
+function startSelectionTimer() {
+  clearInterval(timerInterval);
+  selectionTime = 8;
+  timerEl.textContent = `카드 선택 시간: ${selectionTime}초`;
 
-//   timerInterval = window.setInterval(() => {
-//     selectionTime--;
-//     if (selectionTime > 0) {
-//       timerEl.textContent = `카드 선택 시간: ${selectionTime}초`;
-//     } else {
-//       clearInterval(timerInterval);
-//       timerEl.textContent = "시간 종료";
+  timerInterval = window.setInterval(() => {
+    selectionTime--;
+    if (selectionTime > 0) {
+      timerEl.textContent = `카드 선택 시간: ${selectionTime}초`;
+    } else {
+      clearInterval(timerInterval);
+      timerEl.textContent = "시간 종료";
 
-//       // 2장 미만이면 자동 선택
-//       if (selectedCardNumbers.length < 2) {
-//         autoSelectRandom();
-//       }
-//       // (원하시면 여기서 자동 제출까지 할 수 있지만,
-//       // 질문대로 슬롯에만 채우려면 아래 줄은 주석 처리하세요)
-//       // submitBtn.click();
-//     }
-//   }, 1000);
-// }
+      // 2장 미만이면 자동 선택
+      if (selectedCardNumbers.length < 2) {
+        autoSelectRandom();
+      }
+      // (원하시면 여기서 자동 제출까지 할 수 있지만,
+      // 질문대로 슬롯에만 채우려면 아래 줄은 주석 처리하세요)
+      // submitBtn.click();
+    }
+  }, 1000);
+}
 
 // 2) 슬롯 클릭 시 activeSlot 설정
+
 [selectedLeft, selectedRight].forEach((slot) => {
   slot.addEventListener("click", () => {
     if (!slot.dataset.cardSrc) return;
     selectedLeft.classList.remove("border-4", "border-yellow-300");
     selectedRight.classList.remove("border-4", "border-yellow-300");
     slot.classList.add("border-4", "border-yellow-300");
-    activeSlot = slot === selectedLeft ? "left" : "right";
+    // activeSlot = slot === selectedLeft ? "left" : "right";
   });
 });
 
 // 3) 제출까지 남은 시간 표시 요소
-const submitTimerEl = document.getElementById(
-  "selection-timer"
-) as HTMLDivElement;
+// const submitTimerEl = document.getElementById(
+//   "selection-timer"
+// ) as HTMLDivElement;
 
-let submitTime = 8;
-let submitInterval: number;
+// let submitTime = 8;
+// let submitInterval: number;
 
-/** 4) 제출 타이머 시작 */
-function startSubmitTimer() {
-  clearInterval(submitInterval);
-  submitTime = 8;
-  submitTimerEl.textContent = `제출 시간: ${submitTime}초`;
+// /** 4) 제출 타이머 시작 */
+// function startSubmitTimer() {
+//   clearInterval(submitInterval);
+//   submitTime = 8;
+//   submitTimerEl.textContent = `제출 시간: ${submitTime}초`;
 
-  submitInterval = window.setInterval(() => {
-    submitTime--;
-    if (submitTime > 0) {
-      submitTimerEl.textContent = `제출 시간: ${submitTime}초`;
-    } else {
-      clearInterval(submitInterval);
-      submitTimerEl.textContent = "제출 시간 종료";
+//   submitInterval = window.setInterval(() => {
+//     submitTime--;
+//     if (submitTime > 0) {
+//       submitTimerEl.textContent = `제출 시간: ${submitTime}초`;
+//     } else {
+//       clearInterval(submitInterval);
+//       submitTimerEl.textContent = "제출 시간 종료";
 
-      // 5) 아직 슬롯을 선택하지 않았으면 랜덤으로 하나 선택
-      if (!activeSlot) {
-        activeSlot = Math.random() < 0.5 ? "left" : "right";
-        const slotEl = activeSlot === "left" ? selectedLeft : selectedRight;
-        slotEl.classList.add("border-4", "border-yellow-300");
-      }
+//       // 5) 아직 슬롯을 선택하지 않았으면 랜덤으로 하나 선택
+//       if (!activeSlot) {
+//         activeSlot = Math.random() < 0.5 ? "left" : "right";
+//         const slotEl = activeSlot === "left" ? selectedLeft : selectedRight;
+//         slotEl.classList.add("border-4", "border-yellow-300");
+//       }
 
-      // 6) submit 버튼 클릭
-      submitBtn.click();
-    }
-  }, 1000);
-}
+//       // 6) submit 버튼 클릭
+//       // submitBtn.click();
+//     }
+//   }, 1000);
+// }
 
-// 7) 카드가 두 장 선택되는 시점에 호출하도록, appendCard 클릭 핸들러 안에 아래 추가
-if (selectedCardNumbers.length === 2) {
-  startSubmitTimer();
-}
+// // 7) 카드가 두 장 선택되는 시점에 호출하도록, appendCard 클릭 핸들러 안에 아래 추가
+// if (selectedCardNumbers.length === 2) {
+//   startSubmitTimer();
+//   // handleAutoSelectionAndMove();
+// }
 
 // 초기 로직에 타이머 호출
 window.addEventListener("DOMContentLoaded", () => {
   renderMyCards();
   revealOpponentCards();
-  // startSelectionTimer();
+  startSelectionTimer();
   submitBtnFun();
 });
 
