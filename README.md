@@ -100,7 +100,6 @@ A13C - 하나 빼기 게임
 | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/koo-rogie) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/jungwoo0601) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Yujin0528) | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yebin-jeong) |
 | [rn5184@naver.com](mailto:rn5184@naver.com) | [pjw1346799@naver.com](mailto:pjw1346799@naver.com) | [wooych4931@gmail.com](mailto:wooych4931@gmail.com) | [2022112390@dgu.ac.kr](mailto:2022112390@dgu.ac.kr) |
 | ISFP | ENTJ | ISFJ | ISTJ |
-| 갈등 없이 협력하며 멋진 결과 만들어가요! 다들 화이팅입니다! |  |  | 재밌는 게임을 만들어 봅시다! |
 
 
 
