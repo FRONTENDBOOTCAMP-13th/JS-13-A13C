@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# 사이트맵 위치
+Sitemap: https://a13c.netlify.app/sitemap.xml
