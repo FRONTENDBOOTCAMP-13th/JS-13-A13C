@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+<!-- 메인페이지 -->
+<url>
+  <loc>https://a13c.netlify.app/</loc>
+  <lastmod>2025-05-28T11:28:44+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+
+<!-- 로비페이지 -->
+<url>
+  <loc>https://a13c.netlify.app/src/pages/lobby</loc>
+  <lastmod>2025-05-28T11:28:44+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<!-- 룰페이지 -->
+<url>
+  <loc>https://a13c.netlify.app/src/pages/rule</loc>
+  <lastmod>2025-05-28T11:28:44+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+<!-- 인게임페이지 -->
+<url>
+  <loc>https://a13c.netlify.app/src/pages/ingame</loc>
+  <lastmod>2025-05-28T11:28:44+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+
+</urlset>
